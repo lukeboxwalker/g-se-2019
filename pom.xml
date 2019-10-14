@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.techfak.gse</groupId>
-    <artifactId>template</artifactId>
+    <artifactId>lwalkenhorst</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -217,7 +217,7 @@
                     <repositoryLayout>flat</repositoryLayout>
                     <programs>
                         <program>
-                            <mainClass>de.techfak.gse.template.HelloWorld</mainClass>
+                            <mainClass>de.techfak.gse.lwalkenhorst.GSERadio</mainClass>
                             <id>helloworld</id>
                         </program>
                     </programs>
