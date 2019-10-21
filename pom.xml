@@ -218,7 +218,7 @@
                     <programs>
                         <program>
                             <mainClass>de.techfak.gse.lwalkenhorst.GSERadio</mainClass>
-                            <id>helloworld</id>
+                            <id>gseRadio</id>
                         </program>
                     </programs>
                 </configuration>
