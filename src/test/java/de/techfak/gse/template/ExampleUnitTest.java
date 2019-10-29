@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst;
+package de.techfak.gse.template;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
