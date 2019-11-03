@@ -7,7 +7,10 @@ import java.util.List;
 
 public final class GSERadio {
 
+    private static final MusicPlayer musicPlayer = new MusicPlayer();
+
     private GSERadio() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::exit));
     }
 
     private void start(final String... args) {
@@ -15,9 +18,14 @@ public final class GSERadio {
             MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null);
             List<File> fileList = musicReader.getMusicFiles();
             Playlist playlist = new Playlist(fileList);
+            musicPlayer.play(playlist);
         } catch (NoMusicFileFoundException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public void exit() {
+        musicPlayer.release();
     }
 
     public static void main(final String... args) {
