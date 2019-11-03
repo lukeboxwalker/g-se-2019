@@ -10,14 +10,20 @@ public final class GSERadio {
     private GSERadio() {
     }
 
-    public static void main(final String... args) {
-        System.out.println("Hello lwalkenhorst!");
+    private void start(final String... args) {
         try {
             MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null);
-            List<File> musicFiles = musicReader.getMusicFiles();
-        } catch (NoMusicFileFoundException exception) {
-            System.err.println(exception.getMessage());
+            List<File> fileList = musicReader.getMusicFiles();
+            Playlist playlist = new Playlist(fileList);
+        } catch (NoMusicFileFoundException e) {
+            System.err.println(e.getMessage());
         }
     }
 
+    public static void main(final String... args) {
+        //System.out.println("Hello lwalkenhorst!");
+        System.out.println("Started MediaPlayer");
+        GSERadio radio = new GSERadio();
+        radio.start(args);
+    }
 }
