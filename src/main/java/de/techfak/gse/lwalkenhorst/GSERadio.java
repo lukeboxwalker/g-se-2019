@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
+import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 
 import java.io.File;
 import java.util.List;
@@ -19,8 +19,9 @@ public final class GSERadio {
             List<File> fileList = musicReader.getMusicFiles();
             Playlist playlist = new Playlist(fileList);
             musicPlayer.play(playlist);
-        } catch (NoMusicFileFoundException e) {
+        } catch (ExitCodeException e) {
             System.err.println(e.getMessage());
+            System.exit(e.getExitCode());
         }
     }
 
