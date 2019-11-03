@@ -1,5 +1,7 @@
 package de.techfak.gse.lwalkenhorst;
 
+import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
+
 import java.io.File;
 
 public final class GSERadio {
