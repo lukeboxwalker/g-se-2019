@@ -1,18 +1,17 @@
 package de.techfak.gse.lwalkenhorst;
 
-import java.io.File;
 import java.util.*;
 
 public class Playlist {
 
-    private LinkedList<File> playList;
+    private LinkedList<Song> playList;
 
-    public Playlist(List<File> fileList) {
+    public Playlist(List<Song> fileList) {
         this.playList = new LinkedList<>(fileList);
         this.shuffle();
     }
 
-    public LinkedList<File> getQueue() {
+    public LinkedList<Song> getQueue() {
         return playList;
     }
 
