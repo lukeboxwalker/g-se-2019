@@ -3,6 +3,7 @@ package de.techfak.gse.lwalkenhorst;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 
 import java.io.File;
+import java.util.List;
 
 public final class GSERadio {
 
@@ -13,7 +14,7 @@ public final class GSERadio {
         System.out.println("Hello lwalkenhorst!");
         try {
             MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null);
-            File[] musicFiles = musicReader.getMusicFiles();
+            List<File> musicFiles = musicReader.getMusicFiles();
         } catch (NoMusicFileFoundException exception) {
             System.err.println(exception.getMessage());
         }

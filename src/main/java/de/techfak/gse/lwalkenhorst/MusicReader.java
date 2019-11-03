@@ -3,6 +3,8 @@ package de.techfak.gse.lwalkenhorst;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class MusicReader {
 
@@ -17,17 +19,17 @@ public class MusicReader {
      *
      * @param directory the directory in with the method searches.
      */
-    private File[] searchForMp3Files(final File directory) throws NoMusicFileFoundException {
+    private List<File> searchForMp3Files(final File directory) throws NoMusicFileFoundException {
         File[] musicFiles;
         musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
         if (musicFiles == null || musicFiles.length == 0) {
             throw new NoMusicFileFoundException("No mp3-files found in directory " + directory.getAbsolutePath());
         } else {
-            return musicFiles;
+            return Arrays.asList(musicFiles);
         }
     }
 
-    public File[] getMusicFiles() throws NoMusicFileFoundException {
+    public List<File> getMusicFiles() throws NoMusicFileFoundException {
         return searchForMp3Files(new File(directoryName));
     }
 }
