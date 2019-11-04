@@ -2,7 +2,7 @@ package de.techfak.gse.lwalkenhorst;
 
 public final class GSERadio {
 
-    private static final MusicPlayer musicPlayer = new MusicPlayer();
+    private static MusicPlayer musicPlayer = new MusicPlayer();
 
     private GSERadio() {
         Runtime.getRuntime().addShutdownHook(new Thread(this::exit));

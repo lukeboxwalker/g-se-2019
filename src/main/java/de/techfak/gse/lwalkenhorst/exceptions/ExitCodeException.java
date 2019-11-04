@@ -12,7 +12,7 @@ public abstract class ExitCodeException extends Exception {
 
     @Override
     public String getMessage() {
-        return "[ERROR-" + exitCode +"] " + super.getMessage();
+        return "[ERROR-" + exitCode + "] " + super.getMessage();
     }
 
     public int getExitCode() {
