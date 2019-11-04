@@ -18,4 +18,9 @@ public abstract class ExitCodeException extends Exception {
     public int getExitCode() {
         return exitCode;
     }
+
+    public void exit() {
+        System.err.println(this.getMessage());
+        System.exit(this.getExitCode());
+    }
 }

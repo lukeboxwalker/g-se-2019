@@ -1,9 +1,5 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
-
-import java.util.List;
-
 public final class GSERadio {
 
     private static final MusicPlayer musicPlayer = new MusicPlayer();
@@ -13,23 +9,20 @@ public final class GSERadio {
     }
 
     private void start(final String... args) {
-        try {
-            MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null);
-            List<Song> songs = musicReader.getSongs();
-            Playlist playlist = new Playlist(songs);
-            musicPlayer.play(playlist);
-        } catch (ExitCodeException e) {
-            System.err.println(e.getMessage());
-            System.exit(e.getExitCode());
-        }
+        MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null);
+        Playlist playlist = new Playlist(musicReader);
+        musicPlayer.play(playlist);
     }
 
-    public void exit() {
+    private void exit() {
         musicPlayer.release();
     }
 
+    public static MusicPlayer getMusicPlayer() {
+        return musicPlayer;
+    }
+
     public static void main(final String... args) {
-        //System.out.println("Hello lwalkenhorst!");
         System.out.println("Started MediaPlayer");
         GSERadio radio = new GSERadio();
         radio.start(args);

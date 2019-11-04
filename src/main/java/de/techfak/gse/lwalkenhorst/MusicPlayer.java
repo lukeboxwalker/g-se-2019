@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class MusicPlayer {
 
-    private MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-    private MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+    private static final MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+    private static final MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
 
     public MusicPlayer() {
     }
@@ -41,5 +41,13 @@ public class MusicPlayer {
         mediaPlayerFactory.release();
         mediaPlayer.release();
         System.out.println("Closed MediaPlayer");
+    }
+
+    public MediaPlayerFactory getMediaPlayerFactory() {
+        return mediaPlayerFactory;
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
     }
 }
