@@ -38,7 +38,7 @@ public class VLCJApiWrapper implements MediaLoader {
     }
 
     public void playSong(Song song) {
-        mediaPlayer.submit(() -> mediaPlayer.media().play(song.getMedia().newMediaRef()));
+        mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
     }
 
     public void addEventListener(MediaPlayerEventAdapter eventAdapter) {

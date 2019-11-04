@@ -12,7 +12,6 @@ import java.io.File;
 public class Song {
 
     private File file;
-    private Media media;
 
     private String title;
     private String artist;
@@ -23,8 +22,9 @@ public class Song {
     public Song(File file, MediaLoader mediaLoader) throws NoMusicFileFormatException {
         if (file.getName().endsWith(".mp3")) {
             this.file = file;
-            this.media = mediaLoader.loadMedia(file);
+            Media media = mediaLoader.loadMedia(file);
             initMetaData(media.meta().asMetaData(), media.info());
+            media.release();
         } else {
             throw new NoMusicFileFormatException("File :" + file.getAbsolutePath() + " is supposed to be an .mp3 File");
         }
@@ -40,10 +40,6 @@ public class Song {
 
     public String getAbsolutePath() {
         return file.getAbsolutePath();
-    }
-
-    public Media getMedia() {
-        return media;
     }
 
     public String getTitle() {
