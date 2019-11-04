@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 

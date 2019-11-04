@@ -1,5 +1,6 @@
-package de.techfak.gse.lwalkenhorst;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.apiwrapper.MediaLoader;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFormatException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 
@@ -10,9 +11,11 @@ import java.util.List;
 public class MusicReader {
 
     private String directoryName;
+    private MediaLoader mediaLoader;
 
-    public MusicReader(String directoryName) {
-        this.directoryName = directoryName != null ? directoryName : System.getProperty("user.dir");
+    public MusicReader(String directoryName, MediaLoader mediaLoader) {
+        this.directoryName = directoryName == null ? System.getProperty("user.dir") : directoryName;
+        this.mediaLoader = mediaLoader;
     }
 
     /**
@@ -30,7 +33,7 @@ public class MusicReader {
             List<Song> songs = new ArrayList<>();
             for (File file : musicFiles) {
                 try {
-                    songs.add(new Song(file));
+                    songs.add(new Song(file, mediaLoader));
                 } catch (NoMusicFileFormatException e) {
                     System.err.println(e.getMessage());
                 }
