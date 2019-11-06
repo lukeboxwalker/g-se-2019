@@ -2,7 +2,6 @@ package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.apiwrapper.VLCJApiWrapper;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.MusicReader;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 
 public final class GSERadio {
@@ -15,9 +14,7 @@ public final class GSERadio {
     }
 
     private void start(final String... args) {
-        MusicReader musicReader = new MusicReader(args.length == 1 ? args[0] : null, apiWrapper);
-        Playlist playlist = new Playlist(musicReader);
-
+        Playlist playlist = new Playlist(args.length == 1 ? args[0] : null, apiWrapper);
         MusicPlayer musicPlayer = new MusicPlayer(apiWrapper);
         musicPlayer.play(playlist);
     }

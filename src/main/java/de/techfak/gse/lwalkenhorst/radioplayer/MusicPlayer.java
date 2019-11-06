@@ -18,7 +18,7 @@ public class MusicPlayer {
     private void playSong(LinkedList<Song> songs) {
         Song song = songs.poll();
         String separate = " - ";
-        System.out.println("Now playing: " + song.getArtist() + separate + song.getTitle()  + separate + TimeUnit.MILLISECONDS.toMinutes(song.getDuration()) + " min");
+        System.out.println("Now playing: " + song.getArtist() + separate + song.getTitle() + separate + TimeUnit.MILLISECONDS.toMinutes(song.getDuration()) + " min");
         apiWrapper.playSong(song);
         songs.add(song);
     }

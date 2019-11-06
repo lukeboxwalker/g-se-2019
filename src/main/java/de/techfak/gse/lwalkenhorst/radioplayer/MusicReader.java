@@ -5,8 +5,7 @@ import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFormatException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class MusicReader {
 
@@ -25,12 +24,12 @@ public class MusicReader {
      * @return the list of songs in the directory
      * @throws NoMusicFileFoundException when the directory is empty or does't exist
      */
-    private List<Song> searchForMp3Files(final File directory) throws NoMusicFileFoundException {
+    private LinkedList<Song> searchForMp3Files(final File directory) throws NoMusicFileFoundException {
         File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
         if (musicFiles == null || musicFiles.length == 0) {
             throw new NoMusicFileFoundException("No mp3-files found in directory " + directory.getAbsolutePath());
         } else {
-            List<Song> songs = new ArrayList<>();
+            LinkedList<Song> songs = new LinkedList<>();
             for (File file : musicFiles) {
                 try {
                     songs.add(new Song(file, mediaLoader));
@@ -42,7 +41,7 @@ public class MusicReader {
         }
     }
 
-    public List<Song> getSongs() throws NoMusicFileFoundException {
+    public LinkedList<Song> getSongs() throws NoMusicFileFoundException {
         return searchForMp3Files(new File(directoryName));
     }
 }
