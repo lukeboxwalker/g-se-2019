@@ -9,6 +9,11 @@ import uk.co.caprica.vlcj.media.MetaData;
 
 import java.io.File;
 
+/**
+ * Represents a mp3 format Song.
+ * The Song saves all metadata available form a loaded media,
+ * as well as its complete file.
+ */
 public class Song {
 
     private File file;
@@ -19,6 +24,15 @@ public class Song {
     private String genre;
     private long duration;
 
+    /**
+     * Creates a new Song from given file.
+     * Loading the media to read {@link #initMetaData(MetaData metaData, InfoApi info)} its metadata,
+     * finally releases the memory used for loading the media.
+     *
+     * @param file        the mp3 the song is loaded from.
+     * @param mediaLoader to load the metadata form the file {@link MediaLoader}.
+     * @throws NoMusicFileFormatException when the given file is no mp3 file.
+     */
     public Song(File file, MediaLoader mediaLoader) throws NoMusicFileFormatException {
         if (file.getName().endsWith(".mp3")) {
             this.file = file;

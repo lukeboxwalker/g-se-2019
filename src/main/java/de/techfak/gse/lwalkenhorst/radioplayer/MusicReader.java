@@ -7,11 +7,24 @@ import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import java.io.File;
 import java.util.LinkedList;
 
+/**
+ * Reading the content of a directory.
+ * Filtering all music files (mp3) in a given directory
+ * and collect them in a List.
+ */
 public class MusicReader {
 
     private String directoryName;
     private MediaLoader mediaLoader;
 
+    /**
+     * Creates a new MusicReader to search for music files.
+     * Prepare to search in the directory for mp3 files.
+     * Using the current working directory when directoryName is null.
+     *
+     * @param directoryName the directory in which the reader will search.
+     * @param mediaLoader   to load the metadata form the file {@link MediaLoader}.
+     */
     public MusicReader(String directoryName, MediaLoader mediaLoader) {
         this.directoryName = directoryName == null ? System.getProperty("user.dir") : directoryName;
         this.mediaLoader = mediaLoader;
@@ -20,7 +33,7 @@ public class MusicReader {
     /**
      * Searches through the directory for '.mp3' files.
      *
-     * @param directory the directory in with the method searches
+     * @param directory the directory in which the method searches
      * @return the list of songs in the directory
      * @throws NoMusicFileFoundException when the directory is empty or does't exist
      */

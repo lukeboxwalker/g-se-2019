@@ -9,6 +9,11 @@ import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
 
+/**
+ * Centralize the vlcj library usage.
+ * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
+ * Implements {@link MediaLoader} for read the medias metadata.
+ */
 public class VLCJApiWrapper implements MediaLoader {
 
     private MediaPlayerFactory mediaPlayerFactory;
@@ -45,11 +50,14 @@ public class VLCJApiWrapper implements MediaLoader {
         mediaPlayer.events().addMediaPlayerEventListener(eventAdapter);
     }
 
+    /**
+     * Releasing the Memory used by vlcj.
+     * Stops playing music and release the memory, used by
+     * the vlcj library (MediaPlayerFactory and MediaPlayer)
+     */
     public void release() {
-        //releasing Memory used by mediaPlayerFactory and mediaPlayer
         mediaPlayer.controls().stop();
         mediaPlayerFactory.release();
         mediaPlayer.release();
-        System.out.println("Closed MediaPlayer");
     }
 }

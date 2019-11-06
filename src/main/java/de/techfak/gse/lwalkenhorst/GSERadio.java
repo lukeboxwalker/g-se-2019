@@ -4,6 +4,12 @@ import de.techfak.gse.lwalkenhorst.apiwrapper.VLCJApiWrapper;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 
+/**
+ * The GSERadio program is a music radio.
+ * Responsible for memory management with the vlcj library
+ *
+ * @author Lukas Walkenhorst
+ */
 public final class GSERadio {
 
     private VLCJApiWrapper apiWrapper;
@@ -23,6 +29,12 @@ public final class GSERadio {
         apiWrapper.release();
     }
 
+    /**
+     * Starts the program with given arguments.
+     *
+     * @param args the parameters the program is started with,
+     *             e.g. the directory name
+     */
     public static void main(final String... args) {
         System.out.println("Started MediaPlayer");
         GSERadio radio = new GSERadio();
