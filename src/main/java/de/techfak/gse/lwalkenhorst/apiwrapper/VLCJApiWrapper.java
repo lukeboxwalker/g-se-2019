@@ -8,6 +8,7 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 /**
  * Centralize the vlcj library usage.
@@ -46,8 +47,20 @@ public class VLCJApiWrapper implements MediaLoader {
         mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
     }
 
-    public void addEventListener(MediaPlayerEventAdapter eventAdapter) {
-        mediaPlayer.events().addMediaPlayerEventListener(eventAdapter);
+    /**
+     * Adds a song-finish event listener.
+     * Adds a MediaPlayerEvent to the media player to listen for finished songs.
+     * Performs actions described in consumer.
+     *
+     * @param consumer to represent the content of the overridden finished method.
+     */
+    public void onSongFinish(Consumer<MediaPlayer> consumer) {
+        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void finished(final MediaPlayer mediaPlayer) {
+                consumer.accept(mediaPlayer);
+            }
+        });
     }
 
     /**

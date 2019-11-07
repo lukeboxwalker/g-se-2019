@@ -36,7 +36,6 @@ public final class GSERadio {
      *             e.g. the directory name
      */
     public static void main(final String... args) {
-        System.out.println("Started MediaPlayer");
         GSERadio radio = new GSERadio();
         radio.start(args);
     }
