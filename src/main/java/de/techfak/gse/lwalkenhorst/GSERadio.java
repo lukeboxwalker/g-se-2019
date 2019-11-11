@@ -19,9 +19,9 @@ public final class GSERadio {
         Runtime.getRuntime().addShutdownHook(new Thread(this::exit));
     }
 
-    private void start(final String... args) {
-        Playlist playlist = new Playlist(args.length == 1 ? args[0] : null, apiWrapper);
+    private void start(final String directoryPath) {
         MusicPlayer musicPlayer = new MusicPlayer(apiWrapper);
+        Playlist playlist = new Playlist(directoryPath, apiWrapper);
         musicPlayer.play(playlist);
     }
 
@@ -37,6 +37,6 @@ public final class GSERadio {
      */
     public static void main(final String... args) {
         GSERadio radio = new GSERadio();
-        radio.start(args);
+        radio.start(args.length > 1 ? args[0] : System.getProperty("user.dir"));
     }
 }

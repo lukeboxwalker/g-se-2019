@@ -26,7 +26,7 @@ public class MusicReader {
      * @param mediaLoader   to load the metadata form the file {@link MediaLoader}.
      */
     public MusicReader(String directoryName, MediaLoader mediaLoader) {
-        this.directoryName = directoryName == null ? System.getProperty("user.dir") : directoryName;
+        this.directoryName = directoryName;
         this.mediaLoader = mediaLoader;
     }
 

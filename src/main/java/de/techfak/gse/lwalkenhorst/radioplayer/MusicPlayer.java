@@ -3,7 +3,6 @@ package de.techfak.gse.lwalkenhorst.radioplayer;
 import de.techfak.gse.lwalkenhorst.apiwrapper.VLCJApiWrapper;
 
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Plays mp3 songs by using the vlcj library.
@@ -11,29 +10,39 @@ import java.util.concurrent.TimeUnit;
 public class MusicPlayer {
 
     private VLCJApiWrapper apiWrapper;
+    private Song currentPlayingSong;
+    private Playlist currentPlaylist;
 
     public MusicPlayer(VLCJApiWrapper apiWrapper) {
         this.apiWrapper = apiWrapper;
     }
 
-    private void playSongQueue(LinkedList<Song> songs) {
-        Song song = songs.poll();
-        System.out.println("Now playing: " + song.getTitle() + " - " + TimeUnit.MILLISECONDS.toMinutes(song.getDuration()) + " min");
-        apiWrapper.playSong(song);
-        songs.add(song);
-    }
-
     /**
      * Plays a given playlist.
      * Using the song queue from the playlist {@link Playlist#getQueue()},
-     * to play its songs. Playing a song form the queue by using {@link #playSongQueue(LinkedList songs)}.
-     * Repeatedly plays the playlist.
+     * to play its songs. When a song finishes, the next song from the Playlist
+     * will start playing. The playlist plays on repeat.
      *
      * @param playlist that will be played.
      */
     public void play(Playlist playlist) {
-        LinkedList<Song> songs = playlist.getQueue();
-        playSongQueue(songs);
-        apiWrapper.onSongFinish(mediaPlayer -> playSongQueue(songs));
+        this.currentPlaylist = playlist;
+        this.currentPlayingSong = playlist.getQueue().peek();
+        apiWrapper.playSong(currentPlayingSong);
+        apiWrapper.onSongFinish(mediaPlayer -> {
+            LinkedList<Song> songs = currentPlaylist.getQueue();
+            songs.poll();
+            songs.add(currentPlayingSong);
+            this.currentPlayingSong = songs.peek();
+            apiWrapper.playSong(currentPlayingSong);
+        });
+    }
+
+    public Song getCurrentPlayingSong() {
+        return currentPlayingSong;
+    }
+
+    public Playlist getCurrentPlaylist() {
+        return currentPlaylist;
     }
 }
