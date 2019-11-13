@@ -39,7 +39,7 @@ public final class GSERadio {
      * Starts the program with given arguments.
      *
      * @param args the parameters the program is started with,
-     *             e.g. the directory
+     *             e.g. the directory name
      */
     public static void main(final String... args) {
         GSERadio radio = new GSERadio();
