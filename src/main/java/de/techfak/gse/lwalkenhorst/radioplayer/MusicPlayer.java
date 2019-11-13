@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Plays mp3 songs by using the vlcj library.
  */
-public class MusicPlayer {
+public class MusicPlayer implements RadioModel {
 
     private VLCJApiWrapper apiWrapper;
     private Song currentPlayingSong;
@@ -38,10 +38,12 @@ public class MusicPlayer {
         });
     }
 
+    @Override
     public Song getCurrentPlayingSong() {
         return currentPlayingSong;
     }
 
+    @Override
     public Playlist getCurrentPlaylist() {
         return currentPlaylist;
     }

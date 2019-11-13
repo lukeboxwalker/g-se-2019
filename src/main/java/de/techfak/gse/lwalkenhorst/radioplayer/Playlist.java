@@ -24,7 +24,6 @@ public class Playlist {
     public Playlist(String directoryName, MediaLoader mediaLoader) {
         try {
             this.playList = new MusicReader(directoryName, mediaLoader).getSongs();
-            this.shuffle();
         } catch (ExitCodeException e) {
             e.exit();
         }

@@ -3,6 +3,7 @@ package de.techfak.gse.lwalkenhorst;
 import de.techfak.gse.lwalkenhorst.apiwrapper.VLCJApiWrapper;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.terminalScanner.Terminal;
 
 /**
  * The GSERadio program is a music radio.
@@ -22,7 +23,12 @@ public final class GSERadio {
     private void start(final String directoryPath) {
         MusicPlayer musicPlayer = new MusicPlayer(apiWrapper);
         Playlist playlist = new Playlist(directoryPath, apiWrapper);
+
+        playlist.shuffle();
         musicPlayer.play(playlist);
+
+        Terminal terminal = new Terminal(musicPlayer);
+        terminal.listenForInstructions();
     }
 
     private void exit() {
