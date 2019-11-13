@@ -27,8 +27,7 @@ public final class GSERadio {
         playlist.shuffle();
         musicPlayer.play(playlist);
 
-        Terminal terminal = new Terminal(musicPlayer);
-        terminal.listenForInstructions();
+        Terminal terminal1 = new Terminal(musicPlayer);
     }
 
     private void exit() {
