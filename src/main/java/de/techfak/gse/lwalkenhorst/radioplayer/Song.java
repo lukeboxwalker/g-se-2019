@@ -1,13 +1,12 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.apiwrapper.MediaLoader;
-import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFormatException;
 import uk.co.caprica.vlcj.media.InfoApi;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.media.MetaData;
 
 import java.io.File;
+import java.util.function.Function;
 
 /**
  * Represents a mp3 format Song.
@@ -30,18 +29,13 @@ public class Song {
      * finally releases the memory used for loading the media.
      *
      * @param file        the mp3 the song is loaded from.
-     * @param mediaLoader to load the metadata form the file {@link MediaLoader}.
-     * @throws NoMusicFileFormatException when the given file is no mp3 file.
+     * @param mediaLoader to load the metadata form the file.
      */
-    public Song(File file, MediaLoader mediaLoader) throws NoMusicFileFormatException {
-        if (file.getName().endsWith(".mp3")) {
-            this.file = file;
-            Media media = mediaLoader.loadMedia(file);
-            initMetaData(media.meta().asMetaData(), media.info());
-            media.release();
-        } else {
-            throw new NoMusicFileFormatException("File :" + file.getAbsolutePath() + " is supposed to be an .mp3 File");
-        }
+    public Song(File file, Function<File, Media> mediaLoader) {
+        this.file = file;
+        Media media = mediaLoader.apply(file);
+        initMetaData(media.meta().asMetaData(), media.info());
+        media.release();
     }
 
     private void initMetaData(MetaData metaData, InfoApi info) {

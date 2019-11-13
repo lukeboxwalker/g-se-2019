@@ -1,6 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.apiwrapper.MediaLoader;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 
 import java.util.*;
@@ -19,11 +18,10 @@ public class Playlist {
      * and getting its content by {@link MusicReader#getSongs()}.
      *
      * @param directoryName the directory the playlist is constructed of.
-     * @param mediaLoader   to load the metadata form the files {@link MediaLoader}.
      */
-    public Playlist(String directoryName, MediaLoader mediaLoader) {
+    public Playlist(String directoryName) {
         try {
-            this.playList = new MusicReader(directoryName, mediaLoader).getSongs();
+            this.playList = new MusicReader(directoryName).getSongs();
         } catch (ExitCodeException e) {
             e.exit();
         }

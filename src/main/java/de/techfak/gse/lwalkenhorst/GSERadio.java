@@ -22,7 +22,7 @@ public final class GSERadio {
 
     private void start(final String directoryPath) {
         MusicPlayer musicPlayer = new MusicPlayer(apiWrapper);
-        Playlist playlist = new Playlist(directoryPath, apiWrapper);
+        Playlist playlist = new Playlist(directoryPath);
 
         playlist.shuffle();
         musicPlayer.play(playlist);

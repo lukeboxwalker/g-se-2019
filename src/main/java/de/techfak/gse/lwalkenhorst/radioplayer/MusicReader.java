@@ -1,7 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.apiwrapper.MediaLoader;
-import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFormatException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 
 import java.io.File;
@@ -15,7 +13,6 @@ import java.util.LinkedList;
 public class MusicReader {
 
     private String directoryName;
-    private MediaLoader mediaLoader;
 
     /**
      * Creates a new MusicReader to search for music files.
@@ -23,38 +20,41 @@ public class MusicReader {
      * Using the current working directory when directoryName is null.
      *
      * @param directoryName the directory in which the reader will search.
-     * @param mediaLoader   to load the metadata form the file {@link MediaLoader}.
      */
-    public MusicReader(String directoryName, MediaLoader mediaLoader) {
+    public MusicReader(String directoryName) {
         this.directoryName = directoryName;
-        this.mediaLoader = mediaLoader;
     }
 
     /**
      * Searches through the directory for '.mp3' files.
      *
      * @param directory the directory in which the method searches
-     * @return the list of songs in the directory
+     * @return an array of mp3 files in the directory
      * @throws NoMusicFileFoundException when the directory is empty or does't exist
      */
-    private LinkedList<Song> searchForMp3Files(final File directory) throws NoMusicFileFoundException {
+    private File[] searchForMp3Files(final File directory) throws NoMusicFileFoundException {
         File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
         if (musicFiles == null || musicFiles.length == 0) {
             throw new NoMusicFileFoundException("No mp3-files found in directory " + directory.getAbsolutePath());
         } else {
-            LinkedList<Song> songs = new LinkedList<>();
-            for (File file : musicFiles) {
-                try {
-                    songs.add(new Song(file, mediaLoader));
-                } catch (NoMusicFileFormatException e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-            return songs;
+           return musicFiles;
         }
     }
 
+    /**
+     * Creates a list of songs.
+     * Generate new song object via {@link SongFactory}
+     *
+     * @return the list of songs in the directory
+     * @throws NoMusicFileFoundException when the directory is empty or does't exist
+     */
     public LinkedList<Song> getSongs() throws NoMusicFileFoundException {
-        return searchForMp3Files(new File(directoryName));
+        SongFactory songFactory = new SongFactory();
+        LinkedList<Song> songs = new LinkedList<>();
+        for (File file : searchForMp3Files(new File(directoryName))) {
+            songs.add(songFactory.newSong(file));
+        }
+        songFactory.release();
+        return songs;
     }
 }
