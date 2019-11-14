@@ -80,39 +80,51 @@ public class Terminal {
         running.set(false);
     }
 
+    private static final String ENDING = "##########################################################";
+
     public void printSongInfo(Song song) {
-        final String line = "##########################################################";
-        String message = line
-            + "\nCurrent playing song:\n"
-            + getMetaDataString("Title: ", song.getTitle())
-            + getMetaDataString("Artist: ", song.getArtist())
-            + getMetaDataString("Album: ", song.getAlbum())
-            + getMetaDataString("Genre: ", song.getGenre())
-            + getMetaDataString("Duration: ", song.getDuration())
-            + line;
+        String message = "###################[ You listening to ]###################"
+            + "\nCurrently playing:\n"
+            + getMetaDataString("Title: ", song.getTitle(), true)
+            + getMetaDataString("Artist: ", song.getArtist(), true)
+            + getMetaDataString("Album: ", song.getAlbum(), true)
+            + getMetaDataString("Genre: ", song.getGenre(), true)
+            + getMetaDataString("Duration: ", song.getDuration(), true)
+            + ENDING;
         System.out.println(message);
     }
 
-    private String getMetaDataString(String tag, String metadata) {
-        return metadata == null ? "" : tag + metadata + "\n";
+    private String getMetaDataString(String tag, String metadata, boolean lineBreak) {
+        return metadata == null ? "" : tag + metadata + (lineBreak ? "\n" : "");
     }
 
-    private String getMetaDataString(String tag, long milliseconds) {
+    private String getMetaDataString(String tag, long milliseconds, boolean lineBreak) {
         long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
         long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min\n";
+        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? "\n" : "");
     }
 
     public void printPlaylistInfo(Playlist playlist) {
-        System.out.println(PLAYLIST);
+        System.out.println("###################[ Current playlist ]###################");
+        final String comma = ", ";
+        final String separate = " - ";
+        for (Song song : playlist) {
+            String songDetails = getMetaDataString("", song.getTitle(), false)
+                + getMetaDataString(comma, song.getArtist(), false)
+                + getMetaDataString(separate, song.getGenre(), false)
+                + getMetaDataString(comma, song.getAlbum(), false)
+                + getMetaDataString(comma, song.getGenre(), false)
+                + getMetaDataString(comma, song.getDuration(), false);
+            System.out.println(songDetails);
+        }
+        System.out.println(ENDING);
     }
 
     public void printCMDUsage() {
-        final String line = "##########################################################";
-        String message = line + "\nCommand usage: \n"
-            + "<song> to list the information of the current playing song.\n"
+        String message = "#########################[ Help ]#########################"
+            + "\n<song> to list the information of the current playing song.\n"
             + "<playlist> to list the current playlist that is playing.\n"
-            + "<exit> to exit the application.\n" + line;
+            + "<exit> to exit the application.\n" + ENDING;
         System.out.println(message);
     }
 }
