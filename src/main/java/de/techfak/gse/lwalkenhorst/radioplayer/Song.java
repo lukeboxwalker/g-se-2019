@@ -6,7 +6,6 @@ import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.media.MetaData;
 
 import java.io.File;
-import java.util.function.Function;
 
 /**
  * Represents a mp3 format Song.

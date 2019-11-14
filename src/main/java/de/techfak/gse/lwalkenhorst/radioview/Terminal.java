@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Terminal {
+    private static final String ENDING = "##########################################################";
+    private static final String BREAK = "\n";
 
     private static final String SONG = "song";
     private static final String PLAYLIST = "playlist";
@@ -80,8 +82,6 @@ public class Terminal {
         running.set(false);
     }
 
-    private static final String ENDING = "##########################################################";
-
     public void printSongInfo(Song song) {
         String message = "###################[ You listening to ]###################"
             + "\nCurrently playing:\n"
@@ -95,13 +95,13 @@ public class Terminal {
     }
 
     private String getMetaDataString(String tag, String metadata, boolean lineBreak) {
-        return metadata == null ? "" : tag + metadata + (lineBreak ? "\n" : "");
+        return metadata == null ? "" : tag + metadata + (lineBreak ? BREAK : "");
     }
 
     private String getMetaDataString(String tag, long milliseconds, boolean lineBreak) {
         long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
         long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? "\n" : "");
+        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? BREAK : "");
     }
 
     public void printPlaylistInfo(Playlist playlist) {
