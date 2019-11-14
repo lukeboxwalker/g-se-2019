@@ -3,8 +3,6 @@ package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 
-import java.util.LinkedList;
-
 /**
  * Plays mp3 songs by using the vlcj library.
  */
@@ -19,7 +17,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     /**
      * Plays a given playlist.
-     * Using the song queue from the playlist {@link Playlist#getQueue()},
      * to play its songs. When a song finishes, the next song from the Playlist
      * will start playing. The playlist plays on repeat.
      *
@@ -27,15 +24,14 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      */
     @Override
     public void play(Playlist playlist) {
-        this.currentPlaylist = playlist;
-        this.currentPlayingSong = playlist.getQueue().peek();
-        this.playSong(currentPlayingSong);
-        this.onSongFinish(mediaPlayer -> {
-            LinkedList<Song> songs = currentPlaylist.getQueue();
-            songs.poll();
-            songs.add(currentPlayingSong);
-            this.currentPlayingSong = songs.peek();
-            this.playSong(currentPlayingSong);
+        currentPlaylist = playlist;
+        currentPlayingSong = playlist.getFirst();
+        playSong(currentPlayingSong);
+        onSongFinish(mediaPlayer -> {
+            currentPlaylist.dropFirst();
+            currentPlaylist.appendSong(currentPlayingSong);
+            currentPlayingSong = currentPlaylist.getFirst();
+            playSong(currentPlayingSong);
         });
     }
 

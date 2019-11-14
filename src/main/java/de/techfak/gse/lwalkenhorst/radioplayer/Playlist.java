@@ -8,7 +8,7 @@ import java.util.*;
  * Represents a Playlist (list of songs).
  * The playlist contains a song queue that could be played.
  */
-public class Playlist {
+public class Playlist implements Iterable<Song> {
 
     private LinkedList<Song> playList;
 
@@ -27,11 +27,24 @@ public class Playlist {
         }
     }
 
-    public LinkedList<Song> getQueue() {
-        return playList;
+    public Song getFirst() {
+        return playList.peek();
+    }
+
+    public Song dropFirst() {
+        return playList.poll();
+    }
+
+    public void appendSong(Song song) {
+        playList.add(song);
     }
 
     public void shuffle() {
         Collections.shuffle(playList);
+    }
+
+    @Override
+    public Iterator<Song> iterator() {
+        return playList.iterator();
     }
 }
