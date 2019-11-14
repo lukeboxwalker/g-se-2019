@@ -1,7 +1,6 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.apiwrapper.VLCJApiWrapper;
-import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
+import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.terminalScanner.Terminal;
 
@@ -13,25 +12,23 @@ import de.techfak.gse.lwalkenhorst.terminalScanner.Terminal;
  */
 public final class GSERadio {
 
-    private VLCJApiWrapper apiWrapper;
+    private MusicPlayer musicPlayer;
 
     private GSERadio() {
-        this.apiWrapper = new VLCJApiWrapper();
+        this.musicPlayer = new MusicPlayer();
         Runtime.getRuntime().addShutdownHook(new Thread(this::exit));
     }
 
     private void start(final String directoryPath) {
-        MusicPlayer musicPlayer = new MusicPlayer(apiWrapper);
         Playlist playlist = new Playlist(directoryPath);
-
         playlist.shuffle();
-        musicPlayer.play(playlist);
 
+        musicPlayer.play(playlist);
         Terminal terminal1 = new Terminal(musicPlayer);
     }
 
     private void exit() {
-        apiWrapper.release();
+        musicPlayer.release();
     }
 
     /**

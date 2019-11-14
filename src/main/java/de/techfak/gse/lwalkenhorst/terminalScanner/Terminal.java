@@ -1,11 +1,10 @@
 package de.techfak.gse.lwalkenhorst.terminalScanner;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +23,6 @@ public class Terminal {
     private final AtomicBoolean running;
 
     public Terminal(RadioModel radio) {
-        System.out.println("test");
         this.radio = radio;
         this.running = new AtomicBoolean(true);
         this.listenForInstructions();
