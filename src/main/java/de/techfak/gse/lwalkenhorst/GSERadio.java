@@ -2,7 +2,7 @@ package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.terminalScanner.Terminal;
+import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 /**
  * The GSERadio program is a music radio.

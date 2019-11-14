@@ -38,7 +38,7 @@ public class SongFactory {
     }
 
     public Song newSong(File file) {
-        return new Song(file, this::loadMedia);
+        return new Song(file, loadMedia(file));
     }
 
     public void release() {

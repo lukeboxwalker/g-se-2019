@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst.terminalScanner;
+package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
@@ -7,6 +7,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Terminal {
@@ -45,7 +46,7 @@ public class Terminal {
                                 System.exit(EXIT_CODE);
                                 break;
                             default:
-                                System.out.println("Help msg");
+                                printCMDUsage();
                         }
                     }
                 } catch (IOException e) {
@@ -80,10 +81,38 @@ public class Terminal {
     }
 
     public void printSongInfo(Song song) {
-        System.out.println(SONG);
+        final String line = "##########################################################";
+        String message = line
+            + "\nCurrent playing song:\n"
+            + getMetaDataString("Title: ", song.getTitle())
+            + getMetaDataString("Artist: ", song.getArtist())
+            + getMetaDataString("Album: ", song.getAlbum())
+            + getMetaDataString("Genre: ", song.getGenre())
+            + getMetaDataString("Duration: ", song.getDuration())
+            + line;
+        System.out.println(message);
+    }
+
+    private String getMetaDataString(String tag, String metadata) {
+        return metadata == null ? "" : tag + metadata + "\n";
+    }
+
+    private String getMetaDataString(String tag, long milliseconds) {
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
+        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min\n";
     }
 
     public void printPlaylistInfo(Playlist playlist) {
         System.out.println(PLAYLIST);
+    }
+
+    public void printCMDUsage() {
+        final String line = "##########################################################";
+        String message = line + "\nCommand usage: \n"
+            + "<song> to list the information of the current playing song.\n"
+            + "<playlist> to list the current playlist that is playing.\n"
+            + "<exit> to exit the application.\n" + line;
+        System.out.println(message);
     }
 }

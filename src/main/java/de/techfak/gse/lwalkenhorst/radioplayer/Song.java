@@ -28,12 +28,11 @@ public class Song {
      * Loading the media to read {@link #initMetaData(MetaData metaData, InfoApi info)} its metadata,
      * finally releases the memory used for loading the media.
      *
-     * @param file        the mp3 the song is loaded from.
-     * @param mediaLoader to load the metadata form the file.
+     * @param file  the mp3 the song is loaded from.
+     * @param media to load the metadata.
      */
-    public Song(File file, Function<File, Media> mediaLoader) {
+    public Song(File file, Media media) {
         this.file = file;
-        Media media = mediaLoader.apply(file);
         initMetaData(media.meta().asMetaData(), media.info());
         media.release();
     }
