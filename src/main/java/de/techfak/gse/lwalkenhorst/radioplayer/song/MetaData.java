@@ -4,6 +4,11 @@ import uk.co.caprica.vlcj.media.InfoApi;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.media.Meta;
 
+/**
+ * Represents the metadata from a song.
+ * Can only be initiated within package.
+ * Loads metadata from given media object.
+ */
 public class MetaData {
     private String title;
     private String artist;

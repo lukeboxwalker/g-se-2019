@@ -7,6 +7,10 @@ import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
 
+/**
+ * Building new song instances.
+ * Using MediaPlayerFactory form vlcj library to load metadata.
+ */
 public class SongFactory implements CleanUp {
 
     private final MediaPlayerFactory mediaPlayerFactory;
@@ -39,6 +43,15 @@ public class SongFactory implements CleanUp {
         return media;
     }
 
+    /**
+     * Creating a new Song object.
+     * Using the file to load the metadata from the song
+     * with {@link #loadMedia(File)} and releasing the medias memory afterwards.
+     * Inits a new song with loaded metadata.
+     *
+     * @param file to read the song.
+     * @return a new Song object from given file.
+     */
     public Song newSong(File file) {
         MetaData metaData = new MetaData();
         Media media = loadMedia(file);
@@ -46,6 +59,4 @@ public class SongFactory implements CleanUp {
         media.release();
         return new Song(file, metaData);
     }
-
-
 }

@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The console listener to perform commands.
+ */
 public class Terminal {
     private static final String ENDING = "##########################################################";
     private static final String BREAK = "\n";
@@ -34,6 +37,10 @@ public class Terminal {
         this.running = new AtomicBoolean(false);
     }
 
+    /**
+     * Start listening for console input.
+     * Setting running to true and starting listener thread {@link #startListener()}
+     */
     public void listenForInstructions() {
         if (!running.get()) {
             running.set(true);
@@ -41,6 +48,11 @@ public class Terminal {
         }
     }
 
+    /**
+     * Start listens to listen for incoming commands.
+     * Using {@link #requestInput()} to read next input line.
+     * Listener thread can be killed with {@link #kill()}
+     */
     private void startListener() {
         new Thread(() -> {
             while (running.get()) {
@@ -74,6 +86,12 @@ public class Terminal {
         }).start();
     }
 
+    /**
+     * Reading console input.
+     * Using BufferedReader to read system input in console
+     *
+     * @return the String input or null when listener was killed or interrupted.
+     */
     private String requestInput() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String input;
@@ -97,7 +115,14 @@ public class Terminal {
         running.set(false);
     }
 
-    public void printSongInfo(Song song) {
+    /**
+     * Prints the information given by a song.
+     * Formats the metadata in a readable way to be printed.
+     * Only prints existed metadata from the song.
+     *
+     * @param song that will be printed
+     */
+    private void printSongInfo(Song song) {
         String header = "#####################[ Current song ]#####################";
         String message;
         if (song == null) {
@@ -115,17 +140,14 @@ public class Terminal {
         System.out.println(message);
     }
 
-    private String getMetaDataString(String tag, String metadata, boolean lineBreak) {
-        return metadata == null ? "" : tag + metadata + (lineBreak ? BREAK : "");
-    }
-
-    private String getMetaDataString(String tag, long milliseconds, boolean lineBreak) {
-        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
-        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? BREAK : "");
-    }
-
-    public void printPlaylistInfo(Playlist playlist) {
+    /**
+     * Prints the information given by a playlist.
+     * Lists all song that will be played from the radio.
+     * Prints the song in a compact form.
+     *
+     * @param playlist that will be printed
+     */
+    private void printPlaylistInfo(Playlist playlist) {
         System.out.println("###################[ Current playlist ]###################");
         final String comma = ", ";
         final String separate = " - ";
@@ -142,11 +164,24 @@ public class Terminal {
         System.out.println(ENDING);
     }
 
-    public void printCMDUsage() {
+    /**
+     * Prints a help message.
+     */
+    private void printCMDUsage() {
         String message = "#########################[ Help ]#########################"
             + "\n<song> to list the information of the current playing song.\n"
             + "<playlist> to list the current playlist that is playing.\n"
             + "<exit> to exit the application.\n" + ENDING;
         System.out.println(message);
+    }
+
+    private String getMetaDataString(String tag, String metadata, boolean lineBreak) {
+        return metadata == null ? "" : tag + metadata + (lineBreak ? BREAK : "");
+    }
+
+    private String getMetaDataString(String tag, long milliseconds, boolean lineBreak) {
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
+        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? BREAK : "");
     }
 }

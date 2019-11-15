@@ -4,15 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class CleanUpDemon implements Runnable {
+/**
+ * Runnable responsible for memory cleaning.
+ */
+public final class DemonCleaner implements Runnable {
 
-    public static final Thread CLEANUP_THREAD = new Thread(new CleanUpDemon());
+    public static final Thread CLEANUP_THREAD = new Thread(new DemonCleaner());
     private static final HashMap<CleanUp, List<Cleaner>> CLEANERS = new HashMap<>();
 
-    private CleanUpDemon() {
+    private DemonCleaner() {
         super();
     }
 
+    /**
+     * Registers a new cleaning operation from a CleanUp.
+     * Adding the cleaning operation in the static map.
+     *
+     * @param cleanUp the object the cleaner comes from.
+     * @param cleaner the cleaning operation.
+     */
     public static void register(CleanUp cleanUp, Cleaner cleaner) {
         synchronized (CLEANERS) {
             if (CLEANERS.get(cleanUp) == null) {
@@ -25,6 +35,11 @@ public final class CleanUpDemon implements Runnable {
         }
     }
 
+    /**
+     * Removes all cleaning operation set by a CleanUp.
+     *
+     * @param cleanUp the object to remove all cleanup from.
+     */
     public static void unregister(CleanUp cleanUp) {
         synchronized (CLEANERS) {
             List<Cleaner> cleaners = CLEANERS.get(cleanUp);
@@ -34,6 +49,11 @@ public final class CleanUpDemon implements Runnable {
         }
     }
 
+    /**
+     * Removes all cleaning operation set by a CleanUp.
+     *
+     * @param cleanUp the object to remove all cleanup from.
+     */
     public static void clean(CleanUp cleanUp) {
         synchronized (CLEANERS) {
             List<Cleaner> cleaners = CLEANERS.get(cleanUp);

@@ -19,6 +19,12 @@ public abstract class VLCJApiPlayer implements CleanUp {
     private MediaPlayerFactory mediaPlayerFactory;
     private MediaPlayer mediaPlayer;
 
+    /**
+     * Initialize the VLCJApiPlayer.
+     * Register its cleanup with {@link CleanUp} interface to release memory
+     * used by vlcj library when the application terminates.
+     * Responsible for playing music with vlcj library.
+     */
     public VLCJApiPlayer() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
