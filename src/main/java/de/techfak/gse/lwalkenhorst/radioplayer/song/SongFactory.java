@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst.radioplayer;
+package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -40,6 +40,12 @@ public class SongFactory implements CleanUp {
     }
 
     public Song newSong(File file) {
-        return new Song(file, loadMedia(file));
+        MetaData metaData = new MetaData();
+        Media media = loadMedia(file);
+        metaData.loadDataFrom(media);
+        media.release();
+        return new Song(file, metaData);
     }
+
+
 }

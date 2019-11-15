@@ -2,7 +2,8 @@ package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
-import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.song.MetaData;
+import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,13 +89,14 @@ public class Terminal {
     }
 
     public void printSongInfo(Song song) {
+        MetaData metaData = song.getMetaData();
         String message = "#####################[ Current song ]#####################"
             + "\nCurrently playing:\n"
-            + getMetaDataString("Title: ", song.getTitle(), true)
-            + getMetaDataString("Artist: ", song.getArtist(), true)
-            + getMetaDataString("Album: ", song.getAlbum(), true)
-            + getMetaDataString("Genre: ", song.getGenre(), true)
-            + getMetaDataString("Duration: ", song.getDuration(), true)
+            + getMetaDataString("Title: ", metaData.getTitle(), true)
+            + getMetaDataString("Artist: ", metaData.getArtist(), true)
+            + getMetaDataString("Album: ", metaData.getAlbum(), true)
+            + getMetaDataString("Genre: ", metaData.getGenre(), true)
+            + getMetaDataString("Duration: ", metaData.getDuration(), true)
             + ENDING;
         System.out.println(message);
     }
@@ -114,12 +116,13 @@ public class Terminal {
         final String comma = ", ";
         final String separate = " - ";
         for (Song song : playlist) {
-            String songDetails = getMetaDataString("", song.getTitle(), false)
-                + getMetaDataString(comma, song.getArtist(), false)
-                + getMetaDataString(separate, song.getGenre(), false)
-                + getMetaDataString(comma, song.getAlbum(), false)
-                + getMetaDataString(comma, song.getGenre(), false)
-                + getMetaDataString(comma, song.getDuration(), false);
+            MetaData metaData = song.getMetaData();
+            String songDetails = getMetaDataString("", metaData.getTitle(), false)
+                + getMetaDataString(comma, metaData.getArtist(), false)
+                + getMetaDataString(separate, metaData.getGenre(), false)
+                + getMetaDataString(comma, metaData.getAlbum(), false)
+                + getMetaDataString(comma, metaData.getGenre(), false)
+                + getMetaDataString(comma, metaData.getDuration(), false);
             System.out.println(songDetails);
         }
         System.out.println(ENDING);

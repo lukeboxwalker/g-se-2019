@@ -2,7 +2,7 @@ package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;

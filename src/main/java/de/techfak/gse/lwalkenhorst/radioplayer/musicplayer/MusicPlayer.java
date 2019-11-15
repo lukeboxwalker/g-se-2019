@@ -1,8 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 
 /**
  * Plays mp3 songs by using the vlcj library.
