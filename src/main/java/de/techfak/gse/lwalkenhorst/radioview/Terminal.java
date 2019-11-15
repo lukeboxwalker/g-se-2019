@@ -27,12 +27,18 @@ public class Terminal {
 
     public Terminal(RadioModel radio) {
         this.radio = radio;
-        this.running = new AtomicBoolean(true);
-        this.listenForInstructions();
+        this.running = new AtomicBoolean(false);
     }
 
-    private void listenForInstructions() {
-        Thread terminalThread = new Thread(() -> {
+    public void listenForInstructions() {
+        if (!running.get()) {
+            running.set(true);
+            startListener();
+        }
+    }
+
+    private void startListener() {
+        new Thread(() -> {
             while (running.get()) {
                 try {
                     String cmd = requestInput();
@@ -55,8 +61,7 @@ public class Terminal {
                     this.kill();
                 }
             }
-        });
-        terminalThread.start();
+        }).start();
     }
 
     private String requestInput() throws IOException {
@@ -83,7 +88,7 @@ public class Terminal {
     }
 
     public void printSongInfo(Song song) {
-        String message = "###################[ You listening to ]###################"
+        String message = "#####################[ Current song ]#####################"
             + "\nCurrently playing:\n"
             + getMetaDataString("Title: ", song.getTitle(), true)
             + getMetaDataString("Artist: ", song.getArtist(), true)

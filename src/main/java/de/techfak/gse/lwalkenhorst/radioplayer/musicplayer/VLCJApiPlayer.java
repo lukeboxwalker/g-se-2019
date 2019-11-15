@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
  * Centralize the vlcj library usage.
  * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
  */
-public abstract class VLCJApiPlayer {
+public abstract class VLCJApiPlayer implements CleanUp {
 
     private MediaPlayerFactory mediaPlayerFactory;
     private MediaPlayer mediaPlayer;
@@ -20,6 +21,11 @@ public abstract class VLCJApiPlayer {
     public VLCJApiPlayer() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+        this.registerCleanUp(() -> {
+            mediaPlayer.controls().stop();
+            mediaPlayerFactory.release();
+            mediaPlayer.release();
+        });
     }
 
     public void playSong(Song song) {
@@ -42,16 +48,5 @@ public abstract class VLCJApiPlayer {
                 consumer.accept(mediaPlayer);
             }
         });
-    }
-
-    /**
-     * Releasing the Memory used by vlcj.
-     * Stops playing music and release the memory, used by
-     * the vlcj library (MediaPlayerFactory and MediaPlayer)
-     */
-    public void release() {
-        mediaPlayer.controls().stop();
-        mediaPlayerFactory.release();
-        mediaPlayer.release();
     }
 }

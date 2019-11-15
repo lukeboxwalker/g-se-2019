@@ -1,17 +1,19 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
 
-public class SongFactory {
+public class SongFactory implements CleanUp {
 
-    private MediaPlayerFactory mediaPlayerFactory;
+    private final MediaPlayerFactory mediaPlayerFactory;
 
     public SongFactory() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
+        this.registerCleanUp(this.mediaPlayerFactory::release);
     }
 
     /**
@@ -39,9 +41,5 @@ public class SongFactory {
 
     public Song newSong(File file) {
         return new Song(file, loadMedia(file));
-    }
-
-    public void release() {
-        this.mediaPlayerFactory.release();
     }
 }

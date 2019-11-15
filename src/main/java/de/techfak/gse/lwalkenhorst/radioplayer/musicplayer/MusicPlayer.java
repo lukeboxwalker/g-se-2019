@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 
@@ -17,7 +18,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     /**
      * Plays a given playlist.
-     * to play its songs. When a song finishes, the next song from the Playlist
+     * When a song finishes, the next song from the Playlist
      * will start playing. The playlist plays on repeat.
      *
      * @param playlist that will be played.
