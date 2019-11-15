@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 
 /**
@@ -8,8 +8,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
  */
 public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
-    private Song currentPlayingSong;
-    private Playlist currentPlaylist;
+    private Playlist playlist;
 
     public MusicPlayer() {
         super();
@@ -24,24 +23,18 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      */
     @Override
     public void play(Playlist playlist) {
-        currentPlaylist = playlist;
-        currentPlayingSong = playlist.getFirst();
-        playSong(currentPlayingSong);
-        onSongFinish(mediaPlayer -> {
-            currentPlaylist.dropFirst();
-            currentPlaylist.appendSong(currentPlayingSong);
-            currentPlayingSong = currentPlaylist.getFirst();
-            playSong(currentPlayingSong);
-        });
+        this.playlist = playlist;
+        this.playlist.forNextSong(this::playSong);
+        this.onSongFinish(mediaPlayer -> this.playlist.forNextSong(this::playSong));
     }
 
     @Override
-    public Song getCurrentPlayingSong() {
-        return currentPlayingSong;
+    public Song getSong() {
+        return playlist.getCurrent();
     }
 
     @Override
-    public Playlist getCurrentPlaylist() {
-        return currentPlaylist;
+    public Playlist getPlaylist() {
+        return playlist;
     }
 }

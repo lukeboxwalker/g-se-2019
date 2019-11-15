@@ -1,7 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -14,6 +14,7 @@ import java.util.function.Consumer;
  * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
  */
 public abstract class VLCJApiPlayer implements CleanUp {
+    private static final int POSITION_SKIP = 1;
 
     private MediaPlayerFactory mediaPlayerFactory;
     private MediaPlayer mediaPlayer;
@@ -28,11 +29,15 @@ public abstract class VLCJApiPlayer implements CleanUp {
         });
     }
 
+    public abstract void play(Playlist playlist);
+
     public void playSong(Song song) {
         mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
     }
 
-    public abstract void play(Playlist playlist);
+    public void skipSong() {
+        mediaPlayer.controls().skipPosition(POSITION_SKIP);
+    }
 
     /**
      * Adds a song-finish event listener.

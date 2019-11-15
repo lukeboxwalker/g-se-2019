@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst.radioplayer;
+package de.techfak.gse.lwalkenhorst.radioplayer.playlist;
 
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;

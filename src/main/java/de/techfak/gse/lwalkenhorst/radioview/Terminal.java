@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioview;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.MetaData;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
@@ -18,6 +18,9 @@ public class Terminal {
     private static final String SONG = "song";
     private static final String PLAYLIST = "playlist";
     private static final String EXIT = "exit";
+
+    private static final String SHUFFLE = "shuffle";
+    private static final String SKIP = "skip";
 
     private static final int EXIT_CODE = 1;
     private static final int BUFFER_WAIT = 200;
@@ -46,13 +49,19 @@ public class Terminal {
                     if (cmd != null) {
                         switch (cmd) {
                             case SONG:
-                                printSongInfo(radio.getCurrentPlayingSong());
+                                printSongInfo(radio.getSong());
                                 break;
                             case PLAYLIST:
-                                printPlaylistInfo(radio.getCurrentPlaylist());
+                                printPlaylistInfo(radio.getPlaylist());
                                 break;
                             case EXIT:
                                 System.exit(EXIT_CODE);
+                                break;
+                            case SHUFFLE:
+                                radio.getPlaylist().shuffle();
+                                break;
+                            case SKIP:
+                                radio.skipSong();
                                 break;
                             default:
                                 printCMDUsage();
@@ -89,15 +98,20 @@ public class Terminal {
     }
 
     public void printSongInfo(Song song) {
-        MetaData metaData = song.getMetaData();
-        String message = "#####################[ Current song ]#####################"
-            + "\nCurrently playing:\n"
-            + getMetaDataString("Title: ", metaData.getTitle(), true)
-            + getMetaDataString("Artist: ", metaData.getArtist(), true)
-            + getMetaDataString("Album: ", metaData.getAlbum(), true)
-            + getMetaDataString("Genre: ", metaData.getGenre(), true)
-            + getMetaDataString("Duration: ", metaData.getDuration(), true)
-            + ENDING;
+        String header = "#####################[ Current song ]#####################";
+        String message;
+        if (song == null) {
+            message = header + "\nNothing\n" + ENDING;
+        } else {
+            MetaData metaData = song.getMetaData();
+            message = header
+                + BREAK + getMetaDataString("Title: ", metaData.getTitle(), true)
+                + getMetaDataString("Artist: ", metaData.getArtist(), true)
+                + getMetaDataString("Album: ", metaData.getAlbum(), true)
+                + getMetaDataString("Genre: ", metaData.getGenre(), true)
+                + getMetaDataString("Duration: ", metaData.getDuration(), true)
+                + ENDING;
+        }
         System.out.println(message);
     }
 
@@ -115,7 +129,7 @@ public class Terminal {
         System.out.println("###################[ Current playlist ]###################");
         final String comma = ", ";
         final String separate = " - ";
-        for (Song song : playlist) {
+        playlist.forEachSong((song -> {
             MetaData metaData = song.getMetaData();
             String songDetails = getMetaDataString("", metaData.getTitle(), false)
                 + getMetaDataString(comma, metaData.getArtist(), false)
@@ -124,7 +138,7 @@ public class Terminal {
                 + getMetaDataString(comma, metaData.getGenre(), false)
                 + getMetaDataString(comma, metaData.getDuration(), false);
             System.out.println(songDetails);
-        }
+        }));
         System.out.println(ENDING);
     }
 

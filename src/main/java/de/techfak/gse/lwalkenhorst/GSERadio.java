@@ -2,7 +2,7 @@ package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 /**
@@ -25,6 +25,7 @@ public final class GSERadio {
 
         Playlist playlist = new Playlist(directoryPath);
         playlist.shuffle();
+        playlist.setRepeating(true);
 
         musicPlayer.play(playlist);
     }
