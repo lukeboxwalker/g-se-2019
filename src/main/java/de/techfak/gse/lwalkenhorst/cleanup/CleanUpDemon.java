@@ -7,12 +7,12 @@ import java.util.List;
 /**
  * Runnable responsible for memory cleaning.
  */
-public final class DemonCleaner implements Runnable {
+public final class CleanUpDemon implements Runnable {
 
-    public static final Thread CLEANUP_THREAD = new Thread(new DemonCleaner());
+    public static final Thread CLEANUP_THREAD = new Thread(new CleanUpDemon());
     private static final HashMap<CleanUp, List<Cleaner>> CLEANERS = new HashMap<>();
 
-    private DemonCleaner() {
+    private CleanUpDemon() {
         super();
     }
 

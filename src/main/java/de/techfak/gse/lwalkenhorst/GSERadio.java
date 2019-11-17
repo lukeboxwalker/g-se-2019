@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.cleanup.DemonCleaner;
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
@@ -14,7 +14,7 @@ import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 public final class GSERadio {
 
     private GSERadio() {
-        Runtime.getRuntime().addShutdownHook(DemonCleaner.CLEANUP_THREAD);
+        Runtime.getRuntime().addShutdownHook(CleanUpDemon.CLEANUP_THREAD);
     }
 
     private void start(final String directoryPath) {

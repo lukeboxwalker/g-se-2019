@@ -6,14 +6,14 @@ package de.techfak.gse.lwalkenhorst.cleanup;
 public interface CleanUp {
 
     default void registerCleanUp(final Cleaner cleaner) {
-        DemonCleaner.register(this, cleaner);
+        CleanUpDemon.register(this, cleaner);
     }
 
     default void unregisterCleanUp() {
-        DemonCleaner.unregister(this);
+        CleanUpDemon.unregister(this);
     }
 
     default void clean() {
-        DemonCleaner.clean(this);
+        CleanUpDemon.clean(this);
     }
 }
