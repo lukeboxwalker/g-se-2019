@@ -2,11 +2,11 @@ package de.techfak.gse.lwalkenhorst.cleanup;
 
 import java.util.HashMap;
 
-/**
- * Runnable responsible for memory cleaning.
- */
 import java.util.Map;
 
+/**
+ * Responsible for memory cleaning after program closes.
+ */
 public final class CleanUpDemon {
 
     private static final Map<Object, Cleaner> CLEANERS = new HashMap<>();
@@ -23,6 +23,13 @@ public final class CleanUpDemon {
         }));
     }
 
+    /**
+     * Registers a new cleaning operation from an object.
+     * Adding the cleaning operation in the static map.
+     *
+     * @param ref the object reference to clean from.
+     * @param cleaner the cleaning operation.
+     */
     public static void register(Object ref, Cleaner cleaner) {
         synchronized (CLEANERS) {
             CLEANERS.put(ref, cleaner);

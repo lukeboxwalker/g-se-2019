@@ -1,6 +1,5 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
