@@ -56,7 +56,6 @@ public class MusicReader {
         for (File file : searchForMp3Files(new File(directoryName))) {
             songs.add(songFactory.newSong(file));
         }
-        songFactory.clean();
         return songs;
     }
 }

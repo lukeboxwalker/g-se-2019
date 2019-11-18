@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUp;
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
@@ -11,13 +11,13 @@ import java.io.File;
  * Building new song instances.
  * Using MediaPlayerFactory form vlcj library to load metadata.
  */
-public class SongFactory implements CleanUp {
+public class SongFactory {
 
     private final MediaPlayerFactory mediaPlayerFactory;
 
     public SongFactory() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
-        this.registerCleanUp(this.mediaPlayerFactory::release);
+        CleanUpDemon.register(this, this.mediaPlayerFactory::release);
     }
 
     /**
@@ -57,6 +57,10 @@ public class SongFactory implements CleanUp {
         Media media = loadMedia(file);
         metaData.loadDataFrom(media);
         media.release();
-        return new Song(file, metaData);
+        Song song = new Song(file, metaData);
+
+        // Printing song after reading metadata
+        System.out.println(song.toString());
+        return song;
     }
 }

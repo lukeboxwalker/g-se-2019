@@ -14,6 +14,7 @@ public class Playlist {
 
     private LinkedList<Song> playList;
     private Song current;
+    private int currentIndex;
 
     private volatile boolean repeat;
 
@@ -64,7 +65,7 @@ public class Playlist {
         if (playList.isEmpty()) {
             return false;
         } else {
-            return current == null || (playList.indexOf(current) + 1) < playList.size() || repeat;
+            return current == null || (currentIndex + 1) < playList.size() || repeat;
         }
     }
 
@@ -77,9 +78,9 @@ public class Playlist {
         if (current == null) {
             this.current = playList.peek();
         } else {
-            int index = playList.indexOf(current) + 1;
-            if (index < playList.size()) {
-                this.current = playList.get(index);
+            currentIndex += 1;
+            if (currentIndex < playList.size()) {
+                this.current = playList.get(currentIndex);
             } else if (repeat) {
                 this.current = playList.peek();
             }
@@ -131,10 +132,9 @@ public class Playlist {
     public void forEachSong(final Consumer<Song> consumer) {
         synchronized (this) {
             if (current != null) {
-                int index = playList.indexOf(current);
-                playList.subList(playList.indexOf(current), playList.size()).forEach(consumer);
-                if (index > 0 && repeat) {
-                    playList.subList(0, playList.indexOf(current)).forEach(consumer);
+                playList.subList(currentIndex, playList.size()).forEach(consumer);
+                if (currentIndex > 0 && repeat) {
+                    playList.subList(0, currentIndex).forEach(consumer);
                 }
             }
         }

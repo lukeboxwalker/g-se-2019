@@ -69,12 +69,6 @@ public class Terminal {
                             case EXIT:
                                 System.exit(EXIT_CODE);
                                 break;
-                            case SHUFFLE:
-                                radio.getPlaylist().shuffle();
-                                break;
-                            case SKIP:
-                                radio.skipSong();
-                                break;
                             default:
                                 printCMDUsage();
                         }
@@ -128,14 +122,7 @@ public class Terminal {
         if (song == null) {
             message = header + "\nNothing\n" + ENDING;
         } else {
-            MetaData metaData = song.getMetaData();
-            message = header
-                + BREAK + getMetaDataString("Title: ", metaData.getTitle(), true)
-                + getMetaDataString("Artist: ", metaData.getArtist(), true)
-                + getMetaDataString("Album: ", metaData.getAlbum(), true)
-                + getMetaDataString("Genre: ", metaData.getGenre(), true)
-                + getMetaDataString("Duration: ", metaData.getDuration(), true)
-                + ENDING;
+            message = header + BREAK + song.toString() + BREAK + ENDING;
         }
         System.out.println(message);
     }
@@ -148,20 +135,20 @@ public class Terminal {
      * @param playlist that will be printed
      */
     private void printPlaylistInfo(Playlist playlist) {
-        System.out.println("###################[ Current playlist ]###################");
-        final String comma = ", ";
-        final String separate = " - ";
-        playlist.forEachSong((song -> {
-            MetaData metaData = song.getMetaData();
-            String songDetails = getMetaDataString("", metaData.getTitle(), false)
-                + getMetaDataString(comma, metaData.getArtist(), false)
-                + getMetaDataString(separate, metaData.getGenre(), false)
-                + getMetaDataString(comma, metaData.getAlbum(), false)
-                + getMetaDataString(comma, metaData.getGenre(), false)
-                + getMetaDataString(comma, metaData.getDuration(), false);
-            System.out.println(songDetails);
-        }));
-        System.out.println(ENDING);
+        String header = "###################[ Current playlist ]###################";
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(header);
+        if (playlist == null) {
+            messageBuilder.append("\nEmpty\n");
+        } else {
+            playlist.forEachSong((song) -> {
+                messageBuilder.append(BREAK);
+                messageBuilder.append(song.toString());
+            });
+        }
+        messageBuilder.append(BREAK);
+        messageBuilder.append(ENDING);
+        System.out.println(messageBuilder.toString());
     }
 
     /**

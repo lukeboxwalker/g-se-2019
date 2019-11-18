@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a mp3 format Song.
@@ -31,4 +32,25 @@ public class Song {
         return metaData;
     }
 
+    @Override
+    public String toString() {
+        final String comma = ", ";
+        final String separate = " - ";
+        return getMetaDataString("", metaData.getTitle())
+            + getMetaDataString(comma, metaData.getArtist())
+            + getMetaDataString(separate, metaData.getGenre())
+            + getMetaDataString(comma, metaData.getAlbum())
+            + getMetaDataString(comma, metaData.getGenre())
+            + getMetaDataString(comma, metaData.getDuration());
+    }
+
+    private String getMetaDataString(String tag, String metadata) {
+        return metadata == null ? "" : tag + metadata;
+    }
+
+    private String getMetaDataString(String tag, long milliseconds) {
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
+        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min";
+    }
 }

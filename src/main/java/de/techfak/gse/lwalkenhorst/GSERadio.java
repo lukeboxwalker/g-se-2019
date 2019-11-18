@@ -14,7 +14,6 @@ import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 public final class GSERadio {
 
     private GSERadio() {
-        Runtime.getRuntime().addShutdownHook(CleanUpDemon.CLEANUP_THREAD);
     }
 
     private void start(final String directoryPath) {
