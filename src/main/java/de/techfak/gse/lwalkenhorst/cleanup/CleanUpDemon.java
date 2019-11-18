@@ -27,12 +27,28 @@ public final class CleanUpDemon {
      * Registers a new cleaning operation from an object.
      * Adding the cleaning operation in the static map.
      *
-     * @param ref the object reference to clean from.
-     * @param cleaner the cleaning operation.
+     * @param reference the object reference to clean from.
+     * @param cleaner   the cleaning operation.
      */
-    public static void register(Object ref, Cleaner cleaner) {
+    public static void register(Object reference, Cleaner cleaner) {
         synchronized (CLEANERS) {
-            CLEANERS.put(ref, cleaner);
+            CLEANERS.put(reference, cleaner);
         }
+    }
+
+    public static void cleanup(Object reference) throws NoCleanUpFoundException {
+        synchronized (CLEANERS) {
+            Cleaner cleaner = CLEANERS.get(reference);
+            if (cleaner != null) {
+                cleaner.clean();
+                unregister(reference);
+            } else {
+                throw new NoCleanUpFoundException("No cleanup registered from given reference object");
+            }
+        }
+    }
+
+    private static void unregister(Object reference) {
+        CLEANERS.remove(reference);
     }
 }

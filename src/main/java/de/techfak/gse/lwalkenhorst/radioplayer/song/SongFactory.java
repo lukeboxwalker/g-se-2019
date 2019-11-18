@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
+import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
@@ -10,14 +11,15 @@ import java.io.File;
 /**
  * Building new song instances.
  * Using MediaPlayerFactory form vlcj library to load metadata.
+ * Registers its cleanup to {@link CleanUpDemon}
  */
-public class SongFactory {
+public class SongFactory implements AutoCloseable {
 
     private final MediaPlayerFactory mediaPlayerFactory;
 
     public SongFactory() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
-        CleanUpDemon.register(this, this.mediaPlayerFactory::release);
+        CleanUpDemon.register(this, mediaPlayerFactory::release);
     }
 
     /**
@@ -62,5 +64,10 @@ public class SongFactory {
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;
+    }
+
+    @Override
+    public void close() throws NoCleanUpFoundException {
+        CleanUpDemon.cleanup(this);
     }
 }

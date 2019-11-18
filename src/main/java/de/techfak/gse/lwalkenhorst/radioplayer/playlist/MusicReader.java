@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.playlist;
 
+import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.SongFactory;
@@ -48,13 +49,16 @@ public class MusicReader {
      * Generate new song object via {@link SongFactory}
      *
      * @return the list of songs in the directory
-     * @throws NoMusicFileFoundException when the directory is empty or does't exist
+     * @throws NoMusicFileFoundException when the directory is empty or doesn't exist
      */
     public LinkedList<Song> getSongs() throws NoMusicFileFoundException {
-        SongFactory songFactory = new SongFactory();
         LinkedList<Song> songs = new LinkedList<>();
-        for (File file : searchForMp3Files(new File(directoryName))) {
-            songs.add(songFactory.newSong(file));
+        try (SongFactory songFactory = new SongFactory()) {
+            for (File file : searchForMp3Files(new File(directoryName))) {
+                songs.add(songFactory.newSong(file));
+            }
+        } catch (NoCleanUpFoundException e) {
+            e.printStackTrace();
         }
         return songs;
     }
