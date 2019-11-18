@@ -4,8 +4,6 @@ import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
-import java.util.Arrays;
-
 /**
  * The GSERadio program is a music radio.
  * Responsible for memory management with the vlcj library
