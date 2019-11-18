@@ -4,6 +4,8 @@ import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
+import java.util.Arrays;
+
 /**
  * The GSERadio program is a music radio.
  * Responsible for memory management with the vlcj library
@@ -36,6 +38,6 @@ public final class GSERadio {
      */
     public static void main(final String... args) {
         GSERadio radio = new GSERadio();
-        radio.start(args.length > 1 ? args[0] : System.getProperty("user.dir"));
+        radio.start(args.length >= 1 ? args[0] : System.getProperty("user.dir"));
     }
 }
