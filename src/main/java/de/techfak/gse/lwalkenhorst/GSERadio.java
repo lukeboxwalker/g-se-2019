@@ -6,7 +6,6 @@ import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 /**
  * The GSERadio program is a music radio.
- * Responsible for memory management with the vlcj library
  *
  * @author Lukas Walkenhorst
  */

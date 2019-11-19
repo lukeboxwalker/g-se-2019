@@ -6,7 +6,8 @@ import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.SongFactory;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reading the content of a directory.
@@ -51,8 +52,8 @@ public class MusicReader {
      * @return the list of songs in the directory
      * @throws NoMusicFileFoundException when the directory is empty or doesn't exist
      */
-    public LinkedList<Song> getSongs() throws NoMusicFileFoundException {
-        LinkedList<Song> songs = new LinkedList<>();
+    public List<Song> getSongs() throws NoMusicFileFoundException {
+        List<Song> songs = new ArrayList<>();
         try (SongFactory songFactory = new SongFactory()) {
             for (File file : searchForMp3Files(new File(directoryName))) {
                 songs.add(songFactory.newSong(file));

@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  */
 public class Playlist {
 
-    private LinkedList<Song> playList;
+    private List<Song> playList;
     private Song current;
     private int currentIndex;
 
@@ -76,13 +76,13 @@ public class Playlist {
      */
     private Song next() {
         if (current == null) {
-            this.current = playList.peek();
+            this.current = playList.get(0);
         } else {
             currentIndex += 1;
             if (currentIndex < playList.size()) {
                 this.current = playList.get(currentIndex);
             } else if (repeat) {
-                this.current = playList.peek();
+                this.current = playList.get(0);
             }
         }
         return current;
