@@ -76,13 +76,15 @@ public class Playlist {
      */
     private Song next() {
         if (current == null) {
-            this.current = playList.get(0);
+            this.currentIndex = 0;
+            this.current = playList.get(currentIndex);
         } else {
             currentIndex += 1;
             if (currentIndex < playList.size()) {
                 this.current = playList.get(currentIndex);
             } else if (repeat) {
-                this.current = playList.get(0);
+                this.currentIndex = 0;
+                this.current = playList.get(currentIndex);
             }
         }
         return current;
