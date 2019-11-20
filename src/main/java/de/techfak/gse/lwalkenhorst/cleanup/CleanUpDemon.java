@@ -36,6 +36,12 @@ public final class CleanUpDemon {
         }
     }
 
+    /**
+     * Execute the clean operation registered by given reference.
+     *
+     * @param reference the cleanup is coming from.
+     * @throws NoCleanUpFoundException when there is no cleanup for given reference.
+     */
     public static void cleanup(Object reference) throws NoCleanUpFoundException {
         synchronized (CLEANERS) {
             Cleaner cleaner = CLEANERS.get(reference);
