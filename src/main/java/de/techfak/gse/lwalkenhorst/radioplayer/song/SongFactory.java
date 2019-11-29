@@ -4,6 +4,8 @@ import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
+import uk.co.caprica.vlcj.media.Meta;
+import uk.co.caprica.vlcj.media.MetaData;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
@@ -55,12 +57,22 @@ public class SongFactory implements AutoCloseable {
      * @return a new Song object from given file.
      */
     public Song newSong(File file) {
-        MetaData metaData = new MetaData();
         Media media = loadMedia(file);
-        metaData.loadDataFrom(media);
-        media.release();
-        Song song = new Song(file, metaData);
+        MetaData metaData = media.meta().asMetaData();
 
+        final String rawTitle = metaData.get(Meta.TITLE);
+        final String rawArtist = metaData.get(Meta.ARTIST);
+        final String rawAlbum = metaData.get(Meta.ALBUM);
+        final String rawGenre = metaData.get(Meta.GENRE);
+
+        final String title = rawTitle == null ? "" : rawTitle;
+        final String artist = rawArtist == null ? "" : rawArtist;
+        final String album = rawAlbum == null ? "" : rawAlbum;
+        final String genre = rawGenre == null ? "" : rawGenre;
+        final long duration = media.info().duration();
+
+        media.release();
+        Song song = new Song(file, title, artist, album, genre, duration);
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;

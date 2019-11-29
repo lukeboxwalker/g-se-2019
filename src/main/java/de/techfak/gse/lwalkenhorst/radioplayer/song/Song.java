@@ -11,46 +11,77 @@ import java.util.concurrent.TimeUnit;
 public class Song {
 
     private File file;
-    private MetaData metaData;
+
+    private String title = "";
+    private String artist = "";
+    private String album = "";
+    private String genre = "";
+    private long duration = 0;
 
     /**
-     * Creates a new Song from given file.
+     * Creating a new Song from given file and metadata.
      *
-     * @param file     the mp3 the song is loaded from.
-     * @param metaData to have access to the metadata.
+     * @param file     the mp3 is located
+     * @param title    of the song
+     * @param artist   of the song
+     * @param album    of the song
+     * @param genre    of the song
+     * @param duration of the song in millis
      */
-    public Song(File file, MetaData metaData) {
+    public Song(File file, String title, String artist, String album, String genre, long duration) {
+        this(file);
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+        this.genre = genre;
+        this.duration = duration;
+    }
+
+    protected Song(File file) {
         this.file = file;
-        this.metaData = metaData;
     }
 
     public String getAbsolutePath() {
         return file.getAbsolutePath();
     }
 
-    public MetaData getMetaData() {
-        return metaData;
+    public String getTitle() {
+        return title;
+    }
+    public String getArtist() {
+        return artist;
+    }
+    public String getAlbum() {
+        return album;
+    }
+    public String getGenre() {
+        return genre;
+    }
+    public String getDuration() {
+        return millisToString(duration);
+    }
+    public long getDurationMillis() {
+        return duration;
     }
 
     @Override
     public String toString() {
         final String comma = ", ";
         final String separate = " - ";
-        return getMetaDataString("", metaData.getTitle())
-            + getMetaDataString(comma, metaData.getArtist())
-            + getMetaDataString(separate, metaData.getGenre())
-            + getMetaDataString(comma, metaData.getAlbum())
-            + getMetaDataString(comma, metaData.getGenre())
-            + getMetaDataString(comma, metaData.getDuration());
+        return getMetaDataString("", getTitle())
+            + getMetaDataString(comma, getArtist())
+            + getMetaDataString(separate, getGenre())
+            + getMetaDataString(comma, getAlbum())
+            + getMetaDataString(comma, getDuration()) + "min";
     }
 
-    private String getMetaDataString(String tag, String metadata) {
-        return metadata == null ? "" : tag + metadata;
+    private String getMetaDataString(final String separator, final String metadata) {
+        return metadata.isEmpty() ? "" : separator + metadata;
     }
 
-    private String getMetaDataString(String tag, long milliseconds) {
-        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
-        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min";
+    private String millisToString(final long milliseconds) {
+        final long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
+        final long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
+        return milliseconds <= 0 ? "" : min + ":" + sec;
     }
 }
