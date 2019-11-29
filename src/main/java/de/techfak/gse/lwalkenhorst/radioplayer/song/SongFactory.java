@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
  */
 public class SongFactory implements AutoCloseable {
 
-    private final MediaPlayerFactory mediaPlayerFactory;
-
     private static final Pattern URL_QUICKMATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
     private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
+
+    private final MediaPlayerFactory mediaPlayerFactory;
 
     public SongFactory() {
         this.mediaPlayerFactory = new MediaPlayerFactory();

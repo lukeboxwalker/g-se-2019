@@ -56,7 +56,7 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
      * @param songFinished to represent the content of the overridden finished method.
      * @param timeChanged to represent the content when song moved on playing.
      */
-    protected void onEventCall(final Consumer<MediaPlayer> songFinished, final BiConsumer<MediaPlayer, Float> timeChanged) {
+    protected void onEventCall(Consumer<MediaPlayer> songFinished, BiConsumer<MediaPlayer, Float> timeChanged) {
         mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
             @Override
             public void positionChanged(MediaPlayer mediaPlayer, float newTime) {
