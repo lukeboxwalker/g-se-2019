@@ -28,7 +28,7 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
     public VLCJApiPlayer() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
-        CleanUpDemon.register(this, () -> {
+        CleanUpDemon.getInstance().register(this, () -> {
             mediaPlayer.controls().stop();
             mediaPlayerFactory.release();
             mediaPlayer.release();
@@ -70,6 +70,6 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
 
     @Override
     public void close() throws NoCleanUpFoundException {
-        CleanUpDemon.cleanup(this);
+        CleanUpDemon.getInstance().cleanup(this);
     }
 }

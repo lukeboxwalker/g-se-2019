@@ -10,10 +10,7 @@ import java.util.Map;
 public final class CleanUpDemon {
 
     private static final Map<Object, Cleaner> CLEANERS = new HashMap<>();
-
-    static {
-        new CleanUpDemon();
-    }
+    private static final CleanUpDemon INSTANCE = new CleanUpDemon();
 
     private CleanUpDemon() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -23,6 +20,10 @@ public final class CleanUpDemon {
         }));
     }
 
+    public static CleanUpDemon getInstance() {
+        return INSTANCE;
+    }
+
     /**
      * Registers a new cleaning operation from an object.
      * Adding the cleaning operation in the static map.
@@ -30,7 +31,7 @@ public final class CleanUpDemon {
      * @param reference the object reference to clean from.
      * @param cleaner   the cleaning operation.
      */
-    public static void register(Object reference, Cleaner cleaner) {
+    public void register(Object reference, Cleaner cleaner) {
         synchronized (CLEANERS) {
             CLEANERS.put(reference, cleaner);
         }
@@ -42,7 +43,7 @@ public final class CleanUpDemon {
      * @param reference the cleanup is coming from.
      * @throws NoCleanUpFoundException when there is no cleanup for given reference.
      */
-    public static void cleanup(Object reference) throws NoCleanUpFoundException {
+    public void cleanup(Object reference) throws NoCleanUpFoundException {
         synchronized (CLEANERS) {
             Cleaner cleaner = CLEANERS.get(reference);
             if (cleaner != null) {
@@ -54,7 +55,7 @@ public final class CleanUpDemon {
         }
     }
 
-    private static void unregister(Object reference) {
+    private void unregister(Object reference) {
         CLEANERS.remove(reference);
     }
 }

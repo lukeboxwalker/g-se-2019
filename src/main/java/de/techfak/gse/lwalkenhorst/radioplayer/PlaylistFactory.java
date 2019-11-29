@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class PlaylistFactory implements AutoCloseable {
 
-    private static final Pattern URL_QUICKMATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
+    private static final Pattern URL_QUICK_MATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
     private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
 
     private final MediaPlayerFactory mediaPlayerFactory;
@@ -38,7 +38,7 @@ public class PlaylistFactory implements AutoCloseable {
     public PlaylistFactory(String directoryName) {
         this.directoryName = directoryName;
         this.mediaPlayerFactory = new MediaPlayerFactory();
-        CleanUpDemon.register(this, mediaPlayerFactory::release);
+        CleanUpDemon.getInstance().register(this, mediaPlayerFactory::release);
     }
 
     /**
@@ -144,7 +144,7 @@ public class PlaylistFactory implements AutoCloseable {
             return FALLBACK_URL;
         } else {
             try {
-                if (!URL_QUICKMATCH.matcher(url).matches()) {
+                if (!URL_QUICK_MATCH.matcher(url).matches()) {
                     ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                     URL resource;
                     if (url.charAt(0) == '/') {
@@ -169,6 +169,6 @@ public class PlaylistFactory implements AutoCloseable {
 
     @Override
     public void close() throws NoCleanUpFoundException {
-        CleanUpDemon.cleanup(this);
+        CleanUpDemon.getInstance().cleanup(this);
     }
 }
