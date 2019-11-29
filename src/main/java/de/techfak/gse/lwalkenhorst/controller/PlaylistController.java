@@ -12,9 +12,8 @@ import javafx.util.Callback;
 
 /**
  * Controller responsible for the playlist.
- * Can update its view via {@link PlaylistController#update()}
  */
-public class PlaylistController {
+public class PlaylistController implements PropertyUpdater<Song> {
 
     private static final String TITLE = "Title";
     private static final String ARTIST = "Artist";
@@ -83,7 +82,8 @@ public class PlaylistController {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()));
     }
 
-    public void update() {
+    @Override
+    public void updateProperty(Song oldProperty, Song newProperty) {
         playlist.refresh();
     }
 }

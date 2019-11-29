@@ -39,7 +39,7 @@ public class RadioController implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
             if (propertyChangeEvent.getPropertyName().equals("song")) {
-                playlistController.update();
+                playlistController.updateProperty(propertyChangeEvent, Song.class);
             }
         });
     }
