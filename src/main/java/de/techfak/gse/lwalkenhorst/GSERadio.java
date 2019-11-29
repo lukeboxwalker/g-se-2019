@@ -2,6 +2,7 @@ package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
+import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 /**
@@ -24,6 +25,7 @@ public final class GSERadio {
         musicPlayer.play();
 
         Terminal.start(musicPlayer);
+        GuiApplication.start(musicPlayer);
     }
 
     /**

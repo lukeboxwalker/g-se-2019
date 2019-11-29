@@ -121,9 +121,12 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
         return playlist;
     }
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener observer) {
         support.addPropertyChangeListener(observer);
     }
+
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener observer) {
         support.removePropertyChangeListener(observer);
     }
