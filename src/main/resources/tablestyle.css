@@ -21,15 +21,13 @@
   -fx-text-fill: white;
 }
 .table-row-cell {
-  -fx-background-color: -fx-table-cell-border-color, #383838;
-  -fx-background-insets: 0, 0 0 1 0;
+  -fx-background-color: transparent;
+  -fx-table-cell-border-color: transparent;
+  -fx-border-color: #505050;
+  -fx-border-insets: -1 -1 0 -1;
   -fx-padding: 0.0em;
 }
-.table-row-cell:odd {
-  -fx-background-color: -fx-table-cell-border-color, #383838;
-  -fx-background-insets: 0, 0 0 1 0;
-  -fx-padding: 0.0em;
-}
+
 .table-row-cell:selected {
   -fx-background-color: #787878;
   -fx-background-insets: 0;

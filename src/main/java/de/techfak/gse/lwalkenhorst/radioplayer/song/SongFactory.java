@@ -2,10 +2,12 @@ package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
+import de.techfak.gse.lwalkenhorst.exceptions.FileNotLoadableException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.media.Meta;
 import uk.co.caprica.vlcj.media.MetaData;
+import uk.co.caprica.vlcj.waiter.UnexpectedWaiterErrorException;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
@@ -36,8 +38,9 @@ public class SongFactory implements AutoCloseable {
      *
      * @param file the media file to load
      * @return the loaded media file
+     * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    private Media loadMedia(File file) {
+    private Media loadMedia(File file) throws FileNotLoadableException {
         final Media media = mediaPlayerFactory.media().newMedia(file.getAbsolutePath());
         final ParsedWaiter parsed = new ParsedWaiter(media) {
             @Override
@@ -47,8 +50,8 @@ public class SongFactory implements AutoCloseable {
         };
         try {
             parsed.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | UnexpectedWaiterErrorException e) {
+            throw new FileNotLoadableException("Could not load media: " + file.getAbsolutePath());
         }
         return media;
     }
@@ -61,8 +64,9 @@ public class SongFactory implements AutoCloseable {
      *
      * @param file to read the song.
      * @return a new Song object from given file.
+     * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    public Song newSong(File file) {
+    public Song newSong(File file) throws FileNotLoadableException {
         Media media = loadMedia(file);
         MetaData metaData = media.meta().asMetaData();
 

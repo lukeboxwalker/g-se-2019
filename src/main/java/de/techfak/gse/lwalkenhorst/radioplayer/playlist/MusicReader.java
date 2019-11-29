@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.playlist;
 
 import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
+import de.techfak.gse.lwalkenhorst.exceptions.FileNotLoadableException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import de.techfak.gse.lwalkenhorst.radioplayer.song.SongFactory;
@@ -56,7 +57,11 @@ public class MusicReader {
         List<Song> songs = new ArrayList<>();
         try (SongFactory songFactory = new SongFactory()) {
             for (File file : searchForMp3Files(new File(directoryName))) {
-                songs.add(songFactory.newSong(file));
+                try {
+                    songs.add(songFactory.newSong(file));
+                } catch (FileNotLoadableException e) {
+                    System.err.println(e.getMessage());
+                }
             }
         } catch (NoCleanUpFoundException e) {
             e.printStackTrace();

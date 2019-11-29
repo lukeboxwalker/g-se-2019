@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.song;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -92,8 +93,10 @@ public class Song {
     }
 
     private String millisToString(final long milliseconds) {
+        DecimalFormat numberFormat = new DecimalFormat("00");
         final long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
         final long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : min + ":" + sec;
+        return milliseconds <= 0 ? "" : min + ":" + numberFormat.format(sec);
+
     }
 }
