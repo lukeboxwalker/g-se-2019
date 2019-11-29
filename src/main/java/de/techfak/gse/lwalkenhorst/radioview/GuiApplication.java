@@ -1,7 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.controller.RadioController;
-import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
