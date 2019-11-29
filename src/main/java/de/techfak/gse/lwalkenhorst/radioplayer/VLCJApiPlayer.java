@@ -1,7 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
-import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -13,7 +11,7 @@ import java.util.function.Consumer;
  * Centralize the vlcj library usage.
  * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
  */
-public abstract class VLCJApiPlayer implements AutoCloseable {
+public abstract class VLCJApiPlayer {
     private static final int POSITION_SKIP = 1;
 
     private MediaPlayerFactory mediaPlayerFactory;
@@ -21,18 +19,12 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
 
     /**
      * Initialize the VLCJApiPlayer.
-     * Registers its cleanup to {@link CleanUpDemon}
-     * used by vlcj library when the application terminates.
      * Responsible for playing music with vlcj library.
      */
     public VLCJApiPlayer() {
-        this.mediaPlayerFactory = new MediaPlayerFactory();
-        this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
-        CleanUpDemon.getInstance().register(this, () -> {
-            mediaPlayer.controls().stop();
-            mediaPlayerFactory.release();
-            mediaPlayer.release();
-        });
+        VLCJFactory factory = new VLCJFactory();
+        this.mediaPlayerFactory = factory.newMediaPlayerFactory();
+        this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
     }
 
     public abstract void play();
@@ -66,10 +58,5 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
                 songFinished.accept(mediaPlayer);
             }
         });
-    }
-
-    @Override
-    public void close() throws NoCleanUpFoundException {
-        CleanUpDemon.getInstance().cleanup(this);
     }
 }

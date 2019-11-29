@@ -1,6 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import de.techfak.gse.lwalkenhorst.exceptions.FileNotLoadableException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
@@ -21,12 +20,10 @@ import java.util.regex.Pattern;
 /**
  * PlaylistFactory to create new Playlists form given directory.
  */
-public class PlaylistFactory implements AutoCloseable {
+public class PlaylistFactory {
 
     private static final Pattern URL_QUICK_MATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
     private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
-
-    private final MediaPlayerFactory mediaPlayerFactory;
 
     private String directoryName;
 
@@ -37,8 +34,6 @@ public class PlaylistFactory implements AutoCloseable {
      */
     public PlaylistFactory(String directoryName) {
         this.directoryName = directoryName;
-        this.mediaPlayerFactory = new MediaPlayerFactory();
-        CleanUpDemon.getInstance().register(this, mediaPlayerFactory::release);
     }
 
     /**
@@ -65,12 +60,17 @@ public class PlaylistFactory implements AutoCloseable {
      */
     public Playlist newPlaylist() throws NoMusicFileFoundException {
         List<Song> songs = new ArrayList<>();
-        for (File file : searchForMp3Files(new File(directoryName))) {
-            try {
-                songs.add(newSong(file));
-            } catch (FileNotLoadableException e) {
-                System.err.println(e.getMessage());
+        try (VLCJFactory factory = new VLCJFactory()) {
+            MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
+            for (File file : searchForMp3Files(new File(directoryName))) {
+                try {
+                    songs.add(newSong(file, mediaPlayerFactory));
+                } catch (FileNotLoadableException e) {
+                    System.err.println(e.getMessage());
+                }
             }
+        } catch (NoCleanUpFoundException e) {
+            e.printStackTrace();
         }
         return new Playlist(songs);
     }
@@ -79,12 +79,13 @@ public class PlaylistFactory implements AutoCloseable {
      * Loading a media by its file path.
      * The Media should be prepared to read its metadata or additional information.
      *
-     * @param file the media file to load
+     * @param file    the media file to load
+     * @param factory to create new media objects.
      * @return the loaded media file
      * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    private Media loadMedia(File file) throws FileNotLoadableException {
-        final Media media = mediaPlayerFactory.media().newMedia(file.getAbsolutePath());
+    private Media loadMedia(File file, MediaPlayerFactory factory) throws FileNotLoadableException {
+        final Media media = factory.media().newMedia(file.getAbsolutePath());
         final ParsedWaiter parsed = new ParsedWaiter(media) {
             @Override
             protected boolean onBefore(final Media component) {
@@ -102,15 +103,16 @@ public class PlaylistFactory implements AutoCloseable {
     /**
      * Creating a new Song object.
      * Using the file to load the metadata from the song
-     * with {@link #loadMedia(File)} and releasing the medias memory afterwards.
+     * with {@link #loadMedia(File, MediaPlayerFactory)} and releasing the medias memory afterwards.
      * Inits a new song with loaded metadata.
      *
-     * @param file to read the song.
+     * @param file    to read the song.
+     * @param factory to create new media objects.
      * @return a new Song object from given file.
      * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    public Song newSong(File file) throws FileNotLoadableException {
-        Media media = loadMedia(file);
+    public Song newSong(File file, MediaPlayerFactory factory) throws FileNotLoadableException {
+        Media media = loadMedia(file, factory);
         MetaData metaData = media.meta().asMetaData();
 
         final String rawTitle = metaData.get(Meta.TITLE);
@@ -165,10 +167,5 @@ public class PlaylistFactory implements AutoCloseable {
                 return FALLBACK_URL;
             }
         }
-    }
-
-    @Override
-    public void close() throws NoCleanUpFoundException {
-        CleanUpDemon.getInstance().cleanup(this);
     }
 }
