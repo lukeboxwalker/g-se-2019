@@ -1,0 +1,21 @@
+.progress-bar {
+  -fx-indeterminate-bar-length: 60;
+  -fx-indeterminate-bar-escape: true;
+  -fx-indeterminate-bar-flip: true;
+  -fx-indeterminate-bar-animation-time: 2;
+}
+.progress-bar > .bar {
+  -fx-background-color: #909090;
+  -fx-background-radius: 1;
+  -fx-background-insets: 1 1 1 1;
+  -fx-padding: 1em;
+
+}
+.progress-bar:indeterminate > .bar {
+  -fx-background-color: linear-gradient(to left, transparent, -fx-accent);
+}
+.progress-bar > .track {
+  -fx-background-color: #585858;
+  -fx-background-insets: 0, 0 0 1 0, 1 1 2 1;
+  -fx-background-radius: 4, 3, 2;
+}

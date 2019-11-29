@@ -16,6 +16,7 @@ public class Song {
     private String artist = "";
     private String album = "";
     private String genre = "";
+    private String artWorkURL = "";
     private long duration = 0;
 
     /**
@@ -26,14 +27,16 @@ public class Song {
      * @param artist   of the song
      * @param album    of the song
      * @param genre    of the song
+     * @param artWorkURL of the image cover
      * @param duration of the song in millis
      */
-    public Song(File file, String title, String artist, String album, String genre, long duration) {
+    public Song(File file, String title, String artist, String album, String genre, String artWorkURL, long duration) {
         this(file);
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.genre = genre;
+        this.artWorkURL = artWorkURL;
         this.duration = duration;
     }
 
@@ -48,18 +51,27 @@ public class Song {
     public String getTitle() {
         return title;
     }
+
     public String getArtist() {
         return artist;
     }
+
     public String getAlbum() {
         return album;
     }
+
     public String getGenre() {
         return genre;
     }
+
     public String getDuration() {
         return millisToString(duration);
     }
+
+    public String getArtWorkURL() {
+        return artWorkURL;
+    }
+
     public long getDurationMillis() {
         return duration;
     }

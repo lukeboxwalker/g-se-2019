@@ -13,7 +13,7 @@ import javafx.util.Callback;
 /**
  * Controller responsible for the playlist.
  */
-public class PlaylistController implements PropertyUpdater<Song> {
+public class PlaylistController {
 
     private static final String TITLE = "Title";
     private static final String ARTIST = "Artist";
@@ -23,8 +23,8 @@ public class PlaylistController implements PropertyUpdater<Song> {
     private static final String COLORING_GREEN = "-fx-text-fill:lightgreen";
     private static final String COLORING_WHITE = "-fx-text-fill:white";
 
-    private TableView<Song> playlist;
-    private RadioModel radio;
+    private final TableView<Song> playlist;
+    private final RadioModel radio;
 
     /**
      * Creates a new PlaylistController to fill the table.
@@ -82,8 +82,7 @@ public class PlaylistController implements PropertyUpdater<Song> {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()));
     }
 
-    @Override
-    public void updateProperty(Song oldProperty, Song newProperty) {
+    public void updatePlaylist(RadioController.Property<Song> property) {
         playlist.refresh();
     }
 }

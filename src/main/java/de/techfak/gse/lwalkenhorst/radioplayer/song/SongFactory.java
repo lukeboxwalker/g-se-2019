@@ -64,15 +64,17 @@ public class SongFactory implements AutoCloseable {
         final String rawArtist = metaData.get(Meta.ARTIST);
         final String rawAlbum = metaData.get(Meta.ALBUM);
         final String rawGenre = metaData.get(Meta.GENRE);
+        final String rawArtWorkURL = metaData.get(Meta.ARTWORK_URL);
 
         final String title = rawTitle == null ? "" : rawTitle;
         final String artist = rawArtist == null ? "" : rawArtist;
         final String album = rawAlbum == null ? "" : rawAlbum;
         final String genre = rawGenre == null ? "" : rawGenre;
+        final String artWorldURL = rawArtWorkURL == null ? "" : rawArtWorkURL;
         final long duration = media.info().duration();
 
         media.release();
-        Song song = new Song(file, title, artist, album, genre, duration);
+        Song song = new Song(file, title, artist, album, genre, artWorldURL, duration);
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;

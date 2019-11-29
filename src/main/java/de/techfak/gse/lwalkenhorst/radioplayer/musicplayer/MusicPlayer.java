@@ -83,7 +83,8 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     @Override
     public void play() {
         this.playNextSong();
-        this.onSongFinish(mediaPlayer -> playNextSong());
+        this.onEventCall(mediaPlayer -> playNextSong(),
+            (mediaPlayer, newTime) -> support.firePropertyChange("timeChanged", 0.0f, newTime));
     }
 
     /**

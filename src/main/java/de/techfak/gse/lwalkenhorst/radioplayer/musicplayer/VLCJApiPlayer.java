@@ -8,6 +8,7 @@ import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -52,13 +53,19 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
      * Adds a MediaPlayerEvent to the media player to listen for finished songs.
      * Performs actions described in consumer.
      *
-     * @param consumer to represent the content of the overridden finished method.
+     * @param songFinished to represent the content of the overridden finished method.
+     * @param timeChanged to represent the content when song moved on playing.
      */
-    protected void onSongFinish(Consumer<MediaPlayer> consumer) {
+    protected void onEventCall(final Consumer<MediaPlayer> songFinished, final BiConsumer<MediaPlayer, Float> timeChanged) {
         mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
             @Override
+            public void positionChanged(MediaPlayer mediaPlayer, float newTime) {
+                timeChanged.accept(mediaPlayer, newTime);
+            }
+
+            @Override
             public void finished(final MediaPlayer mediaPlayer) {
-                consumer.accept(mediaPlayer);
+                songFinished.accept(mediaPlayer);
             }
         });
     }
