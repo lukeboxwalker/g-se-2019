@@ -1,8 +1,9 @@
-package de.techfak.gse.lwalkenhorst.radioplayer.song;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import de.techfak.gse.lwalkenhorst.exceptions.FileNotLoadableException;
+import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.Media;
 import uk.co.caprica.vlcj.media.Meta;
@@ -13,23 +14,65 @@ import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Building new song instances.
- * Using MediaPlayerFactory form vlcj library to load metadata.
- * Registers its cleanup to {@link CleanUpDemon}
+ * PlaylistFactory to create new Playlists form given directory.
  */
-public class SongFactory implements AutoCloseable {
+public class PlaylistFactory implements AutoCloseable {
 
     private static final Pattern URL_QUICKMATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
     private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
 
     private final MediaPlayerFactory mediaPlayerFactory;
 
-    public SongFactory() {
+    private String directoryName;
+
+    /**
+     * Factory to create a new Playlist from given directory.
+     *
+     * @param directoryName the directory in which the mp3 file will be searched.
+     */
+    public PlaylistFactory(String directoryName) {
+        this.directoryName = directoryName;
         this.mediaPlayerFactory = new MediaPlayerFactory();
         CleanUpDemon.register(this, mediaPlayerFactory::release);
+    }
+
+    /**
+     * Searches through the directory for '.mp3' files.
+     *
+     * @param directory the directory in which the method searches
+     * @return an array of mp3 files in the directory
+     * @throws NoMusicFileFoundException when the directory is empty or does't exist
+     */
+    private File[] searchForMp3Files(final File directory) throws NoMusicFileFoundException {
+        File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
+        if (musicFiles == null || musicFiles.length == 0) {
+            throw new NoMusicFileFoundException("No mp3-files found in directory " + directory.getAbsolutePath());
+        } else {
+            return musicFiles;
+        }
+    }
+
+    /**
+     * Creates a new Playlist object.
+     *
+     * @return the list of songs in the directory
+     * @throws NoMusicFileFoundException when the directory is empty or doesn't exist
+     */
+    public Playlist newPlaylist() throws NoMusicFileFoundException {
+        List<Song> songs = new ArrayList<>();
+        for (File file : searchForMp3Files(new File(directoryName))) {
+            try {
+                songs.add(newSong(file));
+            } catch (FileNotLoadableException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        return new Playlist(songs);
     }
 
     /**

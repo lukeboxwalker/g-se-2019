@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst.radioplayer.song;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import java.io.File;
 import java.text.DecimalFormat;

@@ -1,7 +1,7 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
-import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

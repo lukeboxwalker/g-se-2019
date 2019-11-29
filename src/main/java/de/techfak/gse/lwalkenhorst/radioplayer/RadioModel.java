@@ -1,7 +1,4 @@
-package de.techfak.gse.lwalkenhorst.radioplayer.musicplayer;
-
-import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import java.beans.PropertyChangeListener;
 import java.util.function.Consumer;

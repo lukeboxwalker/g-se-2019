@@ -2,8 +2,7 @@ package de.techfak.gse.lwalkenhorst.exceptions;
 
 /**
  * An Exception that is supposed to exit the program.
- * The Exception has an explicit exit code, which is used when
- * exiting the program via {@link #exit()}.
+ * The Exception has an explicit exit code
  */
 public abstract class ExitCodeException extends Exception {
 
@@ -24,8 +23,4 @@ public abstract class ExitCodeException extends Exception {
         return exitCode;
     }
 
-    public void exit() {
-        System.err.println(this.getMessage());
-        System.exit(this.getExitCode());
-    }
 }

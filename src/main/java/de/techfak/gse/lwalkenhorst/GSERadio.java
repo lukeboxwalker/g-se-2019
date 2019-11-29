@@ -1,7 +1,9 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
+import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
+import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
+import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.PlaylistFactory;
 import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
@@ -16,16 +18,23 @@ public final class GSERadio {
     }
 
     private void start(final String directoryPath) {
-        MusicPlayer musicPlayer = new MusicPlayer();
+        try {
+            MusicPlayer musicPlayer = new MusicPlayer();
 
-        Playlist playlist = new Playlist(directoryPath);
-        playlist.shuffle();
+            PlaylistFactory factory = new PlaylistFactory(directoryPath);
+            Playlist playlist = factory.newPlaylist();
+            playlist.shuffle();
 
-        musicPlayer.loadPlaylist(playlist);
-        musicPlayer.play();
+            musicPlayer.loadPlaylist(playlist);
+            musicPlayer.play();
 
-        Terminal.start(musicPlayer);
-        GuiApplication.start(musicPlayer);
+            Terminal.start(musicPlayer);
+            GuiApplication.start(musicPlayer);
+
+        } catch (NoMusicFileFoundException e) {
+            System.err.println(e.getMessage());
+            System.exit(e.getExitCode());
+        }
     }
 
     /**

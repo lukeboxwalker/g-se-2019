@@ -1,8 +1,8 @@
 package de.techfak.gse.lwalkenhorst.radioview;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.playlist.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.musicplayer.RadioModel;
-import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 
 import java.io.BufferedReader;
 import java.io.IOException;
