@@ -7,7 +7,6 @@ import de.techfak.gse.lwalkenhorst.radioplayer.song.Song;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,6 +33,16 @@ public class Terminal {
     public Terminal(RadioModel radio) {
         this.radio = radio;
         this.running = new AtomicBoolean(false);
+    }
+
+    /**
+     * Starting the Terminal listener in static context.
+     *
+     * @param radio to get information of current song and playlist.
+     */
+    public static void start(RadioModel radio) {
+        Terminal terminal = new Terminal(radio);
+        terminal.listenForInstructions();
     }
 
     /**
@@ -140,7 +149,7 @@ public class Terminal {
         if (playlist == null) {
             messageBuilder.append("\nEmpty\n");
         } else {
-            playlist.forEachSong((song) -> {
+            radio.forEachUpcomingSong((song) -> {
                 messageBuilder.append(BREAK);
                 messageBuilder.append(song.toString());
             });
@@ -159,15 +168,5 @@ public class Terminal {
             + "<playlist> to list the current playlist that is playing.\n"
             + "<exit> to exit the application.\n" + ENDING;
         System.out.println(message);
-    }
-
-    private String getMetaDataString(String tag, String metadata, boolean lineBreak) {
-        return metadata == null ? "" : tag + metadata + (lineBreak ? BREAK : "");
-    }
-
-    private String getMetaDataString(String tag, long milliseconds, boolean lineBreak) {
-        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
-        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
-        return milliseconds <= 0 ? "" : tag + min + ":" + sec + " min" + (lineBreak ? BREAK : "");
     }
 }

@@ -17,15 +17,13 @@ public final class GSERadio {
     private void start(final String directoryPath) {
         MusicPlayer musicPlayer = new MusicPlayer();
 
-        Terminal terminal = new Terminal(musicPlayer);
-        terminal.listenForInstructions();
-
         Playlist playlist = new Playlist(directoryPath);
         playlist.shuffle();
-        playlist.setRepeating(true);
 
         musicPlayer.loadPlaylist(playlist);
         musicPlayer.play();
+
+        Terminal.start(musicPlayer);
     }
 
     /**
