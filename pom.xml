@@ -51,7 +51,7 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>

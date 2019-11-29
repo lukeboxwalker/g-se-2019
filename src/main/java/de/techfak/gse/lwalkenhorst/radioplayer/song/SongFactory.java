@@ -9,6 +9,9 @@ import uk.co.caprica.vlcj.media.MetaData;
 import uk.co.caprica.vlcj.waiter.media.ParsedWaiter;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * Building new song instances.
@@ -18,6 +21,9 @@ import java.io.File;
 public class SongFactory implements AutoCloseable {
 
     private final MediaPlayerFactory mediaPlayerFactory;
+
+    private static final Pattern URL_QUICKMATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
+    private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
 
     public SongFactory() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
@@ -70,7 +76,7 @@ public class SongFactory implements AutoCloseable {
         final String artist = rawArtist == null ? "" : rawArtist;
         final String album = rawAlbum == null ? "" : rawAlbum;
         final String genre = rawGenre == null ? "" : rawGenre;
-        final String artWorldURL = rawArtWorkURL == null ? "" : rawArtWorkURL;
+        final String artWorldURL = validateUrl(rawArtWorkURL);
         final long duration = media.info().duration();
 
         media.release();
@@ -78,6 +84,40 @@ public class SongFactory implements AutoCloseable {
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;
+    }
+
+    /**
+     * Checks if a given imageUrl exists.
+     *
+     * @param url to check
+     * @return the url if valid otherwise returns fallback url
+     */
+    private static String validateUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return FALLBACK_URL;
+        } else {
+            try {
+                if (!URL_QUICKMATCH.matcher(url).matches()) {
+                    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                    URL resource;
+                    if (url.charAt(0) == '/') {
+                        resource = contextClassLoader.getResource(url.substring(1));
+                    } else {
+                        resource = contextClassLoader.getResource(url);
+                    }
+
+                    if (resource == null) {
+                        throw new IllegalArgumentException("Invalid URL or resource not found");
+                    } else {
+                        return resource.toString();
+                    }
+                } else {
+                    return (new URL(url)).toString();
+                }
+            } catch (IllegalArgumentException | MalformedURLException e) {
+                return FALLBACK_URL;
+            }
+        }
     }
 
     @Override
