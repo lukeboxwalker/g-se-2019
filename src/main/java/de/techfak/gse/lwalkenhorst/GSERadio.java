@@ -24,7 +24,8 @@ public final class GSERadio {
         playlist.shuffle();
         playlist.setRepeating(true);
 
-        musicPlayer.play(playlist);
+        musicPlayer.loadPlaylist(playlist);
+        musicPlayer.play();
     }
 
     /**

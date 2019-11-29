@@ -145,4 +145,8 @@ public class Playlist {
     public void setRepeating(final boolean repeat) {
         this.repeat = repeat;
     }
+
+    public List<Song> getSongs() {
+        return playList;
+    }
 }

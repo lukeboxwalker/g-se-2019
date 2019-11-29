@@ -36,7 +36,8 @@ public abstract class VLCJApiPlayer implements AutoCloseable {
         });
     }
 
-    public abstract void play(Playlist playlist);
+    public abstract void play();
+    public abstract void loadPlaylist(Playlist playlist);
 
     public void playSong(Song song) {
         mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
