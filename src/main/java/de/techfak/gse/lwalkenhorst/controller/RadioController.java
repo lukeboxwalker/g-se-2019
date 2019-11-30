@@ -5,6 +5,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableView;
@@ -34,16 +35,29 @@ public class RadioController implements PropertyChangeListener {
     @FXML
     private ProgressBar timeLine;
 
+    @FXML
+    private Button skip;
+
     /**
      * Loading the given radio model.
      * Inits the content of the view from model information.
      *
      * @param radio the model the view is observing
+     * @param advanced to decide if control buttons are loaded
      */
-    public void load(RadioModel radio) {
+    public void load(RadioModel radio, boolean advanced) {
         radio.addPropertyChangeListener(this);
         this.playlistController = new PlaylistController(playlist, radio);
         this.songController = new SongController(songLabel, image, timeLine, radio);
+        if (advanced) {
+            loadControls(radio);
+        } else {
+            skip.setVisible(false);
+        }
+    }
+
+    public void loadControls(RadioModel radio) {
+        skip.setOnAction(e -> radio.skipSong());
     }
 
     @Override

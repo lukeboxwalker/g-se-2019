@@ -27,7 +27,7 @@ public final class GSERadio {
             musicPlayer.play();
 
             Terminal.start(musicPlayer);
-            GuiApplication.start(musicPlayer);
+            GuiApplication.start(musicPlayer, "-a");
 
         } catch (NoMusicFileFoundException e) {
             System.err.println(e.getMessage());
