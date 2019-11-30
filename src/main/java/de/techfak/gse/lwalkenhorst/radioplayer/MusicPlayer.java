@@ -25,6 +25,11 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
             this.index = index;
         }
     }
+
+    public static final String VOTE_UPDATE = "voteUpdate";
+    public static final String SONG_UPDATE = "songUpdate";
+    public static final String TIME_UPDATE = "timeUpdate";
+
     private VotingManager votingManager;
     private PropertyChangeSupport support;
     private Playlist playlist;
@@ -56,7 +61,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                         try {
                             int oldVotes = votingManager.getVotes(current.song);
                             votingManager.resetVotes(current.song);
-                            support.firePropertyChange("voteUpdate", oldVotes, -1);
+                            support.firePropertyChange(VOTE_UPDATE, oldVotes, -1);
                         } catch (NoSongFoundException e) {
                             e.printStackTrace();
                         }
@@ -71,7 +76,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     }
                     Song oldSong = oldCurrent == null ? null : oldCurrent.song;
                     Song newSong = current == null ? null : current.song;
-                    support.firePropertyChange("song", oldSong, newSong);
+                    support.firePropertyChange(SONG_UPDATE, oldSong, newSong);
                     if (newSong != null) {
                         playSong(newSong);
                     }
@@ -95,7 +100,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     public void play() {
         this.playNextSong();
         this.onEventCall(mediaPlayer -> playNextSong(),
-            (mediaPlayer, newTime) -> support.firePropertyChange("timeChanged", 0.0f, newTime));
+            (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime));
     }
 
     /**
@@ -130,7 +135,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     votingManager.vote(song);
                     current.index = 0;
                     int currentVotes = votingManager.getVotes(song);
-                    support.firePropertyChange("voteUpdate", currentVotes - 1, currentVotes);
+                    support.firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
                 } catch (NoSongFoundException e) {
                     e.printStackTrace();
                 }

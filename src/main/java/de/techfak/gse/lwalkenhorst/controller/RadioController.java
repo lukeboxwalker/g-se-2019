@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
+import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.application.Platform;
@@ -8,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,10 +23,7 @@ public class RadioController implements PropertyChangeListener {
     private SongController songController;
 
     @FXML
-    private VBox vBox;
-
-    @FXML
-    private TableView<Song> playlist;
+    private TableView<PlaylistController.TableEntry> playlist;
 
     @FXML
     private Label songLabel;
@@ -52,13 +49,21 @@ public class RadioController implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
-            if (propertyChangeEvent.getPropertyName().equals("song")) {
-                Property<Song> property = castProperty(propertyChangeEvent, Song.class);
-                playlistController.updatePlaylist(property);
-                songController.updateSong(property);
-            } else if (propertyChangeEvent.getPropertyName().equals("timeChanged")) {
-                Property<Float> property = castProperty(propertyChangeEvent, Float.class);
-                songController.updateTime(property);
+            switch (propertyChangeEvent.getPropertyName()) {
+                case MusicPlayer.SONG_UPDATE:
+                    Property<Song> songProperty = castProperty(propertyChangeEvent, Song.class);
+                    playlistController.updatePlaylist();
+                    songController.updateSong(songProperty);
+                    break;
+                case MusicPlayer.VOTE_UPDATE:
+                    playlistController.updatePlaylist();
+                    break;
+                case MusicPlayer.TIME_UPDATE:
+                    Property<Float> floatProperty = castProperty(propertyChangeEvent, Float.class);
+                    songController.updateTime(floatProperty);
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -85,9 +90,10 @@ public class RadioController implements PropertyChangeListener {
         public T getNewValue() {
             return newValue;
         }
+
     }
 
-    private  <T> Property<T> castProperty(PropertyChangeEvent propertyChangeEvent, Class<T> clazz) {
+    private <T> Property<T> castProperty(PropertyChangeEvent propertyChangeEvent, Class<T> clazz) {
         return new Property<>(clazz.cast(propertyChangeEvent.getOldValue()),
             clazz.cast(propertyChangeEvent.getNewValue()));
     }
