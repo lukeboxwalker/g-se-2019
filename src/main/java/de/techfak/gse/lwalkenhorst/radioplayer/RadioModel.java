@@ -14,4 +14,7 @@ public interface RadioModel {
 
     void addPropertyChangeListener(PropertyChangeListener observer);
     void removePropertyChangeListener(PropertyChangeListener observer);
+
+    int getVotes(Song song);
+    void vote(Song song);
 }

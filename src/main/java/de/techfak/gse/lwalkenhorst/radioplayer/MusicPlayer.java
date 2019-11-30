@@ -1,5 +1,8 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.voting.NoSongFoundException;
+import de.techfak.gse.lwalkenhorst.voting.VotingManager;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
@@ -22,7 +25,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
             this.index = index;
         }
     }
-
+    private VotingManager votingManager;
     private PropertyChangeSupport support;
     private Playlist playlist;
     private SongEntry current;
@@ -31,11 +34,14 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     /**
      * Creating a new MusicPlayer to play music.
      * Will repeat its playing songs
+     *
+     * @param playlist to play
      */
-    public MusicPlayer() {
+    public MusicPlayer(Playlist playlist) {
         super();
         this.support = new PropertyChangeSupport(this);
         this.repeat = true;
+        loadPlaylist(playlist);
     }
 
     private void playNextSong() {
@@ -47,7 +53,14 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     if (current == null) {
                         current = new SongEntry(songs.get(0), 0);
                     } else {
-                        int nextIndex = current.index + 1;
+                        try {
+                            int oldVotes = votingManager.getVotes(current.song);
+                            votingManager.resetVotes(current.song);
+                            support.firePropertyChange("voteUpdate", oldVotes, -1);
+                        } catch (NoSongFoundException e) {
+                            e.printStackTrace();
+                        }
+                        int nextIndex = current.index;
                         if (nextIndex < songs.size()) {
                             this.current = new SongEntry(songs.get(nextIndex), nextIndex);
                         } else if (repeat) {
@@ -70,6 +83,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     @Override
     public void loadPlaylist(Playlist playlist) {
         this.playlist = playlist;
+        this.votingManager = new VotingManager(this.playlist);
     }
 
     /**
@@ -100,6 +114,42 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     songs.subList(0, current.index).forEach(consumer);
                 }
             }
+        }
+    }
+
+    /**
+     * Vote for a given song.
+     * Sets the current index to 0 to start from the highest voted songs
+     *
+     * @param song to vote for
+     */
+    public void vote(Song song) {
+        synchronized (this) {
+            if (!song.equals(current.song)) {
+                try {
+                    votingManager.vote(song);
+                    current.index = 0;
+                    int currentVotes = votingManager.getVotes(song);
+                    support.firePropertyChange("voteUpdate", currentVotes - 1, currentVotes);
+                } catch (NoSongFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Getting the votes of a song.
+     *
+     * @param song to get the votes from
+     * @return the votes from given song
+     */
+    public int getVotes(Song song) {
+        try {
+            return votingManager.getVotes(song);
+        } catch (NoSongFoundException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 

@@ -26,4 +26,17 @@ public class Playlist {
     public List<Song> getSongs() {
         return playList;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        Iterator<Song> iterator = playList.iterator();
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next().toString());
+            if (iterator.hasNext()) {
+                stringBuilder.append("\n");
+            }
+        }
+        return stringBuilder.toString();
+    }
 }

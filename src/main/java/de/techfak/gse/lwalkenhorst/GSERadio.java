@@ -19,13 +19,11 @@ public final class GSERadio {
 
     private void start(final String directoryPath) {
         try {
-            MusicPlayer musicPlayer = new MusicPlayer();
-
             PlaylistFactory factory = new PlaylistFactory(directoryPath);
             Playlist playlist = factory.newPlaylist();
             playlist.shuffle();
 
-            musicPlayer.loadPlaylist(playlist);
+            MusicPlayer musicPlayer = new MusicPlayer(playlist);
             musicPlayer.play();
 
             Terminal.start(musicPlayer);
