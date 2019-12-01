@@ -10,6 +10,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -17,15 +19,12 @@ import java.util.stream.Collectors;
  */
 public class PlaylistController {
 
-    private static final String TITLE = "Title";
-    private static final String ARTIST = "Artist";
-    private static final String ALBUM = "Album";
-    private static final String DURATION = "Duration";
-    private static final String VOTES = "Votes";
+    private static final List<String> COLUMNS = Arrays.asList("Title", "Artist", "Album", "Duration", "Votes");
 
     private static final String COLORING_GREEN = "-fx-text-fill:lightgreen";
     private static final String COLORING_WHITE = "-fx-text-fill:white";
 
+    private final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> coloring;
     private final TableView<TableEntry> playlist;
     private final RadioModel radio;
 
@@ -34,34 +33,12 @@ public class PlaylistController {
      * Setting callbacks when list updates.
      *
      * @param playlist the tableView
-     * @param radio to get information when notified
+     * @param radio    to get information when notified
      */
     public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
         this.playlist = playlist;
         this.radio = radio;
-        initTable();
-    }
-
-    private void initTable() {
-        TableColumn<TableEntry, String> title = new TableColumn<>(TITLE);
-        TableColumn<TableEntry, String> artist = new TableColumn<>(ARTIST);
-        TableColumn<TableEntry, String> album = new TableColumn<>(ALBUM);
-        TableColumn<TableEntry, String> duration = new TableColumn<>(DURATION);
-        TableColumn<TableEntry, String> votes = new TableColumn<>(VOTES);
-
-        title.setCellValueFactory(new PropertyValueFactory<>(TITLE));
-        artist.setCellValueFactory(new PropertyValueFactory<>(ARTIST));
-        album.setCellValueFactory(new PropertyValueFactory<>(ALBUM));
-        duration.setCellValueFactory(new PropertyValueFactory<>(DURATION));
-        votes.setCellValueFactory(new PropertyValueFactory<>(VOTES));
-
-        playlist.getColumns().add(title);
-        playlist.getColumns().add(artist);
-        playlist.getColumns().add(album);
-        playlist.getColumns().add(duration);
-        playlist.getColumns().add(votes);
-
-        Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> color = (column -> new TableCell<>() {
+        this.coloring = (column -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -78,7 +55,11 @@ public class PlaylistController {
                 setStyle(COLORING_WHITE);
             }
         });
+        initTable();
+    }
 
+    private void initTable() {
+        COLUMNS.forEach(this::initColumn);
         // Setting votes by clicking on the row (TEMP SOLUTION!!!)
         playlist.setRowFactory(tableView -> {
             TableRow<TableEntry> row = new TableRow<>();
@@ -90,22 +71,20 @@ public class PlaylistController {
             return row;
         });
 
-        title.setCellFactory(color);
-        artist.setCellFactory(color);
-        album.setCellFactory(color);
-        duration.setCellFactory(color);
-
         // Filling table with playlist songs
-        setItems();
-    }
-
-    private void setItems() {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()
             .stream()
             .map(TableEntry::new)
             .collect(Collectors.toList()))
         );
-        playlist.refresh();
+    }
+
+    private void initColumn(String column) {
+        TableColumn<TableEntry, String> tableColumn = new TableColumn<>(column);
+        tableColumn.setCellValueFactory(new PropertyValueFactory<>(column));
+        playlist.getColumns().add(tableColumn);
+        tableColumn.setCellFactory(coloring);
+
     }
 
     public void updatePlaylist() {

@@ -25,7 +25,7 @@ public class GuiApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/view.fxml"));
 
         Pane root = fxmlLoader.load();
         RadioController controller = fxmlLoader.getController();
@@ -33,7 +33,7 @@ public class GuiApplication extends Application {
 
         Scene scene = new Scene(root);
         stage.setTitle("GSE-Radio");
-        stage.getIcons().add(new Image("file:src/main/resources/icon.png"));
+        stage.getIcons().add(new Image("file:src/main/resources/view/icon.png"));
         stage.setScene(scene);
         stage.show();
     }

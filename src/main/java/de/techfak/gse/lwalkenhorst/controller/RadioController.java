@@ -3,12 +3,10 @@ package de.techfak.gse.lwalkenhorst.controller;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.VLCJApiPlayer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
 import java.beans.PropertyChangeEvent;
@@ -38,11 +36,17 @@ public class RadioController implements PropertyChangeListener {
     @FXML
     private Button skip;
 
+    @FXML
+    private Button back;
+
+    @FXML
+    private ToggleButton play;
+
     /**
      * Loading the given radio model.
      * Inits the content of the view from model information.
      *
-     * @param radio the model the view is observing
+     * @param radio    the model the view is observing
      * @param advanced to decide if control buttons are loaded
      */
     public void load(RadioModel radio, boolean advanced) {
@@ -53,11 +57,27 @@ public class RadioController implements PropertyChangeListener {
             loadControls(radio);
         } else {
             skip.setVisible(false);
+            back.setVisible(false);
+            play.setVisible(false);
         }
     }
 
+    /**
+     * Setting ActionHandlers for control buttons.
+     *
+     * @param radio to perform action on.
+     */
     public void loadControls(RadioModel radio) {
-        skip.setOnAction(e -> radio.skipSong());
+        skip.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.FORWARD));
+        back.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.BACKWARD));
+        play.setOnAction(e -> {
+            if (play.isSelected()) {
+                radio.pauseSong();
+            } else {
+                radio.resumeSong();
+            }
+        });
+
     }
 
     @Override

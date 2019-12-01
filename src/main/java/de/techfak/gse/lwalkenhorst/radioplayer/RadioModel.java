@@ -9,7 +9,11 @@ import java.util.function.Consumer;
 public interface RadioModel {
     Song getSong();
     Playlist getPlaylist();
-    void skipSong();
+
+    void skipSong(VLCJApiPlayer.Skip skip);
+    void pauseSong();
+    void resumeSong();
+
     void forEachUpcomingSong(final Consumer<Song> consumer);
 
     void addPropertyChangeListener(PropertyChangeListener observer);
