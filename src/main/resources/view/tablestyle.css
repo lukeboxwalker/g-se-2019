@@ -30,18 +30,19 @@
   -fx-background-insets: 0;
   -fx-background-radius: 0;
 }
-.table-view > .virtual-flow > .scroll-bar:vertical,
-.table-view > .virtual-flow > .scroll-bar:vertical > .track,
-.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
-.table-view > .virtual-flow > .scroll-bar:horizontal,
-.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
-.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
-  -fx-background-color: #383838;
+
+.table-view *.increment-button,
+.table-view *.decrement-button,
+.table-view *.increment-arrow,
+.table-view *.decrement-arrow
+{
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-shape: "";
 }
-.table-view > .virtual-flow > .scroll-bar > .increment-button,
-.table-view > .virtual-flow > .scroll-bar > .decrement-button {
-  -fx-opacity: 0;
-}
+
 .table-row-cell:empty {
   -fx-background-color: transparent;
   -fx-border-color: transparent;

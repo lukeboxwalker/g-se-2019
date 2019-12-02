@@ -1,12 +1,7 @@
-package de.techfak.gse.lwalkenhorst.voting;
-
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.Song;
-import javafx.util.Pair;
+package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

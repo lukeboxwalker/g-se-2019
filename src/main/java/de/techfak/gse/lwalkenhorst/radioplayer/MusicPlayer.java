@@ -1,8 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.voting.NoSongFoundException;
-import de.techfak.gse.lwalkenhorst.voting.VotingManager;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;

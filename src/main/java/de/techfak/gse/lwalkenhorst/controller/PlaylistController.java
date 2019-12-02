@@ -76,6 +76,9 @@ public class PlaylistController {
 
     }
 
+    /**
+     * Setting updated playlist from radio as table content.
+     */
     public void setItems() {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()
             .stream()
