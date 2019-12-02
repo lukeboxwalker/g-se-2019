@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class PlaylistFactory {
 
     private static final Pattern URL_QUICK_MATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
-    private static final String FALLBACK_URL = "file:src/main/resources/fallback.png";
+    private static final String FALLBACK_URL = "file:src/main/resources/view/fallback.png";
 
     private String directoryName;
 

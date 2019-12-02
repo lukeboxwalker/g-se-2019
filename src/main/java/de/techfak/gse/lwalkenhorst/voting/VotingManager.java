@@ -5,6 +5,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.util.Pair;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VotingManager {
 
-    private HashMap<Song, Pair<AtomicBoolean, AtomicInteger>> songMap = new HashMap<>();
+    private HashMap<Song, AtomicInteger> songMap = new HashMap<>();
     private final Playlist playlist;
 
     /**
@@ -25,8 +26,7 @@ public class VotingManager {
     public VotingManager(Playlist playlist) {
         this.playlist = playlist;
         this.playlist.getSongs().forEach(song -> {
-            final Pair<AtomicBoolean, AtomicInteger> voting =
-                new Pair<>(new AtomicBoolean(false), new AtomicInteger(0));
+            final AtomicInteger voting = new AtomicInteger(0);
             songMap.put(song, voting);
         });
     }
@@ -34,56 +34,32 @@ public class VotingManager {
     /**
      * Votes for a given song.
      * Increment the vote score for given song.
-     * Sets recently resetted to false
      * Sorts the playlist with respect to the voting scores
      *
      * @param song to vote for
-     * @throws NoSongFoundException when given song isn't managed by this VotingManager
      */
-    public void vote(Song song) throws NoSongFoundException {
+    public void vote(Song song) {
         synchronized (this) {
             if (songMap.containsKey(song)) {
-                Pair<AtomicBoolean, AtomicInteger> voting = songMap.get(song);
-                voting.getValue().incrementAndGet();
-                voting.getKey().set(false);
-                playlist.getSongs().sort((song1, song2) -> {
-                    Pair<AtomicBoolean, AtomicInteger> voting1 = songMap.get(song1);
-                    Pair<AtomicBoolean, AtomicInteger> voting2 = songMap.get(song2);
-                    int vote1 = voting1.getKey().get() ? -1 : voting1.getValue().get();
-                    int vote2 = voting2.getKey().get() ? -1 : voting2.getValue().get();
-                    return Integer.compare(vote2, vote1);
-                });
-            } else {
-                throw new NoSongFoundException(
-                    "Trying to vote for a Song that is not managed by this VotingManager");
+                List<Song> songs = playlist.getSongs();
+                Song first = songs.remove(0);
+                AtomicInteger voting = songMap.get(song);
+                voting.incrementAndGet();
+                songs.sort((song1, song2) -> Integer.compare(songMap.get(song2).get(), songMap.get(song1).get()));
+                songs.add(0, first);
             }
         }
     }
 
     /**
      * Resets votes for a given song.
-     * Sets recently resetted to true
      *
      * @param song to reset votes
-     * @throws NoSongFoundException when given song isn't managed by this VotingManager
      */
-    public void resetVotes(Song song) throws NoSongFoundException {
+    public void resetVotes(Song song) {
         synchronized (this) {
-            if (song != null) {
-                if (songMap.containsKey(song)) {
-                    Pair<AtomicBoolean, AtomicInteger> voting = songMap.get(song);
-                    voting.getValue().set(-1);
-                    voting.getKey().set(true);
-                    playlist.getSongs().sort((song1, song2) -> {
-                        Pair<AtomicBoolean, AtomicInteger> voting1 = songMap.get(song1);
-                        Pair<AtomicBoolean, AtomicInteger> voting2 = songMap.get(song2);
-                        return Integer.compare(voting2.getValue().get(), voting1.getValue().get());
-                    });
-                    voting.getValue().set(0);
-                } else {
-                    throw new NoSongFoundException(
-                        "Trying to reset the votes for a Song that is not managed by this VotingManager");
-                }
+            if (song != null && songMap.containsKey(song)) {
+                songMap.get(song).set(0);
             }
         }
     }
@@ -93,17 +69,11 @@ public class VotingManager {
      *
      * @param song to get votes from
      * @return the voting score for given song
-     * @throws NoSongFoundException when given song isn't managed by this VotingManager
      */
-    public int getVotes(Song song) throws NoSongFoundException {
+    public int getVotes(Song song) {
         synchronized (this) {
-            if (song != null) {
-                if (songMap.containsKey(song)) {
-                    return songMap.get(song).getValue().get();
-                } else {
-                    throw new NoSongFoundException(
-                        "Trying to get the votes for a Song that is not managed by this VotingManager");
-                }
+            if (song != null && songMap.containsKey(song)) {
+                return songMap.get(song).get();
             } else {
                 return 0;
             }

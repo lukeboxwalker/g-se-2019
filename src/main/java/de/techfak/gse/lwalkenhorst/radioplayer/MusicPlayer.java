@@ -20,6 +20,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     private static final class SongEntry {
         private Song song;
         private int index;
+
         private SongEntry(Song song, int index) {
             this.song = song;
             this.index = index;
@@ -35,6 +36,8 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     private Playlist playlist;
     private SongEntry current;
     private boolean repeat;
+
+    private Song currentSong;
 
     /**
      * Creating a new MusicPlayer to play music.
@@ -53,34 +56,17 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
         synchronized (this) {
             if (playlist != null) {
                 List<Song> songs = playlist.getSongs();
-                if (playlist != null && !songs.isEmpty()) {
-                    SongEntry oldCurrent = current;
-                    if (current == null) {
-                        current = new SongEntry(songs.get(0), 0);
-                    } else {
-                        try {
-                            int oldVotes = votingManager.getVotes(current.song);
-                            votingManager.resetVotes(current.song);
-                            support.firePropertyChange(VOTE_UPDATE, oldVotes, -1);
-                        } catch (NoSongFoundException e) {
-                            e.printStackTrace();
-                        }
-                        int nextIndex = current.index;
-                        if (nextIndex < songs.size()) {
-                            this.current = new SongEntry(songs.get(nextIndex), nextIndex);
-                        } else if (repeat) {
-                            current = new SongEntry(songs.get(0), 0);
-                        } else {
-                            current = null;
-                        }
-                    }
-                    Song oldSong = oldCurrent == null ? null : oldCurrent.song;
-                    Song newSong = current == null ? null : current.song;
-                    support.firePropertyChange(SONG_UPDATE, oldSong, newSong);
-                    if (newSong != null) {
-                        playSong(newSong);
-                    }
+                Song oldSong = null;
+                if (currentSong == null) {
+                    currentSong = songs.get(0);
+                } else {
+                    oldSong = songs.remove(0);
+                    songs.add(oldSong);
+                    currentSong = songs.get(0);
+                    votingManager.resetVotes(oldSong);
                 }
+                support.firePropertyChange(SONG_UPDATE, oldSong, currentSong);
+                playSong(currentSong);
             }
         }
     }
@@ -113,12 +99,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     public void forEachUpcomingSong(final Consumer<Song> consumer) {
         synchronized (this) {
             List<Song> songs = playlist.getSongs();
-            if (current != null) {
-                songs.subList(current.index, songs.size()).forEach(consumer);
-                if (current.index > 0 && repeat) {
-                    songs.subList(0, current.index).forEach(consumer);
-                }
-            }
+            songs.forEach(consumer);
         }
     }
 
@@ -130,15 +111,10 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      */
     public void vote(Song song) {
         synchronized (this) {
-            if (!song.equals(current.song)) {
-                try {
-                    votingManager.vote(song);
-                    current.index = 0;
-                    int currentVotes = votingManager.getVotes(song);
-                    support.firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
-                } catch (NoSongFoundException e) {
-                    e.printStackTrace();
-                }
+            if (!song.equals(currentSong)) {
+                votingManager.vote(song);
+                int currentVotes = votingManager.getVotes(song);
+                support.firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
             }
         }
     }
@@ -150,12 +126,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      * @return the votes from given song
      */
     public int getVotes(Song song) {
-        try {
-            return votingManager.getVotes(song);
-        } catch (NoSongFoundException e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return votingManager.getVotes(song);
     }
 
     /**
@@ -166,7 +137,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      */
     @Override
     public Song getSong() {
-        return current == null ? null : current.song;
+        return currentSong;
     }
 
     @Override

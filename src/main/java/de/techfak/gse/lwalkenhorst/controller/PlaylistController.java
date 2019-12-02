@@ -72,6 +72,11 @@ public class PlaylistController {
         });
 
         // Filling table with playlist songs
+        setItems();
+
+    }
+
+    public void setItems() {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()
             .stream()
             .map(TableEntry::new)
@@ -88,7 +93,7 @@ public class PlaylistController {
     }
 
     public void updatePlaylist() {
-        playlist.refresh();
+        setItems();
     }
 
     /**
