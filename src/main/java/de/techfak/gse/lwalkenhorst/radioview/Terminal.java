@@ -40,9 +40,10 @@ public class Terminal {
      *
      * @param radio to get information of current song and playlist.
      */
-    public static void start(RadioModel radio) {
+    public static Terminal start(RadioModel radio) {
         Terminal terminal = new Terminal(radio);
         terminal.listenForInstructions();
+        return terminal;
     }
 
     /**

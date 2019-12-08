@@ -92,6 +92,7 @@ public class PlaylistController {
         tableColumn.setCellValueFactory(new PropertyValueFactory<>(column));
         playlist.getColumns().add(tableColumn);
         tableColumn.setCellFactory(coloring);
+        tableColumn.setSortable(false);
 
     }
 

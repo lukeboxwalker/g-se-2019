@@ -53,10 +53,12 @@ public class GuiApplication extends Application {
      */
     public static void start(final RadioModel radioPlayer, final String... args) {
         radio = radioPlayer;
-        if (args.length >= 1 && ADVANCED_MODE.contains(args[0])) {
+        String[] param = args;
+        if (param.length >= 1 && ADVANCED_MODE.contains(param[0])) {
             advanced = true;
+            param = Arrays.copyOfRange(args, 1, args.length);
         }
-        GuiApplication.main(args);
+        GuiApplication.main(param);
     }
     public static void main(final String... args) {
         launch(args);
