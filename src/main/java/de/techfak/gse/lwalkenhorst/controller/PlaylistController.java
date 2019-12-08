@@ -62,14 +62,14 @@ public class PlaylistController {
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
                         setText(empty ? "" : getItem());
-                        voting.setOnAction(event -> {
-                            TableEntry entry = getTableView().getItems().get(getIndex());
-                            radio.vote(entry.getSong());
-                        });
-                        setGraphic(voting);
+                        setGraphic(null);
                         TableRow<TableEntry> currentRow = getTableRow();
                         if (currentRow != null && currentRow.getItem() != null) {
                             Song song = radio.getSong();
+                            voting.setOnAction(event -> {
+                                radio.vote(currentRow.getItem().getSong());
+                            });
+                            setGraphic(voting);
                             if (song != null && currentRow.getItem().getSong().equals(song)) {
                                 setStyle(COLORING_GREEN);
                                 return;
