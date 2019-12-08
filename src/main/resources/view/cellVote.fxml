@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+
+
+<Button fx:id="vote" mnemonicParsing="false" style="-fx-background-color: transparent;" stylesheets="@voteButton.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" />

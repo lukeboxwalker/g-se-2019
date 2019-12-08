@@ -3,28 +3,23 @@ package de.techfak.gse.lwalkenhorst.controller;
 import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.collections.FXCollections;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 /**
  * Controller responsible for the playlist.
  */
 public class PlaylistController {
-
-    private static final List<String> COLUMNS = Arrays.asList("Title", "Artist", "Album", "Duration", "Votes");
-
     private static final String COLORING_GREEN = "-fx-text-fill:lightgreen";
     private static final String COLORING_WHITE = "-fx-text-fill:white";
 
     private final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> coloring;
+    private final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> voting;
     private final TableView<TableEntry> playlist;
     private final RadioModel radio;
 
@@ -35,7 +30,7 @@ public class PlaylistController {
      * @param playlist the tableView
      * @param radio    to get information when notified
      */
-    public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
+    public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) throws IOException {
         this.playlist = playlist;
         this.radio = radio;
         this.coloring = (column -> new TableCell<>() {
@@ -55,21 +50,49 @@ public class PlaylistController {
                 setStyle(COLORING_WHITE);
             }
         });
+
+        this.voting = (column -> {
+            try {
+                return new TableCell<>() {
+                    final FXMLLoader fxmlLoader =
+                        new FXMLLoader(getClass().getClassLoader().getResource("view/cellVote.fxml"));
+                    final Button voting = fxmlLoader.load();
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(empty ? "" : getItem());
+                        voting.setOnAction(event -> {
+                            TableEntry entry = getTableView().getItems().get(getIndex());
+                            radio.vote(entry.getSong());
+                        });
+                        setGraphic(voting);
+                        TableRow<TableEntry> currentRow = getTableRow();
+                        if (currentRow != null && currentRow.getItem() != null) {
+                            Song song = radio.getSong();
+                            if (song != null && currentRow.getItem().getSong().equals(song)) {
+                                setStyle(COLORING_GREEN);
+                                return;
+                            }
+                        }
+                        setStyle(COLORING_WHITE);
+                    }
+                };
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new TableCell<>();
+            }
+        });
+
         initTable();
     }
 
     private void initTable() {
-        COLUMNS.forEach(this::initColumn);
-        // Setting votes by clicking on the row (TEMP SOLUTION!!!)
-        playlist.setRowFactory(tableView -> {
-            TableRow<TableEntry> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty()) {
-                    radio.vote(row.getItem().getSong());
-                }
-            });
-            return row;
-        });
+        initColumn("Title", coloring);
+        initColumn("Artist", coloring);
+        initColumn("Album", coloring);
+        initColumn("Duration", coloring);
+        initColumn("Votes", voting);
 
         // Filling table with playlist songs
         setItems();
@@ -87,12 +110,13 @@ public class PlaylistController {
         );
     }
 
-    private void initColumn(String column) {
+    private void initColumn(String column,
+                            Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> callback) {
         TableColumn<TableEntry, String> tableColumn = new TableColumn<>(column);
         tableColumn.setCellValueFactory(new PropertyValueFactory<>(column));
-        playlist.getColumns().add(tableColumn);
-        tableColumn.setCellFactory(coloring);
+        tableColumn.setCellFactory(callback);
         tableColumn.setSortable(false);
+        playlist.getColumns().add(tableColumn);
 
     }
 

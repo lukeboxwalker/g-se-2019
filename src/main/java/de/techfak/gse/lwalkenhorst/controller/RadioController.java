@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 
 /**
  * The main Controller of the GUI.
@@ -49,7 +50,7 @@ public class RadioController implements PropertyChangeListener {
      * @param radio    the model the view is observing
      * @param advanced to decide if control buttons are loaded
      */
-    public void load(RadioModel radio, boolean advanced) {
+    public void load(RadioModel radio, boolean advanced) throws IOException {
         radio.addPropertyChangeListener(this);
         this.playlistController = new PlaylistController(playlist, radio);
         this.songController = new SongController(songLabel, image, timeLine, radio);
