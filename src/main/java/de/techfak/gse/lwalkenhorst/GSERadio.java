@@ -42,17 +42,17 @@ public final class GSERadio {
             guiMode = false;
         }
         try {
-            PlaylistFactory factory = new PlaylistFactory(directory);
-            Playlist playlist = factory.newPlaylist();
+            final PlaylistFactory factory = new PlaylistFactory(directory);
+            final Playlist playlist = factory.newPlaylist();
             playlist.shuffle();
 
-            MusicPlayer musicPlayer = new MusicPlayer(playlist);
+            final MusicPlayer musicPlayer = new MusicPlayer(playlist);
             musicPlayer.play();
 
             if (guiMode) {
                 GuiApplication.start(musicPlayer);
             } else {
-                Terminal terminal = new Terminal(musicPlayer);
+                final Terminal terminal = new Terminal(musicPlayer);
                 terminal.listenForInstructions();
             }
         } catch (NoMusicFileFoundException e) {

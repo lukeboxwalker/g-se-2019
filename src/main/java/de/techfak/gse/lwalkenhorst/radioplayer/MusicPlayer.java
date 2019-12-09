@@ -29,16 +29,17 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      *
      * @param playlist to play
      */
-    public MusicPlayer(Playlist playlist) {
+    public MusicPlayer(final Playlist playlist) {
         super();
         this.support = new PropertyChangeSupport(this);
-        loadPlaylist(playlist);
+        this.playlist = playlist;
+        this.votingManager = new VotingManager(this.playlist);
     }
 
     private void playNextSong() {
         synchronized (this) {
             if (playlist != null) {
-                List<Song> songs = playlist.getSongs();
+                final List<Song> songs = playlist.getSongs();
                 Song oldSong = null;
                 if (currentSong == null) {
                     currentSong = songs.get(0);
@@ -52,12 +53,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                 playSong(currentSong);
             }
         }
-    }
-
-    @Override
-    public void loadPlaylist(Playlist playlist) {
-        this.playlist = playlist;
-        this.votingManager = new VotingManager(this.playlist);
     }
 
     /**
@@ -80,9 +75,10 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      *
      * @param consumer to passed to foreach call.
      */
+    @Override
     public void forEachUpcomingSong(final Consumer<Song> consumer) {
         synchronized (this) {
-            List<Song> songs = playlist.getSongs();
+            final List<Song> songs = playlist.getSongs();
             songs.forEach(consumer);
         }
     }
@@ -92,11 +88,12 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      *
      * @param song to vote for
      */
-    public void vote(Song song) {
+    @Override
+    public void vote(final Song song) {
         synchronized (this) {
             if (!song.equals(currentSong)) {
                 votingManager.vote(song);
-                int currentVotes = votingManager.getVotes(song);
+                final int currentVotes = votingManager.getVotes(song);
                 support.firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
             }
         }
@@ -108,7 +105,8 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      * @param song to get the votes from
      * @return the votes from given song
      */
-    public int getVotes(Song song) {
+    @Override
+    public int getVotes(final Song song) {
         return votingManager.getVotes(song);
     }
 
@@ -124,12 +122,12 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener observer) {
+    public void addPropertyChangeListener(final PropertyChangeListener observer) {
         support.addPropertyChangeListener(observer);
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener observer) {
+    public void removePropertyChangeListener(final PropertyChangeListener observer) {
         support.removePropertyChangeListener(observer);
     }
 

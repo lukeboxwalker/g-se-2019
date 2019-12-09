@@ -7,8 +7,12 @@ public class FileNotLoadableException extends Exception {
 
     static final long serialVersionUID = 42L;
 
-    public FileNotLoadableException(String message) {
+    public FileNotLoadableException(final String message) {
         super(message);
+    }
+
+    public FileNotLoadableException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     @Override

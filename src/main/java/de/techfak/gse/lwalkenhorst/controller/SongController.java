@@ -26,7 +26,8 @@ public class SongController {
      * @param timeLine  to show the current playing state from the song
      * @param radio     to get information when notified
      */
-    public SongController(final Label songLabel, ImageView image, ProgressBar timeLine, final RadioModel radio) {
+    public SongController(final Label songLabel, final ImageView image,
+                          final ProgressBar timeLine, final RadioModel radio) {
         this.songLabel = songLabel;
         this.image = image;
         this.timeLine = timeLine;
@@ -35,23 +36,23 @@ public class SongController {
     }
 
     private void initLabel() {
-        Song currentSong = radio.getSong();
+        final Song currentSong = radio.getSong();
         songLabel.setAlignment(Pos.CENTER);
         timeLine.setProgress(0);
         setSong(currentSong);
     }
 
-    private void setSong(Song song) {
+    private void setSong(final Song song) {
         songLabel.setText(song.getTitle() + " - " + song.getArtist());
         image.setImage(new Image(song.getArtWorkURL()));
     }
 
-    public void updateSong(RadioController.Property<Song> property) {
+    public void updateSong(final RadioController.Property<Song> property) {
         setSong(property.getNewValue());
         timeLine.setProgress(0);
     }
 
-    public void updateTime(RadioController.Property<Float> property) {
+    public void updateTime(final RadioController.Property<Float> property) {
         timeLine.setProgress(property.getNewValue());
     }
 

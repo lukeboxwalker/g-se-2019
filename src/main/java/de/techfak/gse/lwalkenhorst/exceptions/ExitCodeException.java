@@ -9,7 +9,7 @@ public abstract class ExitCodeException extends Exception {
     public static final long serialVersionUID = 42L;
     private final int exitCode;
 
-    ExitCodeException(String message, final int errorCode) {
+    ExitCodeException(final String message, final int errorCode) {
         super(message);
         this.exitCode = errorCode;
     }

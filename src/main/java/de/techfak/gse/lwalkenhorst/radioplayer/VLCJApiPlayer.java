@@ -17,20 +17,18 @@ public abstract class VLCJApiPlayer {
      * Responsible for playing music with vlcj library.
      */
     public VLCJApiPlayer() {
-        VLCJFactory factory = new VLCJFactory();
-        MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
+        final VLCJFactory factory = new VLCJFactory();
+        final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
         this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
     }
 
     public abstract void play();
 
-    public abstract void loadPlaylist(Playlist playlist);
-
-    public void playSong(Song song) {
+    public void playSong(final Song song) {
         mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
     }
 
-    public void skipSong(Skip skip) {
+    public void skipSong(final Skip skip) {
         mediaPlayer.controls().skipPosition(skip.positionSkip);
     }
 
@@ -42,7 +40,7 @@ public abstract class VLCJApiPlayer {
         mediaPlayer.controls().play();
     }
 
-    protected void registerEventListener(MediaPlayerEventListener eventListener) {
+    protected void registerEventListener(final MediaPlayerEventListener eventListener) {
         mediaPlayer.events().addMediaPlayerEventListener(eventListener);
     }
 
@@ -54,7 +52,7 @@ public abstract class VLCJApiPlayer {
 
         private int positionSkip;
 
-        Skip(int positionSkip) {
+        Skip(final int positionSkip) {
             this.positionSkip = positionSkip;
         }
 

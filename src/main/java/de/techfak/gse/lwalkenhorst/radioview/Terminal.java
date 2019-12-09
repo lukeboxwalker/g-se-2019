@@ -20,16 +20,13 @@ public class Terminal {
     private static final String PLAYLIST = "playlist";
     private static final String EXIT = "exit";
 
-    private static final String SHUFFLE = "shuffle";
-    private static final String SKIP = "skip";
-
     private static final int BUFFER_WAIT = 200;
 
     private final RadioModel radio;
 
     private final AtomicBoolean running;
 
-    public Terminal(RadioModel radio) {
+    public Terminal(final RadioModel radio) {
         this.radio = radio;
         this.running = new AtomicBoolean(false);
     }
@@ -53,7 +50,7 @@ public class Terminal {
     private void startListener() {
         while (running.get()) {
             try {
-                String cmd = requestInput();
+                final String cmd = requestInput();
                 if (cmd != null) {
                     switch (cmd) {
                         case SONG:
@@ -67,6 +64,7 @@ public class Terminal {
                             break;
                         default:
                             printCMDUsage();
+                            break;
                     }
                 }
             } catch (IOException e) {
@@ -82,7 +80,7 @@ public class Terminal {
      * @return the String input or null when listener was killed or interrupted.
      */
     private String requestInput() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String input;
         do {
             try {
@@ -111,8 +109,8 @@ public class Terminal {
      *
      * @param song that will be printed
      */
-    private void printSongInfo(Song song) {
-        String header = "#####################[ Current song ]#####################";
+    private void printSongInfo(final Song song) {
+        final String header = "#####################[ Current song ]#####################";
         String message;
         if (song == null) {
             message = header + "\nNothing\n" + ENDING;
@@ -129,9 +127,9 @@ public class Terminal {
      *
      * @param playlist that will be printed
      */
-    private void printPlaylistInfo(Playlist playlist) {
-        String header = "###################[ Current playlist ]###################";
-        StringBuilder messageBuilder = new StringBuilder();
+    private void printPlaylistInfo(final Playlist playlist) {
+        final String header = "###################[ Current playlist ]###################";
+        final StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(header);
         if (playlist == null) {
             messageBuilder.append("\nEmpty\n");
@@ -141,8 +139,7 @@ public class Terminal {
                 messageBuilder.append(song.toString());
             });
         }
-        messageBuilder.append(BREAK);
-        messageBuilder.append(ENDING);
+        messageBuilder.append(BREAK).append(ENDING);
         System.out.println(messageBuilder.toString());
     }
 
@@ -150,7 +147,7 @@ public class Terminal {
      * Prints a help message.
      */
     private void printCMDUsage() {
-        String message = "#########################[ Help ]#########################"
+        final String message = "#########################[ Help ]#########################"
             + "\n<song> to list the information of the current playing song.\n"
             + "<playlist> to list the current playlist that is playing.\n"
             + "<exit> to exit the application.\n" + ENDING;

@@ -33,7 +33,7 @@ public class PlaylistFactory {
      *
      * @param directoryName the directory in which the mp3 file will be searched.
      */
-    public PlaylistFactory(String directoryName) {
+    public PlaylistFactory(final String directoryName) {
         this.directoryName = directoryName;
     }
 
@@ -45,7 +45,7 @@ public class PlaylistFactory {
      * @throws NoMusicFileFoundException when the directory is empty or does't exist
      */
     private File[] searchForMp3Files(final File directory) throws NoMusicFileFoundException {
-        File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
+        final File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
         if (musicFiles == null || musicFiles.length == 0) {
             throw new NoMusicFileFoundException(EXCEPTION_MESSAGE + directory.getAbsolutePath());
         } else {
@@ -62,11 +62,11 @@ public class PlaylistFactory {
      * @throws NoMusicFileFoundException when playlist is empty
      */
     public Playlist newPlaylist() throws NoMusicFileFoundException {
-        List<Song> songs = new ArrayList<>();
-        File dir = new File(directoryName);
+        final List<Song> songs = new ArrayList<>();
+        final File dir = new File(directoryName);
         try (VLCJFactory factory = new VLCJFactory()) {
-            MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
-            for (File file : searchForMp3Files(dir)) {
+            final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
+            for (final File file : searchForMp3Files(dir)) {
                 try {
                     songs.add(newSong(file, mediaPlayerFactory));
                 } catch (FileNotLoadableException e) {
@@ -91,7 +91,7 @@ public class PlaylistFactory {
      * @return the loaded media file
      * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    private Media loadMedia(File file, MediaPlayerFactory factory) throws FileNotLoadableException {
+    private Media loadMedia(final File file, final MediaPlayerFactory factory) throws FileNotLoadableException {
         final Media media = factory.media().newMedia(file.getAbsolutePath());
         final ParsedWaiter parsed = new ParsedWaiter(media) {
             @Override
@@ -101,8 +101,8 @@ public class PlaylistFactory {
         };
         try {
             parsed.await();
-        } catch (InterruptedException | UnexpectedWaiterErrorException e) {
-            throw new FileNotLoadableException("Could not load media: " + file.getAbsolutePath());
+        } catch (InterruptedException | UnexpectedWaiterErrorException cause) {
+            throw new FileNotLoadableException("Could not load media: " + file.getAbsolutePath(), cause);
         }
         return media;
     }
@@ -118,9 +118,9 @@ public class PlaylistFactory {
      * @return a new Song object from given file.
      * @throws FileNotLoadableException when given file could not be loaded as a mp3 media.
      */
-    public Song newSong(File file, MediaPlayerFactory factory) throws FileNotLoadableException {
-        Media media = loadMedia(file, factory);
-        MetaData metaData = media.meta().asMetaData();
+    public Song newSong(final File file, final MediaPlayerFactory factory) throws FileNotLoadableException {
+        final Media media = loadMedia(file, factory);
+        final MetaData metaData = media.meta().asMetaData();
 
         final String rawTitle = metaData.get(Meta.TITLE);
         final String rawArtist = metaData.get(Meta.ARTIST);
@@ -136,7 +136,7 @@ public class PlaylistFactory {
         final long duration = media.info().duration();
 
         media.release();
-        Song song = new Song(file, title, artist, album, genre, artWorldURL, duration);
+        final Song song = new Song(file, title, artist, album, genre, artWorldURL, duration);
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;
@@ -148,15 +148,18 @@ public class PlaylistFactory {
      * @param url to check
      * @return the url if valid otherwise returns fallback url
      */
-    private static String validateUrl(String url) {
-        if (url == null || url.trim().isEmpty()) {
+    private static String validateUrl(final String url) {
+        final char separate = '/';
+        if (url == null || url.isEmpty()) {
             return FALLBACK_URL;
         } else {
             try {
-                if (!URL_QUICK_MATCH.matcher(url).matches()) {
-                    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                if (URL_QUICK_MATCH.matcher(url).matches()) {
+                    return new URL(url).toString();
+                } else {
+                    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                     URL resource;
-                    if (url.charAt(0) == '/') {
+                    if (url.charAt(0) == separate) {
                         resource = contextClassLoader.getResource(url.substring(1));
                     } else {
                         resource = contextClassLoader.getResource(url);
@@ -167,8 +170,6 @@ public class PlaylistFactory {
                     } else {
                         return resource.toString();
                     }
-                } else {
-                    return (new URL(url)).toString();
                 }
             } catch (IllegalArgumentException | MalformedURLException e) {
                 return FALLBACK_URL;

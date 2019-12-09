@@ -32,7 +32,7 @@ public final class CleanUpDemon {
      * @param reference the object reference to clean from.
      * @param cleaner   the cleaning operation.
      */
-    public void register(Object reference, Cleaner cleaner) {
+    public void register(final Object reference, final Cleaner cleaner) {
         synchronized (CLEANERS) {
             CLEANERS.put(reference, cleaner);
         }
@@ -44,14 +44,14 @@ public final class CleanUpDemon {
      * @param reference the cleanup is coming from.
      * @throws NoCleanUpFoundException when there is no cleanup for given reference.
      */
-    public void cleanup(Object reference) throws NoCleanUpFoundException {
+    public void cleanup(final Object reference) throws NoCleanUpFoundException {
         synchronized (CLEANERS) {
-            Cleaner cleaner = CLEANERS.get(reference);
-            if (cleaner != null) {
+            final Cleaner cleaner = CLEANERS.get(reference);
+            if (cleaner == null) {
+                throw new NoCleanUpFoundException("No cleanup registered from given reference object");
+            } else {
                 cleaner.clean();
                 unregister(reference);
-            } else {
-                throw new NoCleanUpFoundException("No cleanup registered from given reference object");
             }
         }
     }
@@ -61,7 +61,7 @@ public final class CleanUpDemon {
      */
     public void cleanup() {
         synchronized (CLEANERS) {
-            Iterator<Map.Entry<Object, Cleaner>> iterator = CLEANERS.entrySet().iterator();
+            final Iterator<Map.Entry<Object, Cleaner>> iterator = CLEANERS.entrySet().iterator();
             while (iterator.hasNext()) {
                 iterator.next().getValue().clean();
                 iterator.remove();
@@ -69,7 +69,7 @@ public final class CleanUpDemon {
         }
     }
 
-    private void unregister(Object reference) {
+    private void unregister(final Object reference) {
         CLEANERS.remove(reference);
     }
 }

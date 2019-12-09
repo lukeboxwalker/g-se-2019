@@ -13,12 +13,13 @@ public final class TimeChangedEventAdapter extends MediaPlayerEventAdapter {
 
     private BiConsumer<MediaPlayer, Float> consumer;
 
-    public TimeChangedEventAdapter(BiConsumer<MediaPlayer, Float> consumer) {
+    public TimeChangedEventAdapter(final BiConsumer<MediaPlayer, Float> consumer) {
+        super();
         this.consumer = consumer;
     }
 
     @Override
-    public void positionChanged(MediaPlayer mediaPlayer, float newTime) {
+    public void positionChanged(final MediaPlayer mediaPlayer, final float newTime) {
         consumer.accept(mediaPlayer, newTime);
     }
 

@@ -31,7 +31,8 @@ public class Song {
      * @param artWorkURL of the image cover
      * @param duration of the song in millis
      */
-    public Song(File file, String title, String artist, String album, String genre, String artWorkURL, long duration) {
+    public Song(final File file, final String title, final String artist, final String album,
+                final String genre, final String artWorkURL, final long duration) {
         this(file);
         this.title = title;
         this.artist = artist;
@@ -41,7 +42,7 @@ public class Song {
         this.duration = duration;
     }
 
-    protected Song(File file) {
+    protected Song(final File file) {
         this.file = file;
     }
 
@@ -93,7 +94,7 @@ public class Song {
     }
 
     private String millisToString(final long milliseconds) {
-        DecimalFormat numberFormat = new DecimalFormat("00");
+        final DecimalFormat numberFormat = new DecimalFormat("00");
         final long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
         final long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds - TimeUnit.MINUTES.toMillis(min));
         return milliseconds <= 0 ? "" : min + ":" + numberFormat.format(sec);

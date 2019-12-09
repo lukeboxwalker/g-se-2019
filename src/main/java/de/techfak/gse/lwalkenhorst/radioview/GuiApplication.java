@@ -23,14 +23,16 @@ public class GuiApplication extends Application {
     private static final List<String> ADVANCED_MODE = Arrays.asList("-a", "--advanced");
 
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/view.fxml"));
+    public void start(final Stage stage) throws IOException {
+        final FXMLLoader fxmlLoader = new FXMLLoader(
+            Thread.currentThread().getContextClassLoader().getResource("view/view.fxml")
+        );
 
-        Pane root = fxmlLoader.load();
-        RadioController controller = fxmlLoader.getController();
+        final Pane root = fxmlLoader.load();
+        final RadioController controller = fxmlLoader.getController();
         controller.load(radio, advanced);
 
-        Scene scene = new Scene(root);
+        final Scene scene = new Scene(root);
         stage.setTitle("GSE-Radio");
         stage.getIcons().add(new Image("file:src/main/resources/view/icon.png"));
         stage.setScene(scene);

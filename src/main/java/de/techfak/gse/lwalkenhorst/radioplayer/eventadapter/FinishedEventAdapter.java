@@ -12,7 +12,8 @@ public final class FinishedEventAdapter extends MediaPlayerEventAdapter {
 
     private Consumer<MediaPlayer> consumer;
 
-    public FinishedEventAdapter(Consumer<MediaPlayer> consumer) {
+    public FinishedEventAdapter(final Consumer<MediaPlayer> consumer) {
+        super();
         this.consumer = consumer;
     }
 

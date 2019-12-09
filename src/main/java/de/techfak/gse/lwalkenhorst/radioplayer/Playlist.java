@@ -8,33 +8,33 @@ import java.util.*;
  */
 public class Playlist {
 
-    private List<Song> playList;
+    private List<Song> songList;
 
     /**
      * Creates a new Playlist from given songs.
      *
      * @param songs the playlist consist of.
      */
-    public Playlist(List<Song> songs) {
-        this.playList = Collections.synchronizedList(songs);
+    public Playlist(final List<Song> songs) {
+        this.songList = Collections.synchronizedList(songs);
     }
 
     public void shuffle() {
-        Collections.shuffle(playList);
+        Collections.shuffle(songList);
     }
 
     public List<Song> getSongs() {
-        return playList;
+        return songList;
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        Iterator<Song> iterator = playList.iterator();
+        final StringBuilder stringBuilder = new StringBuilder();
+        final Iterator<Song> iterator = songList.iterator();
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next().toString());
             if (iterator.hasNext()) {
-                stringBuilder.append("\n");
+                stringBuilder.append('\n');
             }
         }
         return stringBuilder.toString();

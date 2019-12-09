@@ -33,44 +33,44 @@ public class PlaylistController {
     public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
         this.playlist = playlist;
         this.radio = radio;
-        this.coloring = (column -> new TableCell<>() {
+        this.coloring = column -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(final String item, final boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? "" : getItem());
                 setGraphic(null);
-                TableRow<TableEntry> currentRow = getTableRow();
+                final TableRow<TableEntry> currentRow = getTableRow();
                 if (currentRow != null && currentRow.getItem() != null) {
-                    Song song = radio.getSong();
-                    if (song != null && currentRow.getItem().getSong().equals(song)) {
+                    final Song song = radio.getSong();
+                    if (currentRow.getItem().getSong().equals(song)) {
                         setStyle(COLORING_GREEN);
                         return;
                     }
                 }
                 setStyle(COLORING_WHITE);
             }
-        });
+        };
 
-        this.voting = (column -> {
+        this.voting = column -> {
             try {
                 return new TableCell<>() {
                     final FXMLLoader fxmlLoader =
-                        new FXMLLoader(getClass().getClassLoader().getResource("view/cellVote.fxml"));
+                        new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("view/cellVote.fxml"));
                     final Button voting = fxmlLoader.load();
 
                     @Override
-                    public void updateItem(String item, boolean empty) {
+                    public void updateItem(final String item, final boolean empty) {
                         super.updateItem(item, empty);
                         setText(empty ? "" : getItem());
                         setGraphic(null);
-                        TableRow<TableEntry> currentRow = getTableRow();
+                        final TableRow<TableEntry> currentRow = getTableRow();
                         if (currentRow != null && currentRow.getItem() != null) {
-                            Song song = radio.getSong();
+                            final Song song = radio.getSong();
                             voting.setOnAction(event -> {
                                 radio.vote(currentRow.getItem().getSong());
                             });
                             setGraphic(voting);
-                            if (song != null && currentRow.getItem().getSong().equals(song)) {
+                            if (currentRow.getItem().getSong().equals(song)) {
                                 setStyle(COLORING_GREEN);
                                 return;
                             }
@@ -82,8 +82,7 @@ public class PlaylistController {
                 e.printStackTrace();
                 return new TableCell<>();
             }
-        });
-
+        };
         initTable();
     }
 
@@ -95,14 +94,14 @@ public class PlaylistController {
         initColumn("Votes", voting);
 
         // Filling table with playlist songs
-        setItems();
+        refreshItems();
 
     }
 
     /**
      * Setting updated playlist from radio as table content.
      */
-    public void setItems() {
+    public void refreshItems() {
         playlist.setItems(FXCollections.observableList(radio.getPlaylist().getSongs()
             .stream()
             .map(TableEntry::new)
@@ -110,9 +109,9 @@ public class PlaylistController {
         );
     }
 
-    private void initColumn(String column,
-                            Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> callback) {
-        TableColumn<TableEntry, String> tableColumn = new TableColumn<>(column);
+    private void initColumn(final String column,
+                            final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> callback) {
+        final TableColumn<TableEntry, String> tableColumn = new TableColumn<>(column);
         tableColumn.setCellValueFactory(new PropertyValueFactory<>(column));
         tableColumn.setCellFactory(callback);
         tableColumn.setSortable(false);
@@ -121,7 +120,7 @@ public class PlaylistController {
     }
 
     public void updatePlaylist() {
-        setItems();
+        refreshItems();
     }
 
     /**
@@ -131,7 +130,7 @@ public class PlaylistController {
 
         private Song song;
 
-        private TableEntry(Song song) {
+        private TableEntry(final Song song) {
             this.song = song;
         }
 

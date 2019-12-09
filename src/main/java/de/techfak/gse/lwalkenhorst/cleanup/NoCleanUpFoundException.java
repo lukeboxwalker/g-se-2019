@@ -7,7 +7,7 @@ public class NoCleanUpFoundException extends Exception {
 
     static final long serialVersionUID = 42L;
 
-    public NoCleanUpFoundException(String message) {
+    public NoCleanUpFoundException(final String message) {
         super(message);
     }
 }

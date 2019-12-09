@@ -50,7 +50,7 @@ public class RadioController implements PropertyChangeListener {
      * @param radio    the model the view is observing
      * @param advanced to decide if control buttons are loaded
      */
-    public void load(RadioModel radio, boolean advanced) throws IOException {
+    public void load(final RadioModel radio, final boolean advanced) throws IOException {
         radio.addPropertyChangeListener(this);
         this.playlistController = new PlaylistController(playlist, radio);
         this.songController = new SongController(songLabel, image, timeLine, radio);
@@ -68,7 +68,7 @@ public class RadioController implements PropertyChangeListener {
      *
      * @param radio to perform action on.
      */
-    public void loadControls(RadioModel radio) {
+    public void loadControls(final RadioModel radio) {
         skip.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.FORWARD));
         back.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.BACKWARD));
         play.setOnAction(e -> {
@@ -82,11 +82,11 @@ public class RadioController implements PropertyChangeListener {
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+    public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
             switch (propertyChangeEvent.getPropertyName()) {
                 case MusicPlayer.SONG_UPDATE:
-                    Property<Song> songProperty = castProperty(propertyChangeEvent, Song.class);
+                    final Property<Song> songProperty = castProperty(propertyChangeEvent, Song.class);
                     playlistController.updatePlaylist();
                     songController.updateSong(songProperty);
                     break;
@@ -94,7 +94,7 @@ public class RadioController implements PropertyChangeListener {
                     playlistController.updatePlaylist();
                     break;
                 case MusicPlayer.TIME_UPDATE:
-                    Property<Float> floatProperty = castProperty(propertyChangeEvent, Float.class);
+                    final Property<Float> floatProperty = castProperty(propertyChangeEvent, Float.class);
                     songController.updateTime(floatProperty);
                     break;
                 default:
@@ -113,7 +113,7 @@ public class RadioController implements PropertyChangeListener {
         private T oldValue;
         private T newValue;
 
-        private Property(T oldValue, T newValue) {
+        private Property(final T oldValue, final T newValue) {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
@@ -128,7 +128,7 @@ public class RadioController implements PropertyChangeListener {
 
     }
 
-    private <T> Property<T> castProperty(PropertyChangeEvent propertyChangeEvent, Class<T> clazz) {
+    private <T> Property<T> castProperty(final PropertyChangeEvent propertyChangeEvent, final Class<T> clazz) {
         return new Property<>(clazz.cast(propertyChangeEvent.getOldValue()),
             clazz.cast(propertyChangeEvent.getNewValue()));
     }

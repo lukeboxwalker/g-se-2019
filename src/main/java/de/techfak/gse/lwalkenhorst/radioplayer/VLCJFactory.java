@@ -28,7 +28,7 @@ public class VLCJFactory implements AutoCloseable {
      * @return new MediaPlayerFactory object
      */
     public MediaPlayerFactory newMediaPlayerFactory() {
-        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+        final MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
         cleaners.add(0, mediaPlayerFactory::release);
         return mediaPlayerFactory;
     }
@@ -40,8 +40,8 @@ public class VLCJFactory implements AutoCloseable {
      * @param factory to create new mediaPlayer
      * @return new MediaPlayer object
      */
-    public MediaPlayer newMediaPlayer(MediaPlayerFactory factory) {
-        MediaPlayer mediaPlayer = factory.mediaPlayers().newMediaPlayer();
+    public MediaPlayer newMediaPlayer(final MediaPlayerFactory factory) {
+        final MediaPlayer mediaPlayer = factory.mediaPlayers().newMediaPlayer();
         cleaners.add(0, () -> {
             mediaPlayer.controls().stop();
             mediaPlayer.release();
