@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst;
 
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
@@ -22,9 +23,25 @@ public final class GSERadio {
     private GSERadio() {
     }
 
-    private void start(final String directoryPath, boolean guiMode) {
+    /**
+     * Starts the program with given arguments.
+     *
+     * @param args the parameters the program is started with,
+     *             e.g. the directory name
+     */
+    public static void main(final String... args) {
+        final String systemPath = System.getProperty("user.dir");
+        final String directory;
+        final boolean guiMode;
+        if (args.length >= 1 && GUI_ARGS.contains(args[0])) {
+            directory = args.length >= 2 ? args[1] : systemPath;
+            guiMode = true;
+        } else {
+            directory = args.length >= 1 ? args[0] : systemPath;
+            guiMode = false;
+        }
         try {
-            PlaylistFactory factory = new PlaylistFactory(directoryPath);
+            PlaylistFactory factory = new PlaylistFactory(directory);
             Playlist playlist = factory.newPlaylist();
             playlist.shuffle();
 
@@ -34,29 +51,14 @@ public final class GSERadio {
             if (guiMode) {
                 GuiApplication.start(musicPlayer, "-a");
             } else {
-                Terminal.start(musicPlayer);
+                Terminal terminal = new Terminal(musicPlayer);
+                terminal.listenForInstructions();
             }
-
-
         } catch (NoMusicFileFoundException e) {
             System.err.println(e.getMessage());
             System.exit(e.getExitCode());
-        }
-    }
-
-    /**
-     * Starts the program with given arguments.
-     *
-     * @param args the parameters the program is started with,
-     *             e.g. the directory name
-     */
-    public static void main(final String... args) {
-        GSERadio radio = new GSERadio();
-        final String systemPath = System.getProperty("user.dir");
-        if (args.length >= 1 && GUI_ARGS.contains(args[0])) {
-            radio.start(args.length >= 2 ? args[1] : systemPath, true);
-        } else {
-            radio.start(args.length >= 1 ? args[0] : systemPath, false);
+        } finally {
+            CleanUpDemon.getInstance().cleanup();
         }
     }
 }

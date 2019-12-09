@@ -24,6 +24,7 @@ public class PlaylistFactory {
 
     private static final Pattern URL_QUICK_MATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
     private static final String FALLBACK_URL = "file:src/main/resources/view/fallback.png";
+    private static final String EXCEPTION_MESSAGE = "No mp3-files found in directory ";
 
     private String directoryName;
 
@@ -46,7 +47,7 @@ public class PlaylistFactory {
     private File[] searchForMp3Files(final File directory) throws NoMusicFileFoundException {
         File[] musicFiles = directory.listFiles((file, filename) -> filename.endsWith(".mp3"));
         if (musicFiles == null || musicFiles.length == 0) {
-            throw new NoMusicFileFoundException("No mp3-files found in directory " + directory.getAbsolutePath());
+            throw new NoMusicFileFoundException(EXCEPTION_MESSAGE + directory.getAbsolutePath());
         } else {
             return musicFiles;
         }
@@ -60,9 +61,10 @@ public class PlaylistFactory {
      */
     public Playlist newPlaylist() throws NoMusicFileFoundException {
         List<Song> songs = new ArrayList<>();
+        File dir = new File(directoryName);
         try (VLCJFactory factory = new VLCJFactory()) {
             MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
-            for (File file : searchForMp3Files(new File(directoryName))) {
+            for (File file : searchForMp3Files(dir)) {
                 try {
                     songs.add(newSong(file, mediaPlayerFactory));
                 } catch (FileNotLoadableException e) {
@@ -71,6 +73,9 @@ public class PlaylistFactory {
             }
         } catch (NoCleanUpFoundException e) {
             e.printStackTrace();
+        }
+        if (songs.isEmpty()) {
+            throw new NoMusicFileFoundException(EXCEPTION_MESSAGE + dir.getAbsolutePath());
         }
         return new Playlist(songs);
     }

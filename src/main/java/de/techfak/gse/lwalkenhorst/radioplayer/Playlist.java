@@ -16,7 +16,7 @@ public class Playlist {
      * @param songs the playlist consist of.
      */
     public Playlist(List<Song> songs) {
-        this.playList = Collections.synchronizedList(songs);
+        this.playList = songs;
     }
 
     public void shuffle() {

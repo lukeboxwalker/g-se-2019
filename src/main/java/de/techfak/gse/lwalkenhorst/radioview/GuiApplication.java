@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -17,8 +18,6 @@ import java.util.List;
  * Prepares the stage and loads the Controller specified in the fxml
  */
 public class GuiApplication extends Application {
-
-    private static final int EXIT_CODE = 1;
     private static RadioModel radio;
     private static boolean advanced = false;
     private static final List<String> ADVANCED_MODE = Arrays.asList("-a", "--advanced");
@@ -38,18 +37,12 @@ public class GuiApplication extends Application {
         stage.show();
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        System.exit(EXIT_CODE);
-    }
-
     /**
      * Starting the Gui.
      * Use arguments -a or --advanced to have control buttons in Gui
      *
      * @param radioPlayer the radio model
-     * @param args the arguments.
+     * @param args        the arguments.
      */
     public static void start(final RadioModel radioPlayer, final String... args) {
         radio = radioPlayer;
@@ -60,6 +53,7 @@ public class GuiApplication extends Application {
         }
         GuiApplication.main(param);
     }
+
     public static void main(final String... args) {
         launch(args);
     }

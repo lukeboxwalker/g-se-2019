@@ -2,6 +2,7 @@ package de.techfak.gse.lwalkenhorst.cleanup;
 
 import java.util.HashMap;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -51,6 +52,19 @@ public final class CleanUpDemon {
                 unregister(reference);
             } else {
                 throw new NoCleanUpFoundException("No cleanup registered from given reference object");
+            }
+        }
+    }
+
+    /**
+     * Execute all cleanup operations.
+     */
+    public void cleanup() {
+        synchronized (CLEANERS) {
+            Iterator<Map.Entry<Object, Cleaner>> iterator = CLEANERS.entrySet().iterator();
+            while (iterator.hasNext()) {
+                iterator.next().getValue().clean();
+                iterator.remove();
             }
         }
     }

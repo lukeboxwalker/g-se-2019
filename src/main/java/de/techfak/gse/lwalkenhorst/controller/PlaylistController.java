@@ -30,7 +30,7 @@ public class PlaylistController {
      * @param playlist the tableView
      * @param radio    to get information when notified
      */
-    public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) throws IOException {
+    public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
         this.playlist = playlist;
         this.radio = radio;
         this.coloring = (column -> new TableCell<>() {

@@ -36,17 +36,6 @@ public class Terminal {
     }
 
     /**
-     * Starting the Terminal listener in static context.
-     *
-     * @param radio to get information of current song and playlist.
-     */
-    public static Terminal start(RadioModel radio) {
-        Terminal terminal = new Terminal(radio);
-        terminal.listenForInstructions();
-        return terminal;
-    }
-
-    /**
      * Start listening for console input.
      * Setting running to true and starting listener thread {@link #startListener()}
      */
@@ -63,30 +52,28 @@ public class Terminal {
      * Listener thread can be killed with {@link #kill()}
      */
     private void startListener() {
-        new Thread(() -> {
-            while (running.get()) {
-                try {
-                    String cmd = requestInput();
-                    if (cmd != null) {
-                        switch (cmd) {
-                            case SONG:
-                                printSongInfo(radio.getSong());
-                                break;
-                            case PLAYLIST:
-                                printPlaylistInfo(radio.getPlaylist());
-                                break;
-                            case EXIT:
-                                System.exit(EXIT_CODE);
-                                break;
-                            default:
-                                printCMDUsage();
-                        }
+        while (running.get()) {
+            try {
+                String cmd = requestInput();
+                if (cmd != null) {
+                    switch (cmd) {
+                        case SONG:
+                            printSongInfo(radio.getSong());
+                            break;
+                        case PLAYLIST:
+                            printPlaylistInfo(radio.getPlaylist());
+                            break;
+                        case EXIT:
+                            this.kill();
+                            break;
+                        default:
+                            printCMDUsage();
                     }
-                } catch (IOException e) {
-                    this.kill();
                 }
+            } catch (IOException e) {
+                this.kill();
             }
-        }).start();
+        }
     }
 
     /**
