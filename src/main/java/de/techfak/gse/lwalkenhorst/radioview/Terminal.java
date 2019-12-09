@@ -23,7 +23,6 @@ public class Terminal {
     private static final String SHUFFLE = "shuffle";
     private static final String SKIP = "skip";
 
-    private static final int EXIT_CODE = 1;
     private static final int BUFFER_WAIT = 200;
 
     private final RadioModel radio;
@@ -49,7 +48,7 @@ public class Terminal {
     /**
      * Start listens to listen for incoming commands.
      * Using {@link #requestInput()} to read next input line.
-     * Listener thread can be killed with {@link #kill()}
+     * Listener can be killed with {@link #kill()}
      */
     private void startListener() {
         while (running.get()) {

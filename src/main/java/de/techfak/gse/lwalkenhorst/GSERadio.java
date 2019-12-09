@@ -25,9 +25,10 @@ public final class GSERadio {
 
     /**
      * Starts the program with given arguments.
+     * Can start with given directory to read mp3 files from.
+     * Can start with -g, --gui to start gui mode
      *
-     * @param args the parameters the program is started with,
-     *             e.g. the directory name
+     * @param args the parameters the program is started with.
      */
     public static void main(final String... args) {
         final String systemPath = System.getProperty("user.dir");
@@ -49,7 +50,7 @@ public final class GSERadio {
             musicPlayer.play();
 
             if (guiMode) {
-                GuiApplication.start(musicPlayer, "-a");
+                GuiApplication.start(musicPlayer);
             } else {
                 Terminal terminal = new Terminal(musicPlayer);
                 terminal.listenForInstructions();

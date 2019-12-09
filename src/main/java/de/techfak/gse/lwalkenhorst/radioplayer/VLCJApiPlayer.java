@@ -2,10 +2,7 @@ package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 
 /**
  * Centralize the vlcj library usage.
@@ -45,26 +42,8 @@ public abstract class VLCJApiPlayer {
         mediaPlayer.controls().play();
     }
 
-    /**
-     * Adds a song-finish event listener.
-     * Adds a MediaPlayerEvent to the media player to listen for finished songs.
-     * Performs actions described in consumer.
-     *
-     * @param songFinished to represent the content of the overridden finished method.
-     * @param timeChanged  to represent the content when song moved on playing.
-     */
-    protected void onEventCall(Consumer<MediaPlayer> songFinished, BiConsumer<MediaPlayer, Float> timeChanged) {
-        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-            @Override
-            public void positionChanged(MediaPlayer mediaPlayer, float newTime) {
-                timeChanged.accept(mediaPlayer, newTime);
-            }
-
-            @Override
-            public void finished(final MediaPlayer mediaPlayer) {
-                songFinished.accept(mediaPlayer);
-            }
-        });
+    protected void registerEventListener(MediaPlayerEventListener eventListener) {
+        mediaPlayer.events().addMediaPlayerEventListener(eventListener);
     }
 
     /**

@@ -1,5 +1,8 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.FinishedEventAdapter;
+import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
@@ -10,20 +13,6 @@ import java.util.function.Consumer;
  */
 public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
-    /**
-     * Current song that is playing.
-     * Represents the song and the corresponding index in the playlist
-     */
-    private static final class SongEntry {
-        private Song song;
-        private int index;
-
-        private SongEntry(Song song, int index) {
-            this.song = song;
-            this.index = index;
-        }
-    }
-
     public static final String VOTE_UPDATE = "voteUpdate";
     public static final String SONG_UPDATE = "songUpdate";
     public static final String TIME_UPDATE = "timeUpdate";
@@ -31,8 +20,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     private VotingManager votingManager;
     private PropertyChangeSupport support;
     private Playlist playlist;
-    private SongEntry current;
-    private boolean repeat;
 
     private Song currentSong;
 
@@ -45,7 +32,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     public MusicPlayer(Playlist playlist) {
         super();
         this.support = new PropertyChangeSupport(this);
-        this.repeat = true;
         loadPlaylist(playlist);
     }
 
@@ -76,14 +62,15 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     /**
      * Plays the loaded playlist.
-     * When a song finishes, the next song from the Playlist
-     * will start playing.
+     * When a song finishes, the next song from the Playlist will start playing.
      */
     @Override
     public void play() {
         this.playNextSong();
-        this.onEventCall(mediaPlayer -> playNextSong(),
-            (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime));
+        this.registerEventListener(new FinishedEventAdapter(mediaPlayer -> playNextSong()));
+        this.registerEventListener(new TimeChangedEventAdapter(
+            (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime))
+        );
     }
 
     /**
@@ -102,7 +89,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     /**
      * Vote for a given song.
-     * Sets the current index to 0 to start from the highest voted songs
      *
      * @param song to vote for
      */
@@ -126,12 +112,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
         return votingManager.getVotes(song);
     }
 
-    /**
-     * Getting the current song from the playlist.
-     * Is synchronized to enable thread safe operations form other methods.
-     *
-     * @return the current song.
-     */
+
     @Override
     public Song getSong() {
         return currentSong;

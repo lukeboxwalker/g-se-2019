@@ -55,9 +55,11 @@ public class PlaylistFactory {
 
     /**
      * Creates a new Playlist object.
+     * Using factory method {@link #newSong(File, MediaPlayerFactory)} to create songs.
+     * Inits a MediaPlayerFactory to read Metadata
      *
-     * @return the list of songs in the directory
-     * @throws NoMusicFileFoundException when the directory is empty or doesn't exist
+     * @return a new Playlist
+     * @throws NoMusicFileFoundException when playlist is empty
      */
     public Playlist newPlaylist() throws NoMusicFileFoundException {
         List<Song> songs = new ArrayList<>();
