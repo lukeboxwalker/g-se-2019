@@ -54,8 +54,9 @@ public class PlaylistController {
         this.voting = column -> {
             try {
                 return new TableCell<>() {
-                    final FXMLLoader fxmlLoader =
-                        new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("view/cellVote.fxml"));
+                    final FXMLLoader fxmlLoader = new FXMLLoader(
+                            Thread.currentThread().getContextClassLoader().getResource("view/cellVote.fxml")
+                        );
                     final Button voting = fxmlLoader.load();
 
                     @Override
