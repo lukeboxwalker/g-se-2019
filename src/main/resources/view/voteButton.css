@@ -1,15 +1,8 @@
 .button {
-  -fx-background-color: transparent;
-  -fx-background-image: url('vote.png');
-  -fx-background-size: 2em, 2em;
-  -fx-background-repeat: no-repeat;
-  -fx-background-position: center;
+  -fx-background-color: white;
+  -fx-shape:  "M 400 400 L 300 450 L 500 450 L 400 400 ";
 }
 
 .button:pressed {
-  -fx-background-color: transparent;
-  -fx-background-image: url('votePressed.png');
-  -fx-background-size: 2em, 2em;
-  -fx-background-repeat: no-repeat;
-  -fx-background-position: center;
+  -fx-background-color: lightgreen;
 }

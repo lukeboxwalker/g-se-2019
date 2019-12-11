@@ -3,4 +3,4 @@
 <?import javafx.scene.control.Button?>
 
 
-<Button fx:id="vote" mnemonicParsing="false" style="-fx-background-color: transparent;" stylesheets="@voteButton.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" />
+<Button fx:id="vote" mnemonicParsing="false" prefHeight="0.0" prefWidth="16.0" scaleX="0.9" scaleY="0.4" stylesheets="@voteButton.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" />
