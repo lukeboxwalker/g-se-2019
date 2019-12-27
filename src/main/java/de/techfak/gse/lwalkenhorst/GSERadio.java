@@ -50,7 +50,7 @@ public final class GSERadio {
             musicPlayer.play();
 
             if (guiMode) {
-                GuiApplication.start(musicPlayer);
+                GuiApplication.start(musicPlayer, "-a");
             } else {
                 final Terminal terminal = new Terminal(musicPlayer);
                 terminal.listenForInstructions();

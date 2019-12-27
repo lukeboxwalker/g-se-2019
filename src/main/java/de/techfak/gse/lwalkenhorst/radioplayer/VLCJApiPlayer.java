@@ -25,7 +25,7 @@ public abstract class VLCJApiPlayer {
     public abstract void play();
 
     public void playSong(final Song song) {
-        mediaPlayer.submit(() -> mediaPlayer.media().play(song.getAbsolutePath()));
+        mediaPlayer.submit(() -> mediaPlayer.media().play(song.getFilePath()));
     }
 
     public void skipSong(final Skip skip) {

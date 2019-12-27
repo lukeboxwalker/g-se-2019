@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -136,7 +137,15 @@ public class PlaylistFactory {
         final long duration = media.info().duration();
 
         media.release();
-        final Song song = new Song(file, title, artist, album, genre, artWorldURL, duration);
+        final Song song = new Song();
+        song.setFilePath(file.getAbsolutePath());
+        song.setTitle(title);
+        song.setArtist(artist);
+        song.setAlbum(album);
+        song.setGenre(genre);
+        song.setArtWorkURL(artWorldURL);
+        song.setDurationMillis(duration);
+
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;
