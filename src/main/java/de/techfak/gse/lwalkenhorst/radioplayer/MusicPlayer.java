@@ -1,7 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
-import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.FinishedEventAdapter;
 import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
 
@@ -53,11 +51,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                 }
                 support.firePropertyChange(SONG_UPDATE, oldSong, currentSong);
                 playSong(currentSong);
-            }
-            try {
-                System.out.println(new JSONParser<>(Song.class).toJSON(currentSong));
-            } catch (SerialisationException e) {
-                e.printStackTrace();
             }
         }
     }

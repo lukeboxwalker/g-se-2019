@@ -1,5 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.*;
 
 /**
@@ -8,23 +10,28 @@ import java.util.*;
  */
 public class Playlist {
 
+    private static final int LIST_BOUNDARY = 100;
     private List<Song> songList;
-
-    /**
-     * Creates a new Playlist from given songs.
-     *
-     * @param songs the playlist consist of.
-     */
-    public Playlist(final List<Song> songs) {
-        this.songList = Collections.synchronizedList(songs);
-    }
 
     public void shuffle() {
         Collections.shuffle(songList);
     }
 
+    @JsonIgnore
     public List<Song> getSongs() {
         return songList;
+    }
+
+    public List<Song> getSongList() {
+        if (songList.size() > LIST_BOUNDARY) {
+            return songList.subList(0, LIST_BOUNDARY);
+        } else {
+            return songList;
+        }
+    }
+
+    public void setSongList(List<Song> songs) {
+        this.songList = Collections.synchronizedList(songs);
     }
 
     @Override

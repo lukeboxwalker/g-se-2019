@@ -80,7 +80,9 @@ public class PlaylistFactory {
         if (songs.isEmpty()) {
             throw new NoMusicFileFoundException(EXCEPTION_MESSAGE + dir.getAbsolutePath());
         }
-        return new Playlist(songs);
+        Playlist playlist = new Playlist();
+        playlist.setSongList(songs);
+        return playlist;
     }
 
     /**
