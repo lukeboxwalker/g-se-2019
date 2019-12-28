@@ -1,6 +1,9 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+
+import java.util.regex.Matcher;
 
 public class CommandLineAdapter implements ICommandLine {
 
@@ -21,12 +24,22 @@ public class CommandLineAdapter implements ICommandLine {
     }
 
     @Override
-    public boolean hasOption(String opt) {
-       return commandLine.hasOption(opt);
+    public boolean hasOption(IOption option) {
+       return commandLine.hasOption(option.getName());
     }
 
     @Override
-    public String getOptionArg(String opt) {
-        return commandLine.getOptionValue(opt);
+    public String getParsedOptionArg(IOption option) throws ParseException {
+        return parse(option, commandLine.getOptionValue(option.getName()));
+    }
+
+    private String parse(final IOption option, final String arg) throws ParseException {
+        PatternHolder patternHolder = option.getPatternHolder();
+        Matcher matcher = patternHolder.getFilterPattern().matcher(arg);
+        if (patternHolder.getParsePattern().matcher(arg).matches() && matcher.find()) {
+            return matcher.group();
+        } else {
+            throw new ParseException("Could not parse argument");
+        }
     }
 }
