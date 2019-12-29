@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VotingManager {
 
-    private HashMap<Song, AtomicInteger> songMap = new HashMap<>();
+    private HashMap<String, AtomicInteger> songMap = new HashMap<>();
     private final Playlist playlist;
 
     /**
@@ -22,7 +22,7 @@ public class VotingManager {
         this.playlist = playlist;
         this.playlist.getSongs().forEach(song -> {
             final AtomicInteger voting = new AtomicInteger(0);
-            songMap.put(song, voting);
+            songMap.put(song.getUuid(), voting);
         });
     }
 
@@ -35,12 +35,12 @@ public class VotingManager {
      */
     public void vote(final Song song) {
         synchronized (this) {
-            if (songMap.containsKey(song)) {
+            if (songMap.containsKey(song.getUuid())) {
                 final List<Song> songs = playlist.getSongs();
                 final Song first = songs.remove(0);
-                final AtomicInteger voting = songMap.get(song);
+                final AtomicInteger voting = songMap.get(song.getUuid());
                 voting.incrementAndGet();
-                songs.sort((song1, song2) -> Integer.compare(songMap.get(song2).get(), songMap.get(song1).get()));
+                songs.sort((song1, song2) -> Integer.compare(songMap.get(song2.getUuid()).get(), songMap.get(song1.getUuid()).get()));
                 songs.add(0, first);
             }
         }
@@ -53,8 +53,8 @@ public class VotingManager {
      */
     public void resetVotes(final Song song) {
         synchronized (this) {
-            if (song != null && songMap.containsKey(song)) {
-                songMap.get(song).set(0);
+            if (song != null && songMap.containsKey(song.getUuid())) {
+                songMap.get(song.getUuid()).set(0);
             }
         }
     }
@@ -67,8 +67,18 @@ public class VotingManager {
      */
     public int getVotes(final Song song) {
         synchronized (this) {
-            if (song != null && songMap.containsKey(song)) {
-                return songMap.get(song).get();
+            if (song != null && songMap.containsKey(song.getUuid())) {
+                return songMap.get(song.getUuid()).get();
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public int getVotes(final String songUUID) {
+        synchronized (this) {
+            if (songUUID != null && songMap.containsKey(songUUID)) {
+                return songMap.get(songUUID).get();
             } else {
                 return 0;
             }

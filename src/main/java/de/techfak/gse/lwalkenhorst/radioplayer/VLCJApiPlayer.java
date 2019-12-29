@@ -4,14 +4,22 @@ import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 /**
  * Centralize the vlcj library usage.
  * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
  */
 public abstract class VLCJApiPlayer {
 
+    public static final String VOTE_UPDATE = "voteUpdate";
+    public static final String SONG_UPDATE = "songUpdate";
+    public static final String TIME_UPDATE = "timeUpdate";
+
     private MediaPlayer mediaPlayer;
     private IPlayAble playAble;
+    private PropertyChangeSupport support;
 
     /**
      * Initialize the VLCJApiPlayer.
@@ -21,6 +29,7 @@ public abstract class VLCJApiPlayer {
         final VLCJFactory factory = new VLCJFactory();
         final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
         this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
+        this.support = new PropertyChangeSupport(this);
         this.playAble = playAble;
     }
 
@@ -56,5 +65,17 @@ public abstract class VLCJApiPlayer {
             this.positionSkip = positionSkip;
         }
 
+    }
+
+    public void addPropertyChangeListener(final PropertyChangeListener observer) {
+        support.addPropertyChangeListener(observer);
+    }
+
+    public void removePropertyChangeListener(final PropertyChangeListener observer) {
+        support.removePropertyChangeListener(observer);
+    }
+
+    protected PropertyChangeSupport getSupport() {
+        return support;
     }
 }

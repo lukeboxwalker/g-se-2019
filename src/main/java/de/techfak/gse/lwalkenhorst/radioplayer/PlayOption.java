@@ -3,8 +3,6 @@ package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.function.Function;
 
 public class PlayOption implements IPlayAble {
@@ -27,7 +25,6 @@ public class PlayOption implements IPlayAble {
         } else if (!hasFunction && hasOption) {
             return () -> mediaPlayer.media().play(option[0]);
         } else if (hasFunction) {
-            System.out.println(song.getFilePath() + " " + Arrays.toString(option));
             return () -> mediaPlayer.media().play(function.apply(song), option);
         } else {
             return () -> {

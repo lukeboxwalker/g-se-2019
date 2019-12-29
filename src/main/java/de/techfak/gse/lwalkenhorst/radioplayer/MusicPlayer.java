@@ -3,8 +3,6 @@ package de.techfak.gse.lwalkenhorst.radioplayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.FinishedEventAdapter;
 import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -12,15 +10,9 @@ import java.util.function.Consumer;
  * Plays mp3 songs by using the vlcj library.
  */
 public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
-
-    public static final String VOTE_UPDATE = "voteUpdate";
-    public static final String SONG_UPDATE = "songUpdate";
-    public static final String TIME_UPDATE = "timeUpdate";
-
     private VotingManager votingManager;
-    private PropertyChangeSupport support;
-    private Playlist playlist = new Playlist();
 
+    private Playlist playlist = new Playlist();
     private Song currentSong = new Song();
 
     /**
@@ -29,7 +21,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      */
     public MusicPlayer(final IPlayAble playAble) {
         super(playAble);
-        this.support = new PropertyChangeSupport(this);
         this.votingManager = new VotingManager(this.playlist);
     }
 
@@ -46,7 +37,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     currentSong = songs.get(0);
                     votingManager.resetVotes(oldSong);
                 }
-                support.firePropertyChange(SONG_UPDATE, oldSong, currentSong);
+                getSupport().firePropertyChange(SONG_UPDATE, oldSong, currentSong);
                 playSong(currentSong);
             }
         }
@@ -54,6 +45,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     public void setPlaylist(Playlist playlist) {
         this.playlist = playlist;
+        this.votingManager = new VotingManager(this.playlist);
     }
 
     /**
@@ -67,7 +59,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
             this.playNextSong();
             this.registerEventListener(new FinishedEventAdapter(mediaPlayer -> playNextSong()));
             this.registerEventListener(new TimeChangedEventAdapter(
-                (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime))
+                (mediaPlayer, newTime) -> getSupport().firePropertyChange(TIME_UPDATE, 0.0f, newTime))
             );
         }
     }
@@ -98,7 +90,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
             if (!song.equals(currentSong)) {
                 votingManager.vote(song);
                 final int currentVotes = votingManager.getVotes(song);
-                support.firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
+                getSupport().firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
             }
         }
     }
@@ -114,6 +106,9 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
         return votingManager.getVotes(song);
     }
 
+    public VotingManager getVotingManager() {
+        return votingManager;
+    }
 
     @Override
     public Song getSong() {
@@ -124,16 +119,5 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
     public Playlist getPlaylist() {
         return playlist;
     }
-
-    @Override
-    public void addPropertyChangeListener(final PropertyChangeListener observer) {
-        support.addPropertyChangeListener(observer);
-    }
-
-    @Override
-    public void removePropertyChangeListener(final PropertyChangeListener observer) {
-        support.removePropertyChangeListener(observer);
-    }
-
 
 }

@@ -21,7 +21,7 @@ import java.io.IOException;
 public final class GSERadio {
 
     private static final String USER_DIR =  System.getProperty("user.dir");
-    private static final String LOCALHOST = "127.0.0.1";
+
 
     private GSERadio() {
     }
@@ -42,14 +42,15 @@ public final class GSERadio {
             if (commandLine.hasOption(argumentParser.getServerOption())) {
                 String port = commandLine.getParsedOptionArg(argumentParser.getServerOption());
 
-                final PlayOption playOption = new PlayOption();
-                playOption.setOption(":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
-                final MusicPlayer radio = load(directory, playOption);
+                //Starting server on given port
+                WebServer server = new WebServer(Integer.parseInt(port));
+                server.start(createPlaylist(directory));
 
-                WebServer server = new WebServer(Integer.parseInt(port), radio);
-                GuiApplication.start(radio, "-a");
+                //Using terminal to interact with music player
+                GuiApplication.start(server.getRadio(), "-a");
 
             } else if (commandLine.hasOption(argumentParser.getGuiOption())) {
+                //Starting in gui mode to interact with music player
                 final MusicPlayer radio = load(directory);
                 GuiApplication.start(radio, "-a");
             } else if (commandLine.hasOption(argumentParser.getClientOption()))  {
@@ -58,21 +59,14 @@ public final class GSERadio {
                 playOption.setOption("rtp://127.0.0.1:9000/");
                 playOption.setFunction(null);
 
-                final MusicPlayer radio = new MusicPlayer(playOption);
-                final WebClient client = new WebClient();
-
-                GuiApplication.start(radio, "-a");
-
-
+                final WebClient client = new WebClient("127.0.0.1", 9000);
+                final StreamPlayer radio = new StreamPlayer(playOption, client);
                 System.out.println("Client startup");
 
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                GuiApplication.start(radio);
 
             } else {
+                //Using terminal to interact with music player
                 final MusicPlayer radio = load(directory);
                 final Terminal terminal = new Terminal(radio);
                 terminal.listenForInstructions();
@@ -91,17 +85,20 @@ public final class GSERadio {
         }
     }
 
-    public static MusicPlayer load(String directory, IPlayAble playAble) throws ExitCodeException {
+    public static Playlist createPlaylist(String directory) throws ExitCodeException {
         final PlaylistFactory factory = new PlaylistFactory(directory);
         final Playlist playlist = factory.newPlaylist();
         playlist.shuffle();
+        return playlist;
+    }
 
+    public static MusicPlayer load(Playlist playlist, IPlayAble playAble) {
         final MusicPlayer musicPlayer = new MusicPlayer(playAble);
         musicPlayer.setPlaylist(playlist);
         return musicPlayer;
     }
 
     public static MusicPlayer load(String directory) throws ExitCodeException {
-        return load(directory, new PlayOption());
+        return load(createPlaylist(directory), new PlayOption());
     }
 }
