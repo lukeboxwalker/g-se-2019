@@ -3,17 +3,15 @@ package de.techfak.gse.lwalkenhorst.jsonparser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JSONParser<T> {
+public class JSONParser {
 
     private ObjectMapper objectMapper;
-    private Class<T> clazz;
 
-    public JSONParser(Class<T> clazz) {
-        this.clazz = clazz;
+    public JSONParser() {
         this.objectMapper = new ObjectMapper().findAndRegisterModules();
     }
 
-    public String toJSON(T object) throws SerialisationException {
+    public String toJSON(Object object) throws SerialisationException {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -21,7 +19,7 @@ public class JSONParser<T> {
         }
     }
 
-    public T parseJSON(String json) throws SerialisationException {
+    public <T> T parseJSON(String json, Class<T> clazz) throws SerialisationException {
         try {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {

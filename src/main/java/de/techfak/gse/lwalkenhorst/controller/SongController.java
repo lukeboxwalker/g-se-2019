@@ -44,7 +44,9 @@ public class SongController {
 
     private void setSong(final Song song) {
         songLabel.setText(song.getTitle() + " - " + song.getArtist());
-        image.setImage(new Image(song.getArtWorkURL()));
+        if (!song.getArtWorkURL().isEmpty()) {
+            image.setImage(new Image(song.getArtWorkURL()));
+        }
     }
 
     public void updateSong(final RadioController.Property<Song> property) {

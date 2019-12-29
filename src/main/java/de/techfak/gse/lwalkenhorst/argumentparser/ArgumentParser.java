@@ -3,7 +3,6 @@ package de.techfak.gse.lwalkenhorst.argumentparser;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import org.apache.commons.cli.*;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ArgumentParser {
@@ -43,16 +42,6 @@ public final class ArgumentParser {
         }
         return new CommandLineAdapter(cmd);
 
-    }
-
-    public String parse(final IOption option, final String arg) throws ParseException {
-        PatternHolder patternHolder = option.getPatternHolder();
-        Matcher matcher = patternHolder.getFilterPattern().matcher(arg);
-        if (patternHolder.getParsePattern().matcher(arg).matches() && matcher.find()) {
-            return matcher.group();
-        } else {
-            throw new ParseException("Could not parse argument");
-        }
     }
 
     public IOption getGuiOption() {

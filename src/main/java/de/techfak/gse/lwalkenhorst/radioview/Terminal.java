@@ -29,6 +29,7 @@ public class Terminal {
     public Terminal(final RadioModel radio) {
         this.radio = radio;
         this.running = new AtomicBoolean(false);
+        radio.start();
     }
 
     /**

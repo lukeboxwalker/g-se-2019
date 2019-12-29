@@ -37,6 +37,8 @@ public class GuiApplication extends Application {
         stage.getIcons().add(new Image("file:src/main/resources/view/icon.png"));
         stage.setScene(scene);
         stage.show();
+
+        radio.start();
     }
 
     /**

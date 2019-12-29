@@ -2,16 +2,16 @@ package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.argumentparser.ArgumentParser;
 import de.techfak.gse.lwalkenhorst.argumentparser.ICommandLine;
-import de.techfak.gse.lwalkenhorst.argumentparser.IOption;
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
-import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
-import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.PlaylistFactory;
+import de.techfak.gse.lwalkenhorst.radioplayer.*;
 import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
+
 import org.apache.commons.cli.ParseException;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+
+import java.io.IOException;
 
 /**
  * The GSERadio program is a music radio.
@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 public final class GSERadio {
 
     private static final String USER_DIR =  System.getProperty("user.dir");
+    private static final String LOCALHOST = "127.0.0.1";
 
     private GSERadio() {
     }
@@ -40,15 +41,40 @@ public final class GSERadio {
 
             if (commandLine.hasOption(argumentParser.getServerOption())) {
                 String port = commandLine.getParsedOptionArg(argumentParser.getServerOption());
-                //TODO Server startup
-                System.out.println("Server startup with port: " + port);
+
+                final PlayOption playOption = new PlayOption();
+                playOption.setOption(":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
+                final MusicPlayer radio = load(directory, playOption);
+
+                WebServer server = new WebServer(Integer.parseInt(port), radio);
+                GuiApplication.start(radio, "-a");
+
             } else if (commandLine.hasOption(argumentParser.getGuiOption())) {
-                GuiApplication.start(start(directory), "-a");
+                final MusicPlayer radio = load(directory);
+                GuiApplication.start(radio, "-a");
             } else if (commandLine.hasOption(argumentParser.getClientOption()))  {
-                //TODO Client startup
+
+                final PlayOption playOption = new PlayOption();
+                playOption.setOption("rtp://127.0.0.1:9000/");
+                playOption.setFunction(null);
+
+                final MusicPlayer radio = new MusicPlayer(playOption);
+                final WebClient client = new WebClient();
+
+                GuiApplication.start(radio, "-a");
+
+
                 System.out.println("Client startup");
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             } else {
-                final Terminal terminal = new Terminal(start(directory));
+                final MusicPlayer radio = load(directory);
+                final Terminal terminal = new Terminal(radio);
                 terminal.listenForInstructions();
             }
         } catch (ExitCodeException e) {
@@ -58,18 +84,24 @@ public final class GSERadio {
         } catch (ParseException e) {
             //Printing help message when argument parsing failed because of wrong arguments.
             argumentParser.printHelp();
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             CleanUpDemon.getInstance().cleanup();
         }
     }
 
-    public static MusicPlayer start(String directory) throws NoMusicFileFoundException {
+    public static MusicPlayer load(String directory, IPlayAble playAble) throws ExitCodeException {
         final PlaylistFactory factory = new PlaylistFactory(directory);
         final Playlist playlist = factory.newPlaylist();
         playlist.shuffle();
 
-        final MusicPlayer musicPlayer = new MusicPlayer(playlist);
-        musicPlayer.play();
+        final MusicPlayer musicPlayer = new MusicPlayer(playAble);
+        musicPlayer.setPlaylist(playlist);
         return musicPlayer;
+    }
+
+    public static MusicPlayer load(String directory) throws ExitCodeException {
+        return load(directory, new PlayOption());
     }
 }

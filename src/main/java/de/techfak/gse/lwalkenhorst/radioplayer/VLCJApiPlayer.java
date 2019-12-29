@@ -11,21 +11,21 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 public abstract class VLCJApiPlayer {
 
     private MediaPlayer mediaPlayer;
+    private IPlayAble playAble;
 
     /**
      * Initialize the VLCJApiPlayer.
      * Responsible for playing music with vlcj library.
      */
-    public VLCJApiPlayer() {
+    public VLCJApiPlayer(IPlayAble playAble) {
         final VLCJFactory factory = new VLCJFactory();
         final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
         this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
+        this.playAble = playAble;
     }
 
-    public abstract void play();
-
     public void playSong(final Song song) {
-        mediaPlayer.submit(() -> mediaPlayer.media().play(song.getFilePath()));
+        mediaPlayer.submit(playAble.play(mediaPlayer, song));
     }
 
     public void skipSong(final Skip skip) {

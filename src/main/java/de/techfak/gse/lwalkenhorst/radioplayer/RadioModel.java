@@ -13,6 +13,7 @@ public interface RadioModel {
     void skipSong(VLCJApiPlayer.Skip skip);
     void pauseSong();
     void resumeSong();
+    void start();
 
     void forEachUpcomingSong(final Consumer<Song> consumer);
 

@@ -19,20 +19,17 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
 
     private VotingManager votingManager;
     private PropertyChangeSupport support;
-    private Playlist playlist;
+    private Playlist playlist = new Playlist();
 
-    private Song currentSong;
+    private Song currentSong = new Song();
 
     /**
      * Creating a new MusicPlayer to play music.
      * Will repeat its playing songs
-     *
-     * @param playlist to play
      */
-    public MusicPlayer(final Playlist playlist) {
-        super();
+    public MusicPlayer(final IPlayAble playAble) {
+        super(playAble);
         this.support = new PropertyChangeSupport(this);
-        this.playlist = playlist;
         this.votingManager = new VotingManager(this.playlist);
     }
 
@@ -55,17 +52,24 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
         }
     }
 
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
     /**
      * Plays the loaded playlist.
      * When a song finishes, the next song from the Playlist will start playing.
      */
     @Override
-    public void play() {
-        this.playNextSong();
-        this.registerEventListener(new FinishedEventAdapter(mediaPlayer -> playNextSong()));
-        this.registerEventListener(new TimeChangedEventAdapter(
-            (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime))
-        );
+    public void start() {
+        if (!playlist.getSongs().isEmpty()) {
+            this.currentSong = null;
+            this.playNextSong();
+            this.registerEventListener(new FinishedEventAdapter(mediaPlayer -> playNextSong()));
+            this.registerEventListener(new TimeChangedEventAdapter(
+                (mediaPlayer, newTime) -> support.firePropertyChange(TIME_UPDATE, 0.0f, newTime))
+            );
+        }
     }
 
     /**

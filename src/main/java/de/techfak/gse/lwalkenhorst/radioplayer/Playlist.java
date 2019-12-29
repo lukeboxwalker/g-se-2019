@@ -11,7 +11,7 @@ import java.util.*;
 public class Playlist {
 
     private static final int LIST_BOUNDARY = 100;
-    private List<Song> songList;
+    private List<Song> songList = new ArrayList<>();
 
     public void shuffle() {
         Collections.shuffle(songList);
