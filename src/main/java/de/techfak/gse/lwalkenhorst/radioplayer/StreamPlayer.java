@@ -23,6 +23,7 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
             @Override
             public void run() {
                 currentSong = client.requestSong();
+                playlist = client.requestPlaylist();
             }
         };
         timer.schedule(timerTask, DELAY_MS, PERIOD_MS);
@@ -35,7 +36,6 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
     @Override
     public Playlist getPlaylist() {
-        playlist = client.requestPlaylist();
         return playlist;
     }
 
