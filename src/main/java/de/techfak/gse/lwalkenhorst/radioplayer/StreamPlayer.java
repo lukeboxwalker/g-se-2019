@@ -2,9 +2,14 @@ package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.WebClient;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Consumer;
 
 public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
+
+    private static final int DELAY_MS = 1000;
+    private static final int PERIOD_MS = 2000;
 
     private WebClient client;
     private Song currentSong = new Song();
@@ -13,11 +18,18 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
     public StreamPlayer(IPlayAble playAble, WebClient client) {
         super(playAble);
         this.client = client;
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                currentSong = client.requestSong();
+            }
+        };
+        timer.schedule(timerTask, DELAY_MS, PERIOD_MS);
     }
 
     @Override
     public Song getSong() {
-        currentSong = client.requestSong();
         return currentSong;
     }
 
