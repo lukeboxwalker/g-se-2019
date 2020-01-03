@@ -1,8 +1,9 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.WebClient;
+import de.techfak.gse.lwalkenhorst.server.NoConnectionException;
+import de.techfak.gse.lwalkenhorst.server.NoValidUrlException;
+import de.techfak.gse.lwalkenhorst.server.WebClient;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,12 +24,8 @@ public class StreamPlayerFactory {
             playOption.setOption(url);
             playOption.setFunction(null);
 
-            try {
-                final WebClient client = new WebClient(serverAddress, Integer.parseInt(port));
-                return new StreamPlayer(playOption, client);
-            } catch (IOException | InterruptedException e) {
-                throw new NoConnectionException("could not connect to given url " + serverAddress + ":" + port);
-            }
+            final WebClient client = new WebClient(serverAddress, Integer.parseInt(port));
+            return new StreamPlayer(playOption, client);
         } else {
             throw new NoValidUrlException("could not parse address: " + serverAddress + " and port: " + port);
         }

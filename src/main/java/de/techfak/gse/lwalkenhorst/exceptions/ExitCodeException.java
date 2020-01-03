@@ -14,6 +14,11 @@ public abstract class ExitCodeException extends Exception {
         this.exitCode = errorCode;
     }
 
+    public ExitCodeException(final String message, final int errorCode, Throwable cause) {
+        super(message, cause);
+        this.exitCode = errorCode;
+    }
+
     @Override
     public String getMessage() {
         return "[ERROR-" + exitCode + "] " + super.getMessage();

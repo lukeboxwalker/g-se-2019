@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst;
+package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
@@ -27,14 +27,18 @@ public class WebServer extends NanoHTTPD {
         this.parser = new JSONParser();
     }
 
-    public void start(Playlist playlist) throws IOException {
+    public void start(Playlist playlist) throws NoConnectionException {
         final PlayOption playOption = new PlayOption();
         playOption.setOption(":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
 
         musicPlayer = new MusicPlayer(playOption);
         musicPlayer.setPlaylist(playlist);
 
-        this.start(SOCKET_READ_TIMEOUT, false);
+        try {
+            this.start(SOCKET_READ_TIMEOUT, false);
+        } catch (IOException e) {
+            throw new NoConnectionException("could not setup server socket on: " + LOCALHOST + ":" + port, e);
+        }
         CleanUpDemon.getInstance().register(this, this::stop);
     }
 

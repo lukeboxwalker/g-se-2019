@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst;
+package de.techfak.gse.lwalkenhorst.server;
 
 
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
@@ -14,18 +14,28 @@ import java.net.http.HttpResponse;
 
 public final class WebClient {
 
+    private static final String SPLITTER = ":";
+    private static final int OK = 200;
+
     private final JSONParser parser;
     private final HttpClient client;
     private final String baseUri;
 
-    public WebClient(String serverAddress, int port) throws IOException, InterruptedException {
+    public WebClient(String serverAddress, int port) throws NoConnectionException {
         this.client = HttpClient.newHttpClient();
         this.parser = new JSONParser();
-        this.baseUri = "http://" + serverAddress + ":" + port;
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).build();
-        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("HTTP-Status: " + response.statusCode() + ", Response: " + response.body());
-
+        this.baseUri = "http://" + serverAddress + SPLITTER + port;
+        final String message = "could not connect to given url " + serverAddress + SPLITTER + port;
+        HttpResponse<String> response;
+        try {
+            final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).build();
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new NoConnectionException(message, e);
+        }
+        if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
+            throw new NoConnectionException(message);
+        }
     }
 
     public Song requestSong() {

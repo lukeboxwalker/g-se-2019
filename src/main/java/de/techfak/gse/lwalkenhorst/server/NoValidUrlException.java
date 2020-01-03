@@ -1,10 +1,10 @@
-package de.techfak.gse.lwalkenhorst.radioplayer;
+package de.techfak.gse.lwalkenhorst.server;
 
-public class NoConnectionException extends Exception {
+public class NoValidUrlException extends Exception {
 
     static final long serialVersionUID = 42L;
 
-    public NoConnectionException(final String message) {
+    public NoValidUrlException(final String message) {
         super(message);
     }
 

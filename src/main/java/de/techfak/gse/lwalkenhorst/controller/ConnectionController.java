@@ -2,6 +2,8 @@ package de.techfak.gse.lwalkenhorst.controller;
 
 
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
+import de.techfak.gse.lwalkenhorst.server.NoConnectionException;
+import de.techfak.gse.lwalkenhorst.server.NoValidUrlException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;

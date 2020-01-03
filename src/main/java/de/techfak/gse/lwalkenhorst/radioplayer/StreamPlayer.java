@@ -1,9 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.WebClient;
+import de.techfak.gse.lwalkenhorst.server.WebClient;
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
-import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
 import java.util.Timer;
 import java.util.TimerTask;

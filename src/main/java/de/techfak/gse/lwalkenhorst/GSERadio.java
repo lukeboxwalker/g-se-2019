@@ -10,9 +10,9 @@ import de.techfak.gse.lwalkenhorst.radioview.ClientApplication;
 import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
+import de.techfak.gse.lwalkenhorst.server.WebServer;
 import org.apache.commons.cli.ParseException;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
@@ -70,8 +70,6 @@ public final class GSERadio {
         } catch (ParseException e) {
             //Printing help message when argument parsing failed because of wrong arguments.
             argumentParser.printHelp();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             CleanUpDemon.getInstance().cleanup();
         }
