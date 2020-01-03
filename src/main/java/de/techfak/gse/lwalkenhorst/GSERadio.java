@@ -5,6 +5,7 @@ import de.techfak.gse.lwalkenhorst.argumentparser.ICommandLine;
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
+import de.techfak.gse.lwalkenhorst.radioview.ClientApplication;
 import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
@@ -39,7 +40,7 @@ public final class GSERadio {
             final ICommandLine commandLine = argumentParser.parse(args);
             final String directory = commandLine.hasArgument() ? commandLine.getArgument() : USER_DIR;
 
-            if (commandLine.hasOption(argumentParser.getServerOption())) {
+            if (commandLine.hasOption(argumentParser.getServerOption())) { //Server
                 String port = commandLine.getParsedOptionArg(argumentParser.getServerOption());
 
                 //Starting server on given port
@@ -49,23 +50,15 @@ public final class GSERadio {
                 //Using terminal to interact with music player
                 GuiApplication.start(server.getRadio(), "-a");
 
-            } else if (commandLine.hasOption(argumentParser.getGuiOption())) {
+            } else if (commandLine.hasOption(argumentParser.getGuiOption())) { //Local GUI
                 //Starting in gui mode to interact with music player
                 final MusicPlayer radio = load(directory);
                 GuiApplication.start(radio, "-a");
-            } else if (commandLine.hasOption(argumentParser.getClientOption()))  {
+            } else if (commandLine.hasOption(argumentParser.getClientOption()))  { //Client
 
-                final PlayOption playOption = new PlayOption();
-                playOption.setOption("rtp://127.0.0.1:9000/");
-                playOption.setFunction(null);
+                ClientApplication.main(args);
 
-                final WebClient client = new WebClient("127.0.0.1", 9000);
-                final StreamPlayer radio = new StreamPlayer(playOption, client);
-                System.out.println("Client startup");
-
-                GuiApplication.start(radio);
-
-            } else {
+            } else { //Local Terminal
                 //Using terminal to interact with music player
                 final MusicPlayer radio = load(directory);
                 final Terminal terminal = new Terminal(radio);

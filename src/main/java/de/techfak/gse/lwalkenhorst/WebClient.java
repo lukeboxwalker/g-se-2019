@@ -18,17 +18,14 @@ public final class WebClient {
     private final HttpClient client;
     private final String baseUri;
 
-    public WebClient(String serverAddress, int port) {
+    public WebClient(String serverAddress, int port) throws IOException, InterruptedException {
         this.client = HttpClient.newHttpClient();
         this.parser = new JSONParser();
         this.baseUri = "http://" + serverAddress + ":" + port;
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).build();
-        try {
-            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("HTTP-Status: " + response.statusCode() + ", Response: " + response.body());
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error getting resource");
-        }
+        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("HTTP-Status: " + response.statusCode() + ", Response: " + response.body());
+
     }
 
     public Song requestSong() {

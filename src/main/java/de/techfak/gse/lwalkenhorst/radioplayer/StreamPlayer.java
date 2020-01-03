@@ -1,6 +1,9 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.WebClient;
+import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
+import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,24 +12,27 @@ import java.util.function.Consumer;
 public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
     private static final int DELAY_MS = 1000;
-    private static final int PERIOD_MS = 2000;
+    private static final int PERIOD_MS = 10000;
 
     private WebClient client;
     private Song currentSong = new Song();
     private Playlist playlist = new Playlist();
+    private TimerTask timerTask;
 
     public StreamPlayer(IPlayAble playAble, WebClient client) {
         super(playAble);
         this.client = client;
         Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
+        this.timerTask = new TimerTask() {
             @Override
             public void run() {
                 currentSong = client.requestSong();
                 playlist = client.requestPlaylist();
+                getSupport().firePropertyChange(SONG_UPDATE, null, currentSong);
             }
         };
         timer.schedule(timerTask, DELAY_MS, PERIOD_MS);
+        CleanUpDemon.getInstance().register(this, timer::cancel);
     }
 
     @Override
@@ -41,7 +47,7 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
     @Override
     public void start() {
-
+        playSong(currentSong);
     }
 
     @Override
@@ -57,6 +63,6 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
     @Override
     public void vote(Song song) {
-
+        timerTask.run();
     }
 }

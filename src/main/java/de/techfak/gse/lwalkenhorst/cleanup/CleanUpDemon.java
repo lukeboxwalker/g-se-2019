@@ -16,7 +16,9 @@ public final class CleanUpDemon {
     private CleanUpDemon() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             synchronized (CLEANERS) {
-                CLEANERS.forEach((ref, cleaner) -> cleaner.clean());
+                CLEANERS.forEach((ref, cleaner) -> {
+                    cleaner.clean();
+                });
             }
         }));
     }

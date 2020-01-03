@@ -7,9 +7,8 @@ import java.util.regex.Pattern;
 
 public final class ArgumentParser {
 
-    private static final String PORT_RANGE = "([0-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}"
-        + "|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-5][0-9]{4}"
-        + "|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$";
+    private static final String PORT_RANGE = "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]"
+        + "{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])";
 
     private final OptionAdapter guiOption;
     private final OptionAdapter clientOption;

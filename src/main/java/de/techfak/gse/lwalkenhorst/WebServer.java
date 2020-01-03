@@ -11,10 +11,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebServer extends NanoHTTPD {
 
@@ -39,7 +36,6 @@ public class WebServer extends NanoHTTPD {
 
         this.start(SOCKET_READ_TIMEOUT, false);
         CleanUpDemon.getInstance().register(this, this::stop);
-        musicPlayer.start();
     }
 
     @Override
