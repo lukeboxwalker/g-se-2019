@@ -5,6 +5,8 @@ import org.apache.commons.cli.ParseException;
 public interface ICommandLine {
     boolean hasArgument();
     String getArgument();
-    boolean hasOption(IOption option);
-    String getParsedOptionArg(IOption option) throws ParseException;
+    String getParsedOptionArg(String opt) throws ParseException;
+
+    IOption getOption(String opt);
+    boolean hasOption(String opt);
 }

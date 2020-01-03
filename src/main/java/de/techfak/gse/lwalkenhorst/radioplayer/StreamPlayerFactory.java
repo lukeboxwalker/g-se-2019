@@ -8,10 +8,11 @@ import java.util.regex.Pattern;
 
 public class StreamPlayerFactory {
 
-    private static final String PORT_RANGE = "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]"
-        + "{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])";
-    private static final String ADDRESS = "(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])"
-        + "\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])|localhost)";
+    private static final String PORT_RANGE = ""
+        + "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])";
+    private static final String ADDRESS = ""
+        + "(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])"
+        + "|localhost)";
     private static final String PROTOCOL = "((rtp)|(http))://";
     private static final String SPLITTER = ":";
 
