@@ -27,10 +27,12 @@ public class Option implements IOption {
         this.requiredArguments = new ArrayList<>();
     }
 
-    private Option(final Builder builder) {
-        this(builder.optionName);
-        this.conflictingOptions = builder.conflictingOptions;
-        this.requiredArguments = builder.requiredArguments;
+    public void setConflictingOptions(List<String> conflictingOptions) {
+        this.conflictingOptions = conflictingOptions;
+    }
+
+    public void setRequiredArguments(List<IArgument> requiredArguments) {
+        this.requiredArguments = requiredArguments;
     }
 
     @Override
@@ -64,50 +66,47 @@ public class Option implements IOption {
     }
 
     public static Builder builder() {
-        return new Builder();
+        return new OptionBuilder();
     }
 
     /**
      * Builder to build an option object.
      * Using fluent interface design to build option
      */
-    public static final class Builder {
-        private List<String> conflictingOptions;
-        private List<IArgument> requiredArguments;
-        private String optionName;
-
-        private Builder() {
-            this.conflictingOptions = new ArrayList<>();
-            this.requiredArguments = new ArrayList<>();
-        }
-
-        public Builder withArgument(IArgument argument) {
-            this.requiredArguments.add(argument);
-            return this;
-        }
-
-        public Builder conflictsOption(String option) {
-            this.conflictingOptions.add(option);
-            return this;
-        }
-
-        public Builder withName(String optionName) {
-            this.optionName = optionName;
-            return this;
-        }
+    public interface Builder {
 
         /**
-         * Building the option.
-         * Checks if required optionName is set
+         * Prepares to add a new argument to the option.
          *
-         * @return new configured option
+         * @param argument to add
+         * @return builder
          */
-        public IOption build() {
-            if (optionName == null || optionName.isEmpty()) {
-                throw new IllegalArgumentException("Option must declare a name");
-            } else {
-                return new Option(this);
-            }
-        }
+        Option.Builder withArgument(IArgument argument);
+
+        /**
+         * Prepares to add a conflicting option.
+         *
+         * @param option that conflicts
+         * @return builder
+         */
+        Option.Builder conflictsOption(String option);
+
+        /**
+         * Prepares the name of the option.
+         * Needs to be set for option to be instantiated
+         *
+         * @param optionName for option
+         * @return builder
+         */
+        Option.Builder withName(String optionName);
+
+        /**
+         * Building the option object.
+         * Using all configurations set during
+         * the building process.
+         *
+         * @return new option
+         */
+        IOption build();
     }
 }

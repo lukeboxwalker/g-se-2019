@@ -18,16 +18,9 @@ public class Argument implements IArgument {
 
     public Argument(final String argumentPrefix) {
         this.argumentPrefix = argumentPrefix;
+        this.isRequired = true;
     }
-
-    private Argument(final Builder builder) {
-        this(builder.argumentName);
-        this.isRequired = builder.isRequired;
-        this.valueSeparator = builder.valueSeparator;
-        this.valuePatternMatcher = builder.valuePatternMatcher;
-        this.defaultValue = builder.defaultValue;
-    }
-
+    
     @Override
     public String getDefaultValue() {
         return defaultValue;
@@ -76,61 +69,65 @@ public class Argument implements IArgument {
     }
 
     public static Builder builder() {
-        return new Builder();
+        return new ArgumentBuilder();
     }
 
     /**
      * Builder to build an argument object.
      * Using fluent interface design to build argument
      */
-    public static final class Builder {
+    public interface Builder {
 
-        private String argumentName;
-        private boolean isRequired;
-        private String valueSeparator;
-        private Pattern valuePatternMatcher;
-        private String defaultValue;
+        /**
+         * Prepares the name of the argument.
+         * Needs to be set for argument to be instantiated
+         *
+         * @param argumentName for argument
+         * @return builder
+         */
+        Argument.Builder withName(String argumentName);
 
-        private Builder() {
-        }
+        /**
+         * Prepares isRequired for argument.
+         * Default is true
+         *
+         * @param isRequired to set
+         * @return builder
+         */
+        Argument.Builder isRequired(boolean isRequired);
 
-        public Builder withName(String argumentName) {
-            this.argumentName = argumentName;
-            return this;
-        }
+        /**
+         * Prepares valueSeparator for argument.
+         * Default is null
+         *
+         * @param separator to set
+         * @return builder
+         */
+        Argument.Builder withValueSeparator(String separator);
 
-        public Builder isRequired(boolean isRequired) {
-            this.isRequired = isRequired;
-            return this;
-        }
+        /**
+         * Prepares valuePatternMatcher for argument.
+         * Default is null
+         *
+         * @param valuePatternMatcher to set
+         * @return builder
+         */
+        Argument.Builder withPatternMatcher(Pattern valuePatternMatcher);
 
-        public Builder withValueSeparator(String separator) {
-            this.valueSeparator = separator;
-            return this;
-        }
-
-        public Builder withPatternMatcher(Pattern valuePatternMatcher) {
-            this.valuePatternMatcher = valuePatternMatcher;
-            return this;
-        }
-
-        public Builder withDefaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
+        /**
+         * Prepares defaultValue for argument.
+         * Default is null
+         *
+         * @param defaultValue to set
+         * @return builder
+         */
+        Argument.Builder withDefaultValue(String defaultValue);
 
         /**
          * Building the argument.
-         * Checks if required argumentName is set
          *
          * @return new configured argument
          */
-        public IArgument build() {
-            if (argumentName == null || argumentName.isEmpty()) {
-                throw new IllegalArgumentException("Argument must declare a name");
-            } else {
-                return new Argument(this);
-            }
-        }
+        IArgument build();
     }
 }
