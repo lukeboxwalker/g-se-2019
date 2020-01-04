@@ -7,6 +7,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
+/**
+ * Plays vljc stream by using the vlcj library.
+ */
 public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
     private static final int DELAY_MS = 1000;
@@ -17,6 +20,13 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
     private Playlist playlist = new Playlist();
     private TimerTask timerTask;
 
+    /**
+     * Creates a new StreamPlayer.
+     * Using client object {@link WebClient} to get
+     * access to current song and playlist
+     *
+     * @param client the webClient
+     */
     public StreamPlayer(WebClient client) {
         super();
         this.client = client;
@@ -52,7 +62,6 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
     public void forEachUpcomingSong(Consumer<Song> consumer) {
         playlist.getSongs().forEach(consumer);
     }
-
 
     @Override
     public int getVotes(Song song) {

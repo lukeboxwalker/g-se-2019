@@ -1,9 +1,13 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Argument that is required by an option.
+ * An Argument as a construct follows an option in a commandline
+ * to specify the options semantics
+ */
 public class Argument implements IArgument {
 
     private final String argumentPrefix;
@@ -75,7 +79,11 @@ public class Argument implements IArgument {
         return new Builder();
     }
 
-    public static class Builder {
+    /**
+     * Builder to build an argument object.
+     * Using fluent interface design to build argument
+     */
+    public static final class Builder {
 
         private String argumentName;
         private boolean isRequired;
@@ -111,6 +119,12 @@ public class Argument implements IArgument {
             return this;
         }
 
+        /**
+         * Building the argument.
+         * Checks if required argumentName is set
+         *
+         * @return new configured argument
+         */
         public IArgument build() {
             if (argumentName == null || argumentName.isEmpty()) {
                 throw new IllegalArgumentException("Argument must declare a name");

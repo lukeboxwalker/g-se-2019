@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * ClientApplication to select server connection.
+ */
 public class ClientApplication extends Application {
 
     private Stage stage;
@@ -47,6 +50,10 @@ public class ClientApplication extends Application {
         launch(args);
     }
 
+    /**
+     * Setting current stage with given Pane.
+     * @param root the pane to set
+     */
     public void setStage(Pane root) {
         final Scene scene = new Scene(root);
         this.stage.setTitle("GSE-Radio");

@@ -3,6 +3,9 @@ package de.techfak.gse.lwalkenhorst.argumentparser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Option that could be used in a commandline.
+ */
 public class Option implements IOption {
 
     private final String optionName;
@@ -10,6 +13,13 @@ public class Option implements IOption {
     private List<String> conflictingOptions;
     private List<IArgument> requiredArguments;
 
+    /**
+     * Creates a new Option with given name.
+     * Option always requires a name to specify its
+     * long name and short name (first letter of long name)
+     *
+     * @param optionName to set name of option
+     */
     public Option(final String optionName) {
         this.optionName = optionName;
         this.shortName = optionName.substring(0, 1);
@@ -57,7 +67,11 @@ public class Option implements IOption {
         return new Builder();
     }
 
-    public static class Builder {
+    /**
+     * Builder to build an option object.
+     * Using fluent interface design to build option
+     */
+    public static final class Builder {
         private List<String> conflictingOptions;
         private List<IArgument> requiredArguments;
         private String optionName;
@@ -82,6 +96,12 @@ public class Option implements IOption {
             return this;
         }
 
+        /**
+         * Building the option.
+         * Checks if required optionName is set
+         *
+         * @return new configured option
+         */
         public IOption build() {
             if (optionName == null || optionName.isEmpty()) {
                 throw new IllegalArgumentException("Option must declare a name");

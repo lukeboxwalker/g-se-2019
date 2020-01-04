@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public final class GSERadio {
 
-    private static final String USER_DIR =  System.getProperty("user.dir");
+    private static final String USER_DIR = System.getProperty("user.dir");
     private static final String SERVER = "server";
     private static final String GUI = "gui";
     private static final String CLIENT = "client";
@@ -35,12 +35,23 @@ public final class GSERadio {
     private GSERadio() {
     }
 
+    /**
+     * Starting the GSERadio application.
+     * Parsing Arguments with {@link ArgumentParser} to determine what the application is used for
+     * Program can start as Server, as Client or as local music application
+     * Arguments:
+     * --server [--streaming=<port>] [--port<port>] to specify server mode
+     * --client to start in client mode
+     * --gui to start with gui otherwise starts in default cli mode
+     *
+     * @param args the program was started with
+     */
     private void start(final String... args) {
         try {
             final ICommandLine commandLine = new ArgumentParser().parse(createOptions(), args);
             final String directory = commandLine.hasArgument() ? commandLine.getArgument() : USER_DIR;
 
-            if (commandLine.hasOption(CLIENT))  { //Client
+            if (commandLine.hasOption(CLIENT)) { //Client
                 ClientApplication.main(args);
             } else {
                 MusicPlayer musicPlayer;
@@ -52,7 +63,7 @@ public final class GSERadio {
                     server.startTSPSocket();
 
                     musicPlayer = load(directory);
-                    musicPlayer.setPlayAble(server.getPlayAble(streaming));
+                    musicPlayer.setPlayBehavior(server.getPlayBehavior(streaming));
                     server.setMusicPlayer(musicPlayer);
                 } else {
                     musicPlayer = load(directory);
@@ -76,6 +87,12 @@ public final class GSERadio {
         }
     }
 
+    /**
+     * Creating cli options.
+     * Building new option arguments to parse arguments with.
+     *
+     * @return list of defined options
+     */
     private List<IOption> createOptions() {
         IOption guiOption = Option.builder().withName(GUI).conflictsOption(CLIENT).build();
         IOption clientOption = Option.builder().withName(CLIENT).conflictsOption(GUI).build();
@@ -96,6 +113,13 @@ public final class GSERadio {
         return options;
     }
 
+    /**
+     * Loading MusicPlayer with given music form directory.
+     *
+     * @param directory with mp3 files
+     * @return musicPlayer with loaded playlist
+     * @throws ExitCodeException when Playlist is empty or directory contains no mp3 files
+     */
     private MusicPlayer load(String directory) throws ExitCodeException {
         final PlaylistFactory factory = new PlaylistFactory(directory);
         final Playlist playlist = factory.newPlaylist();

@@ -6,10 +6,14 @@ import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
 
 import fi.iki.elonen.NanoHTTPD;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * WebServer to setup Rest Server.
+ */
 public class WebServer extends NanoHTTPD {
 
     private static final String LOCALHOST = "127.0.0.1";
@@ -27,19 +31,39 @@ public class WebServer extends NanoHTTPD {
         this.musicPlayer = musicPlayer;
     }
 
-    public IPlayAble getPlayAble(String port) {
-        final PlayOption playOption = new PlayOption();
+    /**
+     * Creates new PlayBehavior for server usage.
+     * Using given port to setup stream play behavior.
+     * If port is null or empty using normal behavior
+     *
+     * @param port the streaming port
+     * @return new PlayBehavior
+     */
+    public IPlayBehavior getPlayBehavior(String port) {
+        IPlayBehavior playBehavior = new NormalPlayBehavior();
         if (port != null && !port.isEmpty()) {
-            playOption.setOption(":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
+            playBehavior = new IPlayBehavior() {
+                @Override
+                public Runnable play(MediaPlayer mediaPlayer, Song song) {
+                    return () -> mediaPlayer.media().play(song.getFilePath(),
+                        ":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
+                }
+            };
         }
-        return playOption;
+        return playBehavior;
     }
 
+    /**
+     * Starting the server.
+     *
+     * @throws NoConnectionException if server could not start socket.
+     */
     public void startTSPSocket() throws NoConnectionException {
         try {
             this.start(SOCKET_READ_TIMEOUT, false);
         } catch (IOException e) {
-            throw new NoConnectionException("could not setup server socket on: " + LOCALHOST + ":" + getListeningPort(), e);
+            throw new NoConnectionException("could not setup server socket on: "
+                + LOCALHOST + ":" + getListeningPort(), e);
         }
         CleanUpDemon.getInstance().register(this, this::stop);
     }
@@ -49,23 +73,25 @@ public class WebServer extends NanoHTTPD {
         try {
             switch (session.getUri()) {
                 case "/current-song":
-                    return newFixedLengthResponse(Response.Status.OK, MIME_TYPE, parser.toJSON(musicPlayer.getSong()));
+                    return newFixedLengthResponse(Response.Status.OK,
+                        MIME_TYPE, parser.toJSON(musicPlayer.getSong()));
                 case "/playlist":
-                    return newFixedLengthResponse(Response.Status.OK, MIME_TYPE, parser.toJSON(musicPlayer.getPlaylist()));
+                    return newFixedLengthResponse(Response.Status.OK,
+                        MIME_TYPE, parser.toJSON(musicPlayer.getPlaylist()));
                 case "/votes":
                     if (session.getParameters().size() == 1) {
-                        String songUUID = session.getParameters().getOrDefault("id", Collections.singletonList("")).get(0);
+                        String songUUID = session.getParameters()
+                            .getOrDefault("id", Collections.singletonList("")).get(0);
                         Integer integer = musicPlayer.getVotingManager().getVotes(songUUID);
                         return newFixedLengthResponse(Response.Status.OK, MIME_TYPE, parser.toJSON(integer));
                     }
+                    break;
+                default:
+                    return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
             }
         } catch (SerialisationException e) {
             e.printStackTrace();
         }
         return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "GSE Radio");
-    }
-
-    public RadioModel getRadio() {
-        return musicPlayer;
     }
 }

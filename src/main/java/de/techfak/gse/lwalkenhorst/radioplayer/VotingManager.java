@@ -40,7 +40,8 @@ public class VotingManager {
                 final Song first = songs.remove(0);
                 final AtomicInteger voting = songMap.get(song.getUuid());
                 voting.incrementAndGet();
-                songs.sort((song1, song2) -> Integer.compare(songMap.get(song2.getUuid()).get(), songMap.get(song1.getUuid()).get()));
+                songs.sort((song1, song2) -> Integer.compare(
+                    songMap.get(song2.getUuid()).get(), songMap.get(song1.getUuid()).get()));
                 songs.add(0, first);
             }
         }
@@ -75,6 +76,12 @@ public class VotingManager {
         }
     }
 
+    /**
+     * Getting the current voting score form given songUUID.
+     *
+     * @param songUUID to get votes from
+     * @return the voting score for given songUUID
+     */
     public int getVotes(final String songUUID) {
         synchronized (this) {
             if (songUUID != null && songMap.containsKey(songUUID)) {

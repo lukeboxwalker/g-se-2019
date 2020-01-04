@@ -22,6 +22,12 @@ public class Playlist {
         return songList;
     }
 
+    /**
+     * Song list limited by 100.
+     * Used in json parsing to limit json object.
+     *
+     * @return shorted song list
+     */
     public List<Song> getSongList() {
         if (songList.size() > LIST_BOUNDARY) {
             return songList.subList(0, LIST_BOUNDARY);

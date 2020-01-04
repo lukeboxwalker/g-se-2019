@@ -26,6 +26,10 @@ public class Terminal {
 
     private final AtomicBoolean running;
 
+    /**
+     * Creates a new cli (Terminal) object.
+     * @param radio the musicPlayer
+     */
     public Terminal(final RadioModel radio) {
         this.radio = radio;
         this.running = new AtomicBoolean(false);

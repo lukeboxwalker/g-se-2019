@@ -81,6 +81,11 @@ public class Song {
         return durationMillis;
     }
 
+    /**
+     * Setting formatted duration.
+     *
+     * @param duration in millis
+     */
     public void setDurationMillis(long duration) {
         this.durationMillis = duration;
         final DecimalFormat numberFormat = new DecimalFormat("00");

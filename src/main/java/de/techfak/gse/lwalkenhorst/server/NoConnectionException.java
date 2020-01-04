@@ -2,6 +2,10 @@ package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 
+/**
+ * NoConnectionException if no connection could be found.
+ * Has exit code to that the program can use is to exit
+ */
 public class NoConnectionException extends ExitCodeException {
 
     static final long serialVersionUID = 42L;

@@ -14,6 +14,9 @@ import javafx.scene.layout.HBox;
 
 import java.util.function.Consumer;
 
+/**
+ * Controller for ClientApplication.
+ */
 public class ConnectionController {
 
     @FXML
@@ -37,12 +40,18 @@ public class ConnectionController {
     private Consumer<RadioModel> radioStart = (radioModel -> {
     });
 
+    /**
+     * Inits the controller.
+     * When user tries to connect verifies connection
+     * and changes to normal gui
+     */
     public void initialize() {
         address.focusedProperty().addListener(new ChangeListener<>() {
             private boolean startup = true;
 
             @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+            public void changed(ObservableValue<? extends Boolean> observableValue,
+                                Boolean oldValue, Boolean newValue) {
                 if (newValue && startup) {
                     hbox.requestFocus();
                     startup = false;

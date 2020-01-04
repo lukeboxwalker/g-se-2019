@@ -18,31 +18,33 @@ public abstract class VLCJApiPlayer {
     public static final String TIME_UPDATE = "timeUpdate";
 
     private MediaPlayer mediaPlayer;
-    private IPlayAble playAble;
+    private IPlayBehavior playBehavior;
     private PropertyChangeSupport support;
 
     /**
      * Initialize the VLCJApiPlayer.
      * Responsible for playing music with vlcj library.
+     *
+     * @param playBehavior supplies runnable to submit for playing a song.
      */
-    public VLCJApiPlayer(IPlayAble playAble) {
+    public VLCJApiPlayer(IPlayBehavior playBehavior) {
         final VLCJFactory factory = new VLCJFactory();
         final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
         this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
         this.support = new PropertyChangeSupport(this);
-        this.playAble = playAble;
+        this.playBehavior = playBehavior;
     }
 
     public VLCJApiPlayer() {
-        this(new PlayOption());
+        this(new NormalPlayBehavior());
     }
 
-    public void setPlayAble(IPlayAble playAble) {
-        this.playAble = playAble;
+    public void setPlayBehavior(IPlayBehavior playBehavior) {
+        this.playBehavior = playBehavior;
     }
 
     public void playSong(final Song song) {
-        mediaPlayer.submit(playAble.play(mediaPlayer, song));
+        mediaPlayer.submit(playBehavior.play(mediaPlayer, song));
     }
 
     public void skipSong(final Skip skip) {

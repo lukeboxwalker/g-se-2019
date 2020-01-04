@@ -5,6 +5,7 @@ import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,15 +13,26 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public final class WebClient {
+/**
+ * WebClient that communicates with server by requests.
+ */
+public class WebClient {
 
+    private static final String MESSAGE = "Error getting resource";
     private static final String SPLITTER = ":";
-    private static final int OK = 200;
 
     private final JSONParser parser;
     private final HttpClient client;
     private final String baseUri;
 
+    /**
+     * Creates a new Webclient.
+     * Checks connection to server.
+     *
+     * @param serverAddress of the server
+     * @param port of the server
+     * @throws NoConnectionException if could not connect to given server
+     */
     public WebClient(String serverAddress, int port) throws NoConnectionException {
         this.client = HttpClient.newHttpClient();
         this.parser = new JSONParser();
@@ -33,18 +45,26 @@ public final class WebClient {
         } catch (IOException | InterruptedException e) {
             throw new NoConnectionException(message, e);
         }
-        if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
+        if (response.statusCode() == NanoHTTPD.Response.Status.OK.getRequestStatus()
+            || !response.body().equals("GSE Radio")) {
             throw new NoConnectionException(message);
         }
     }
 
+    /**
+     * Requests a Song form connected server.
+     * Parses responded json to song object.
+     * If parsing or connection fails returns an empty song.
+     *
+     * @return new song object.
+     */
     public Song requestSong() {
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return parser.parseJSON(response.body(), Song.class);
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error getting resource");
+            System.err.println(MESSAGE);
             return new Song();
         } catch (SerialisationException e) {
             e.printStackTrace();
@@ -52,13 +72,20 @@ public final class WebClient {
         }
     }
 
+    /**
+     * Requests a Playlist from connected server.
+     * Parses responded json to playlist object.
+     * If parsing or connection fails returns an empty playlist.
+     *
+     * @return new Playlist object
+     */
     public Playlist requestPlaylist() {
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/playlist")).build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return parser.parseJSON(response.body(), Playlist.class);
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error getting resource");
+            System.err.println(MESSAGE);
             return new Playlist();
         } catch (SerialisationException e) {
             e.printStackTrace();
@@ -66,13 +93,22 @@ public final class WebClient {
         }
     }
 
+    /**
+     * Requests the votes for a song.
+     * Using the uuid of a song to send server request
+     * returns 0 if connection fails.
+     *
+     * @param song to get votes from
+     * @return votes of a given song
+     */
     public int requestVote(Song song) {
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/votes?id=" + song.getUuid())).build();
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUri + "/votes?id=" + song.getUuid())).build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return Integer.parseInt(response.body());
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error getting resource");
+            System.err.println(MESSAGE);
             return 0;
         }
     }

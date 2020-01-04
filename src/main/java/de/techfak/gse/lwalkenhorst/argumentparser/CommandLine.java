@@ -2,6 +2,9 @@ package de.techfak.gse.lwalkenhorst.argumentparser;
 
 import java.util.*;
 
+/**
+ * Commandline that is parsed by a parser.
+ */
 public class CommandLine implements ICommandLine {
 
     private final Map<String, IOption> options;
@@ -13,6 +16,13 @@ public class CommandLine implements ICommandLine {
         this.optionArguments = new HashMap<>();
     }
 
+    /**
+     * Sets argument that is found by a parser.
+     * Only one argument is allowed for a commandline
+     *
+     * @param argument the argument
+     * @throws ParseException if there is more than one argument
+     */
     public void setArgument(String argument) throws ParseException {
         if (this.argument == null) {
             this.argument = argument;
@@ -22,6 +32,13 @@ public class CommandLine implements ICommandLine {
 
     }
 
+    /**
+     * Adding an argument that belongs to an option.
+     *
+     * @param option the argument belongs to
+     * @param argKey the argument prefix
+     * @param argValue the argument value
+     */
     public void addOptionArgument(IOption option, String argKey, String argValue) {
         final String optionName = option.getName();
         if (optionArguments.containsKey(optionName)) {
@@ -34,6 +51,12 @@ public class CommandLine implements ICommandLine {
         }
     }
 
+    /**
+     * Adding an option that was found.
+     *
+     * @param option found by parsing.
+     * @throws OverlappingOptionException if option would overlap an existing option
+     */
     public void addOption(IOption option) throws OverlappingOptionException {
         for (String optionName : option.getConflictingOptions()) {
             if (options.containsKey(optionName)) {
