@@ -12,16 +12,30 @@ import java.util.concurrent.TimeUnit;
  */
 public class Song {
 
-    private String filePath = "";
-    private String title = "";
-    private String artist = "";
-    private String album = "";
-    private String genre = "";
-    private String artWorkURL = "";
-    private String duration = "";
-    private long durationMillis = 0;
+    private String filePath;
+    private String title;
+    private String artist;
+    private String album;
+    private String genre;
+    private String artWorkURL;
+    private String duration;
+    private long durationMillis;
 
     private String uuid = UUID.randomUUID().toString();
+
+    /**
+     * Creating a new empty Song.
+     */
+    public Song() {
+        this.filePath = "";
+        this.title = "";
+        this.artist = "";
+        this.album = "";
+        this.genre = "";
+        this.artWorkURL = "";
+        this.duration = "";
+        this.durationMillis = 0;
+    }
 
     public String getUuid() {
         return uuid;
@@ -114,6 +128,10 @@ public class Song {
             + toMetaDataString(comma, getDuration()) + "min";
     }
 
+    private String toMetaDataString(final String separator, final String metadata) {
+        return metadata.isEmpty() ? "" : separator + metadata;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Song) {
@@ -125,9 +143,5 @@ public class Song {
     @Override
     public int hashCode() {
         return this.uuid.hashCode();
-    }
-
-    private String toMetaDataString(final String separator, final String metadata) {
-        return metadata.isEmpty() ? "" : separator + metadata;
     }
 }

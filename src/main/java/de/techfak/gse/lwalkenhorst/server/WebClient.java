@@ -5,7 +5,6 @@ import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
-import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,8 +17,8 @@ import java.net.http.HttpResponse;
  */
 public class WebClient {
 
-    private static final String MESSAGE = "Error getting resource";
     private static final String SPLITTER = ":";
+    private static final int OK = 200;
 
     private final JSONParser parser;
     private final HttpClient client;
@@ -45,8 +44,7 @@ public class WebClient {
         } catch (IOException | InterruptedException e) {
             throw new NoConnectionException(message, e);
         }
-        if (response.statusCode() == NanoHTTPD.Response.Status.OK.getRequestStatus()
-            || !response.body().equals("GSE Radio")) {
+        if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
             throw new NoConnectionException(message);
         }
     }
@@ -64,7 +62,6 @@ public class WebClient {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return parser.parseJSON(response.body(), Song.class);
         } catch (IOException | InterruptedException e) {
-            System.err.println(MESSAGE);
             return new Song();
         } catch (SerialisationException e) {
             e.printStackTrace();
@@ -85,7 +82,6 @@ public class WebClient {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return parser.parseJSON(response.body(), Playlist.class);
         } catch (IOException | InterruptedException e) {
-            System.err.println(MESSAGE);
             return new Playlist();
         } catch (SerialisationException e) {
             e.printStackTrace();
@@ -108,7 +104,6 @@ public class WebClient {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return Integer.parseInt(response.body());
         } catch (IOException | InterruptedException e) {
-            System.err.println(MESSAGE);
             return 0;
         }
     }

@@ -22,13 +22,14 @@ public class WebServer extends NanoHTTPD {
     private final JSONParser parser;
     private MusicPlayer musicPlayer;
 
-    public WebServer(final String port) {
+    public WebServer(final String port, MusicPlayer musicPlayer) {
         super(Integer.parseInt(port));
         this.parser = new JSONParser();
+        this.musicPlayer = musicPlayer;
     }
 
-    public void setMusicPlayer(MusicPlayer musicPlayer) {
-        this.musicPlayer = musicPlayer;
+    public void setMusicStream(final String port) {
+        this.musicPlayer.setPlayBehavior(getPlayBehavior(port));
     }
 
     /**
@@ -39,7 +40,7 @@ public class WebServer extends NanoHTTPD {
      * @param port the streaming port
      * @return new PlayBehavior
      */
-    public IPlayBehavior getPlayBehavior(String port) {
+    private IPlayBehavior getPlayBehavior(String port) {
         IPlayBehavior playBehavior = new NormalPlayBehavior();
         if (port != null && !port.isEmpty()) {
             playBehavior = new IPlayBehavior() {
@@ -71,6 +72,9 @@ public class WebServer extends NanoHTTPD {
     @Override
     public Response serve(IHTTPSession session) {
         try {
+            if (session.getUri().isEmpty()) {
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
+            }
             switch (session.getUri()) {
                 case "/current-song":
                     return newFixedLengthResponse(Response.Status.OK,
@@ -87,7 +91,6 @@ public class WebServer extends NanoHTTPD {
                     }
                     break;
                 default:
-                    return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
             }
         } catch (SerialisationException e) {
             e.printStackTrace();

@@ -47,9 +47,10 @@ public class ArgumentParser {
                             int deltaIndex = index + 1;
                             while (deltaIndex <= index + arguments && deltaIndex < args.length) {
                                 for (IArgument argument : requiredArguments) {
-                                    final String arg = args[deltaIndex].substring(2);
-                                    if (arg.startsWith(argument.getPrefix())) {
-                                        final String[] split = arg.split(argument.getValueSeparator());
+                                    if (args[deltaIndex].length() > 2
+                                        && args[deltaIndex].substring(2).startsWith(argument.getPrefix())) {
+                                        final String[] split = args[deltaIndex].substring(2)
+                                            .split(argument.getValueSeparator());
                                         if (split.length == 2 && split[0].equals(argument.getPrefix())
                                             && argument.getValuePatternMatcher().matcher(split[1]).matches()) {
                                             commandLine.addOptionArgument(option, argument.getPrefix(), split[1]);
@@ -61,8 +62,8 @@ public class ArgumentParser {
                                                 + " has invalid structure");
                                         }
                                     }
-                                    ++deltaIndex;
                                 }
+                                ++deltaIndex;
                             }
                             for (IArgument argument : requiredArguments) {
                                 if (!foundArgs.contains(argument) && argument.isRequired()) {

@@ -57,11 +57,14 @@ public class CommandLine implements ICommandLine {
      * @param option found by parsing.
      * @throws OverlappingOptionException if option would overlap an existing option
      */
-    public void addOption(IOption option) throws OverlappingOptionException {
+    public void addOption(IOption option) throws OverlappingOptionException, ParseException {
         for (String optionName : option.getConflictingOptions()) {
             if (options.containsKey(optionName)) {
                 throw new OverlappingOptionException("The arguments have overlapping semantics");
             }
+        }
+        if (options.containsKey(option.getName())) {
+            throw new ParseException("Found same option multiple times");
         }
         this.options.put(option.getName(), option);
     }

@@ -20,7 +20,7 @@ public class Argument implements IArgument {
         this.argumentPrefix = argumentPrefix;
         this.isRequired = true;
     }
-    
+
     @Override
     public String getDefaultValue() {
         return defaultValue;

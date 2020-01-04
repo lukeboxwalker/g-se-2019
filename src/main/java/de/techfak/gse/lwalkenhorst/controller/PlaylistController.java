@@ -33,6 +33,10 @@ public class PlaylistController {
     public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
         this.playlist = playlist;
         this.radio = radio;
+        final ProgressIndicator placeHolder = new ProgressIndicator();
+        placeHolder.setStyle(" -fx-progress-color: lightgreen");
+        placeHolder.setProgress(-1);
+        this.playlist.setPlaceholder(placeHolder);
         this.coloring = column -> new TableCell<>() {
             @Override
             protected void updateItem(final String item, final boolean empty) {

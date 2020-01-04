@@ -54,19 +54,14 @@ public final class GSERadio {
             if (commandLine.hasOption(CLIENT)) { //Client
                 ClientApplication.main(args);
             } else {
-                MusicPlayer musicPlayer;
+                final MusicPlayer musicPlayer = load(directory);
                 if (commandLine.hasOption(SERVER)) { //Server
                     String streaming = commandLine.getOptionArg(SERVER, STREAMING);
                     String port = commandLine.getOptionArg(SERVER, PORT);
 
-                    WebServer server = new WebServer(port);
+                    WebServer server = new WebServer(port, musicPlayer);
                     server.startTSPSocket();
-
-                    musicPlayer = load(directory);
-                    musicPlayer.setPlayBehavior(server.getPlayBehavior(streaming));
-                    server.setMusicPlayer(musicPlayer);
-                } else {
-                    musicPlayer = load(directory);
+                    server.setMusicStream(streaming);
                 }
                 if (commandLine.hasOption(GUI)) { //Local GUI
                     GuiApplication.start(musicPlayer, "-a");
@@ -88,7 +83,7 @@ public final class GSERadio {
     }
 
     /**
-     * Creating cli options.
+     * Creating commandLine options.
      * Building new option arguments to parse arguments with.
      *
      * @return list of defined options
