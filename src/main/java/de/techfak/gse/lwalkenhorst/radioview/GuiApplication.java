@@ -5,7 +5,6 @@ import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -34,7 +33,6 @@ public class GuiApplication extends Application {
 
         final Scene scene = new Scene(root);
         stage.setTitle("GSE-Radio");
-        stage.getIcons().add(new Image("file:src/main/resources/view/icon.png"));
         stage.setScene(scene);
         stage.show();
 

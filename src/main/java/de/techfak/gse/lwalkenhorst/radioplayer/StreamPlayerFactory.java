@@ -25,7 +25,9 @@ public class StreamPlayerFactory {
             playOption.setFunction(null);
 
             final WebClient client = new WebClient(serverAddress, Integer.parseInt(port));
-            return new StreamPlayer(playOption, client);
+            StreamPlayer streamPlayer = new StreamPlayer(client);
+            streamPlayer.setPlayAble(playOption);
+            return streamPlayer;
         } else {
             throw new NoValidUrlException("could not parse address: " + serverAddress + " and port: " + port);
         }

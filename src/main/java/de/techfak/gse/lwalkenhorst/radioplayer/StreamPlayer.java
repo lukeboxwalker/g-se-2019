@@ -17,8 +17,8 @@ public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
     private Playlist playlist = new Playlist();
     private TimerTask timerTask;
 
-    public StreamPlayer(IPlayAble playAble, WebClient client) {
-        super(playAble);
+    public StreamPlayer(WebClient client) {
+        super();
         this.client = client;
         Timer timer = new Timer();
         this.timerTask = new TimerTask() {

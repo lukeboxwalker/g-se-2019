@@ -1,8 +1,6 @@
 package de.techfak.gse.lwalkenhorst;
 
-import de.techfak.gse.lwalkenhorst.argumentparser.ArgumentParser;
-import de.techfak.gse.lwalkenhorst.argumentparser.ICommandLine;
-import de.techfak.gse.lwalkenhorst.argumentparser.OptionAdapter;
+import de.techfak.gse.lwalkenhorst.argumentparser.*;
 import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
@@ -11,8 +9,9 @@ import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
 import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 import de.techfak.gse.lwalkenhorst.server.WebServer;
-import org.apache.commons.cli.ParseException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -26,42 +25,44 @@ public final class GSERadio {
     private static final String SERVER = "server";
     private static final String GUI = "gui";
     private static final String CLIENT = "client";
-    private static final String PORT_RANGE = ""
-        + "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])";
-
+    private static final String STREAMING = "streaming";
+    private static final String PORT = "port";
+    private static final String DEFAULT_PORT = "8080";
+    private static final String SEPARATE = "=";
+    private static final Pattern PORT_RANGE = Pattern.compile(
+        "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])");
 
     private GSERadio() {
     }
 
     private void start(final String... args) {
-        final ArgumentParser argumentParser = newArgumentParser();
         try {
-            final ICommandLine commandLine = argumentParser.parse(args);
+            final ICommandLine commandLine = new ArgumentParser().parse(createOptions(), args);
             final String directory = commandLine.hasArgument() ? commandLine.getArgument() : USER_DIR;
 
-            if (commandLine.hasOption(SERVER)) { //Server
-                String port = commandLine.getParsedOptionArg(SERVER);
-
-                //Starting server on given port
-                WebServer server = new WebServer(Integer.parseInt(port));
-                server.start(createPlaylist(directory));
-
-                //Using terminal to interact with music player
-                GuiApplication.start(server.getRadio(), "-a");
-
-            } else if (commandLine.hasOption(GUI)) { //Local GUI
-                //Starting in gui mode to interact with music player
-                final MusicPlayer radio = load(directory);
-                GuiApplication.start(radio, "-a");
-            } else if (commandLine.hasOption(CLIENT))  { //Client
-
+            if (commandLine.hasOption(CLIENT))  { //Client
                 ClientApplication.main(args);
+            } else {
+                MusicPlayer musicPlayer;
+                if (commandLine.hasOption(SERVER)) { //Server
+                    String streaming = commandLine.getOptionArg(SERVER, STREAMING);
+                    String port = commandLine.getOptionArg(SERVER, PORT);
 
-            } else { //Local Terminal
-                //Using terminal to interact with music player
-                final MusicPlayer radio = load(directory);
-                final Terminal terminal = new Terminal(radio);
-                terminal.listenForInstructions();
+                    WebServer server = new WebServer(port);
+                    server.startTSPSocket();
+
+                    musicPlayer = load(directory);
+                    musicPlayer.setPlayAble(server.getPlayAble(streaming));
+                    server.setMusicPlayer(musicPlayer);
+                } else {
+                    musicPlayer = load(directory);
+                }
+                if (commandLine.hasOption(GUI)) { //Local GUI
+                    GuiApplication.start(musicPlayer, "-a");
+                } else { //Local Terminal
+                    final Terminal terminal = new Terminal(musicPlayer);
+                    terminal.listenForInstructions();
+                }
             }
         } catch (ExitCodeException e) {
             //Handling exceptions that will exit the program with specified exit code.
@@ -69,42 +70,40 @@ public final class GSERadio {
             System.exit(e.getExitCode());
         } catch (ParseException e) {
             //Printing help message when argument parsing failed because of wrong arguments.
-            argumentParser.printHelp();
+            System.err.println(e.getMessage());
         } finally {
             CleanUpDemon.getInstance().cleanup();
         }
     }
 
-    private ArgumentParser newArgumentParser() {
-        OptionAdapter guiOption = new OptionAdapter(GUI, "Starting in gui mode.");
-        OptionAdapter clientOption = new OptionAdapter(CLIENT, "Starting in client mode.");
+    private List<IOption> createOptions() {
+        IOption guiOption = Option.builder().withName(GUI).conflictsOption(CLIENT).build();
+        IOption clientOption = Option.builder().withName(CLIENT).conflictsOption(GUI).build();
 
-        guiOption.addConflictingOption(clientOption);
-        clientOption.addConflictingOption(guiOption);
+        IArgument streaming = Argument.builder().withName(STREAMING).withValueSeparator(SEPARATE)
+            .withPatternMatcher(PORT_RANGE).isRequired(false).build();
+        IArgument port = Argument.builder().withName(PORT).withValueSeparator(SEPARATE)
+            .withPatternMatcher(PORT_RANGE).isRequired(true).withDefaultValue(DEFAULT_PORT).build();
 
-        String description = "Starting in server mode with given argument --streaming=<port> to specify port.";
-        OptionAdapter serverOption = new OptionAdapter(SERVER, true, description);
-        serverOption.setParsingPattern(Pattern.compile("--streaming=" + PORT_RANGE));
-        serverOption.setExtractingPatternPattern(Pattern.compile(PORT_RANGE));
+        IOption serverOption = Option.builder().withName(SERVER).withArgument(streaming).withArgument(port)
+            .conflictsOption(CLIENT).build();
 
-        return new ArgumentParser(guiOption, clientOption, serverOption);
-    }
+        List<IOption> options = new ArrayList<>();
+        options.add(guiOption);
+        options.add(clientOption);
+        options.add(serverOption);
 
-    private Playlist createPlaylist(String directory) throws ExitCodeException {
-        final PlaylistFactory factory = new PlaylistFactory(directory);
-        final Playlist playlist = factory.newPlaylist();
-        playlist.shuffle();
-        return playlist;
-    }
-
-    private MusicPlayer load(Playlist playlist, IPlayAble playAble) {
-        final MusicPlayer musicPlayer = new MusicPlayer(playAble);
-        musicPlayer.setPlaylist(playlist);
-        return musicPlayer;
+        return options;
     }
 
     private MusicPlayer load(String directory) throws ExitCodeException {
-        return load(createPlaylist(directory), new PlayOption());
+        final PlaylistFactory factory = new PlaylistFactory(directory);
+        final Playlist playlist = factory.newPlaylist();
+        playlist.shuffle();
+
+        final MusicPlayer musicPlayer = new MusicPlayer();
+        musicPlayer.setPlaylist(playlist);
+        return musicPlayer;
     }
 
     /**

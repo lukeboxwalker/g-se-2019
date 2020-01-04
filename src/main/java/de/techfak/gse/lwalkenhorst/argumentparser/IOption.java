@@ -2,14 +2,13 @@ package de.techfak.gse.lwalkenhorst.argumentparser;
 
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public interface IOption {
-    List<IOption> getConflictingOptions();
-    void addConflictingOption(IOption option);
+    List<String> getConflictingOptions();
+    void addConflictingOption(String option);
+    String getName();
+    String getShortName();
+    List<IArgument> getRequiredArguments();
+    void addRequiredArguments(IArgument argument);
 
-    void setParsingPattern(Pattern pattern);
-    void setExtractingPatternPattern(Pattern pattern);
-    Pattern getParsingPattern();
-    Pattern getExtractingPatternPattern();
 }

@@ -9,7 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
@@ -35,15 +34,10 @@ public class ConnectionController {
     @FXML
     private Label response;
 
-    @FXML
-    private ProgressIndicator loading;
-
     private Consumer<RadioModel> radioStart = (radioModel -> {
     });
 
     public void initialize() {
-        loading.setProgress(-1);
-        loading.setVisible(false);
         address.focusedProperty().addListener(new ChangeListener<>() {
             private boolean startup = true;
 

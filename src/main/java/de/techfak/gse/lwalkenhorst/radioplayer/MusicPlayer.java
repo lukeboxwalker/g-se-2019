@@ -19,8 +19,8 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
      * Creating a new MusicPlayer to play music.
      * Will repeat its playing songs
      */
-    public MusicPlayer(final IPlayAble playAble) {
-        super(playAble);
+    public MusicPlayer() {
+        super();
         this.votingManager = new VotingManager(this.playlist);
     }
 

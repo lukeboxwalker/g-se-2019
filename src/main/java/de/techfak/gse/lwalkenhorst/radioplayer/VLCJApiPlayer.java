@@ -33,6 +33,14 @@ public abstract class VLCJApiPlayer {
         this.playAble = playAble;
     }
 
+    public VLCJApiPlayer() {
+        this(new PlayOption());
+    }
+
+    public void setPlayAble(IPlayAble playAble) {
+        this.playAble = playAble;
+    }
+
     public void playSong(final Song song) {
         mediaPlayer.submit(playAble.play(mediaPlayer, song));
     }

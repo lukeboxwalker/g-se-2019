@@ -5,7 +5,6 @@ import de.techfak.gse.lwalkenhorst.controller.RadioController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -51,7 +50,6 @@ public class ClientApplication extends Application {
     public void setStage(Pane root) {
         final Scene scene = new Scene(root);
         this.stage.setTitle("GSE-Radio");
-        this.stage.getIcons().add(new Image("file:src/main/resources/view/icon.png"));
         this.stage.setScene(scene);
         this.stage.show();
     }
