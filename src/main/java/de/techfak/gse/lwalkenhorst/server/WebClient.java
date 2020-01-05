@@ -37,15 +37,14 @@ public class WebClient {
         this.parser = new JSONParser();
         this.baseUri = "http://" + serverAddress + SPLITTER + port;
         final String message = "could not connect to given url " + serverAddress + SPLITTER + port;
-        HttpResponse<String> response;
         try {
             final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).build();
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
+                throw new NoConnectionException(message);
+            }
         } catch (IOException | InterruptedException e) {
             throw new NoConnectionException(message, e);
-        }
-        if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
-            throw new NoConnectionException(message);
         }
     }
 
@@ -57,10 +56,12 @@ public class WebClient {
      * @return new song object.
      */
     public Song requestSong() {
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).build();
         try {
-            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return parser.parseJSON(response.body(), Song.class);
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Song song = parser.parseJSON(response.body(), Song.class);
+            song.setArtWorkURL(URI.create(baseUri + "/cover?id=" + song.getUuid()).toString());
+            return song;
         } catch (IOException | InterruptedException e) {
             return new Song();
         } catch (SerialisationException e) {

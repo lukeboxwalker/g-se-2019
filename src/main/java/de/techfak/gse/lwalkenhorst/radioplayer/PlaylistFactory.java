@@ -146,7 +146,7 @@ public class PlaylistFactory {
         song.setGenre(genre);
         song.setArtWorkURL(artWorldURL);
         song.setDurationMillis(duration);
-
+        System.out.println(song.getUuid());
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;

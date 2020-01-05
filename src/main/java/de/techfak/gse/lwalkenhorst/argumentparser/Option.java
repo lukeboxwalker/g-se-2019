@@ -20,7 +20,7 @@ public class Option implements IOption {
      *
      * @param optionName to set name of option
      */
-    public Option(final String optionName) {
+    Option(final String optionName) {
         this.optionName = optionName;
         this.shortName = optionName.substring(0, 1);
         this.conflictingOptions = new ArrayList<>();
@@ -65,32 +65,15 @@ public class Option implements IOption {
         return conflictingOptions;
     }
 
-    public static Builder builder() {
+    public static NameBuilder builder() {
         return new OptionBuilder();
     }
 
     /**
      * Builder to build an option object.
-     * Using fluent interface design to build option
+     * Which has to specify a name
      */
-    public interface Builder {
-
-        /**
-         * Prepares to add a new argument to the option.
-         *
-         * @param argument to add
-         * @return builder
-         */
-        Option.Builder withArgument(IArgument argument);
-
-        /**
-         * Prepares to add a conflicting option.
-         *
-         * @param option that conflicts
-         * @return builder
-         */
-        Option.Builder conflictsOption(String option);
-
+    public interface NameBuilder {
         /**
          * Prepares the name of the option.
          * Needs to be set for option to be instantiated
@@ -98,7 +81,30 @@ public class Option implements IOption {
          * @param optionName for option
          * @return builder
          */
-        Option.Builder withName(String optionName);
+        Option.OptionalsBuilder withName(String optionName);
+    }
+
+    /**
+     * Builder to build an option object.
+     * Using fluent interface design to build option
+     */
+    public interface OptionalsBuilder {
+
+        /**
+         * Prepares to add a new argument to the option.
+         *
+         * @param argument to add
+         * @return builder
+         */
+        Option.OptionalsBuilder withArgument(IArgument argument);
+
+        /**
+         * Prepares to add a conflicting option.
+         *
+         * @param option that conflicts
+         * @return builder
+         */
+        Option.OptionalsBuilder conflictsOption(String option);
 
         /**
          * Building the option object.

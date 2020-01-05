@@ -16,7 +16,7 @@ public class Argument implements IArgument {
     private Pattern valuePatternMatcher;
     private String defaultValue;
 
-    public Argument(final String argumentPrefix) {
+    Argument(final String argumentPrefix) {
         this.argumentPrefix = argumentPrefix;
         this.isRequired = true;
     }
@@ -68,16 +68,15 @@ public class Argument implements IArgument {
         this.isRequired = isRequired;
     }
 
-    public static Builder builder() {
+    public static PrefixBuilder builder() {
         return new ArgumentBuilder();
     }
 
     /**
      * Builder to build an argument object.
-     * Using fluent interface design to build argument
+     * Which has to specify a name
      */
-    public interface Builder {
-
+    public interface PrefixBuilder {
         /**
          * Prepares the name of the argument.
          * Needs to be set for argument to be instantiated
@@ -85,7 +84,14 @@ public class Argument implements IArgument {
          * @param argumentName for argument
          * @return builder
          */
-        Argument.Builder withName(String argumentName);
+        Argument.OptionalsBuilder withName(String argumentName);
+    }
+
+    /**
+     * Builder to build an argument object.
+     * Using fluent interface design to build argument
+     */
+    public interface OptionalsBuilder {
 
         /**
          * Prepares isRequired for argument.
@@ -94,7 +100,7 @@ public class Argument implements IArgument {
          * @param isRequired to set
          * @return builder
          */
-        Argument.Builder isRequired(boolean isRequired);
+        Argument.OptionalsBuilder isRequired(boolean isRequired);
 
         /**
          * Prepares valueSeparator for argument.
@@ -103,7 +109,7 @@ public class Argument implements IArgument {
          * @param separator to set
          * @return builder
          */
-        Argument.Builder withValueSeparator(String separator);
+        Argument.OptionalsBuilder withValueSeparator(String separator);
 
         /**
          * Prepares valuePatternMatcher for argument.
@@ -112,7 +118,7 @@ public class Argument implements IArgument {
          * @param valuePatternMatcher to set
          * @return builder
          */
-        Argument.Builder withPatternMatcher(Pattern valuePatternMatcher);
+        Argument.OptionalsBuilder withPatternMatcher(Pattern valuePatternMatcher);
 
         /**
          * Prepares defaultValue for argument.
@@ -121,7 +127,7 @@ public class Argument implements IArgument {
          * @param defaultValue to set
          * @return builder
          */
-        Argument.Builder withDefaultValue(String defaultValue);
+        Argument.OptionalsBuilder withDefaultValue(String defaultValue);
 
         /**
          * Building the argument.

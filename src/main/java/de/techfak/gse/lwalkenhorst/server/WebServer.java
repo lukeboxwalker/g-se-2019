@@ -8,8 +8,13 @@ import de.techfak.gse.lwalkenhorst.radioplayer.*;
 import fi.iki.elonen.NanoHTTPD;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
+
 
 /**
  * WebServer to setup Rest Server.
@@ -17,11 +22,19 @@ import java.util.Collections;
 public class WebServer extends NanoHTTPD {
 
     private static final String LOCALHOST = "127.0.0.1";
-    private static final String MIME_TYPE = "application/json";
+    private static final String MIME_TYPE_JSON = "application/json";
+    private static final String MIME_TYPE_JPEG = "image/jpeg";
+    private static final String ID = "id";
 
     private final JSONParser parser;
     private MusicPlayer musicPlayer;
 
+    /**
+     * Creating a new WebServer.
+     *
+     * @param port        to listen to
+     * @param musicPlayer to stream music
+     */
     public WebServer(final String port, MusicPlayer musicPlayer) {
         super(Integer.parseInt(port));
         this.parser = new JSONParser();
@@ -78,16 +91,32 @@ public class WebServer extends NanoHTTPD {
             switch (session.getUri()) {
                 case "/current-song":
                     return newFixedLengthResponse(Response.Status.OK,
-                        MIME_TYPE, parser.toJSON(musicPlayer.getSong()));
+                        MIME_TYPE_JSON, parser.toJSON(musicPlayer.getSong()));
                 case "/playlist":
                     return newFixedLengthResponse(Response.Status.OK,
-                        MIME_TYPE, parser.toJSON(musicPlayer.getPlaylist()));
+                        MIME_TYPE_JSON, parser.toJSON(musicPlayer.getPlaylist()));
                 case "/votes":
                     if (session.getParameters().size() == 1) {
                         String songUUID = session.getParameters()
-                            .getOrDefault("id", Collections.singletonList("")).get(0);
+                            .getOrDefault(ID, Collections.singletonList("")).get(0);
                         Integer integer = musicPlayer.getVotingManager().getVotes(songUUID);
-                        return newFixedLengthResponse(Response.Status.OK, MIME_TYPE, parser.toJSON(integer));
+                        return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JSON, parser.toJSON(integer));
+                    }
+                    break;
+                case "/cover":
+                    if (session.getParameters().size() == 1) {
+                        String songUUID = session.getParameters()
+                            .getOrDefault(ID, Collections.singletonList("")).get(0);
+                        Song song = musicPlayer.getPlaylist().getSongs().stream()
+                            .filter(song1 -> song1.getUuid().equals(songUUID)).findFirst().get();
+                        try {
+                            File file = new File(URI.create(song.getArtWorkURL()).getPath());
+                            FileInputStream stream = new FileInputStream(file);
+                            return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JPEG, stream, -1);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "not found");
+                        }
                     }
                     break;
                 default:

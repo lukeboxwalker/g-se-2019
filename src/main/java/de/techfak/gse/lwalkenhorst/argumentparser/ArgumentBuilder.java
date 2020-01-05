@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
  * Builder to build an argument object.
  * Using fluent interface design to build argument
  */
-class ArgumentBuilder implements Argument.Builder {
+class ArgumentBuilder implements Argument.OptionalsBuilder, Argument.PrefixBuilder {
 
     private String argumentName;
     private boolean isRequired;
@@ -19,31 +19,31 @@ class ArgumentBuilder implements Argument.Builder {
     }
 
     @Override
-    public Argument.Builder withName(String argumentName) {
+    public Argument.OptionalsBuilder withName(String argumentName) {
         this.argumentName = argumentName;
         return this;
     }
 
     @Override
-    public Argument.Builder isRequired(boolean isRequired) {
+    public Argument.OptionalsBuilder isRequired(boolean isRequired) {
         this.isRequired = isRequired;
         return this;
     }
 
     @Override
-    public Argument.Builder withValueSeparator(String separator) {
+    public Argument.OptionalsBuilder withValueSeparator(String separator) {
         this.valueSeparator = separator;
         return this;
     }
 
     @Override
-    public Argument.Builder withPatternMatcher(Pattern valuePatternMatcher) {
+    public Argument.OptionalsBuilder withPatternMatcher(Pattern valuePatternMatcher) {
         this.valuePatternMatcher = valuePatternMatcher;
         return this;
     }
 
     @Override
-    public Argument.Builder withDefaultValue(String defaultValue) {
+    public Argument.OptionalsBuilder withDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

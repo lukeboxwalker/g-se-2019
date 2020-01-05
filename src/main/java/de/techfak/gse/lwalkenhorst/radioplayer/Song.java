@@ -37,21 +37,22 @@ public class Song {
         this.durationMillis = 0;
     }
 
+    @JsonIgnore
+    public String getFilePath() {
+        return filePath;
+    }
+
+    @JsonIgnore
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     public String getUuid() {
         return uuid;
     }
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    @JsonIgnore
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
     }
 
     public String getTitle() {
@@ -87,6 +88,16 @@ public class Song {
     }
 
     @JsonIgnore
+    public String getArtWorkURL() {
+        return artWorkURL;
+    }
+
+    @JsonIgnore
+    public void setArtWorkURL(String artWorkURL) {
+        this.artWorkURL = artWorkURL;
+    }
+
+    @JsonIgnore
     public String getDuration() {
         return duration;
     }
@@ -96,7 +107,7 @@ public class Song {
     }
 
     /**
-     * Setting formatted duration.
+     * Setting formatted duration as well as duration millis.
      *
      * @param duration in millis
      */
@@ -106,15 +117,6 @@ public class Song {
         final long min = TimeUnit.MILLISECONDS.toMinutes(durationMillis);
         final long sec = TimeUnit.MILLISECONDS.toSeconds(durationMillis - TimeUnit.MINUTES.toMillis(min));
         this.duration = durationMillis <= 0 ? "" : min + ":" + numberFormat.format(sec);
-    }
-
-    @JsonIgnore
-    public String getArtWorkURL() {
-        return artWorkURL;
-    }
-
-    public void setArtWorkURL(String artWorkURL) {
-        this.artWorkURL = artWorkURL;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioview;
 
+import de.techfak.gse.lwalkenhorst.argumentparser.*;
 import de.techfak.gse.lwalkenhorst.controller.RadioController;
 import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
 import javafx.application.Application;
@@ -9,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 public class GuiApplication extends Application {
     private static RadioModel radio;
     private static boolean advanced = false;
-    private static final List<String> ADVANCED_MODE = Arrays.asList("-a", "--advanced");
+    private static final String ADVANCED = "advanced";
 
     @Override
     public void start(final Stage stage) throws IOException {
@@ -47,13 +48,19 @@ public class GuiApplication extends Application {
      * @param args        the arguments.
      */
     public static void start(final RadioModel radioPlayer, final String... args) {
-        radio = radioPlayer;
-        String[] param = args;
-        if (param.length >= 1 && ADVANCED_MODE.contains(param[0])) {
-            advanced = true;
-            param = Arrays.copyOfRange(args, 1, args.length);
+        try {
+            List<IOption> options = new ArrayList<>();
+            IOption advancedOption = Option.builder().withName(ADVANCED).build();
+            options.add(advancedOption);
+            ICommandLine commandLine = new ArgumentParser().parse(options, args);
+            radio = radioPlayer;
+            if (commandLine.hasOption(ADVANCED)) {
+                advanced = true;
+            }
+            GuiApplication.main();
+        } catch (OverlappingOptionException | ParseException e) {
+            e.printStackTrace();
         }
-        GuiApplication.main(param);
     }
 
     public static void main(final String... args) {

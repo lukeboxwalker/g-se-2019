@@ -46,6 +46,8 @@ public class SongController {
         songLabel.setText(song.getTitle() + " - " + song.getArtist());
         if (!song.getArtWorkURL().isEmpty()) {
             image.setImage(new Image(song.getArtWorkURL()));
+        } else {
+            image.setImage(null);
         }
     }
 
