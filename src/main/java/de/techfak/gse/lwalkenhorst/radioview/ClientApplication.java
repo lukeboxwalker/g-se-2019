@@ -2,6 +2,7 @@ package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.controller.ConnectionController;
 import de.techfak.gse.lwalkenhorst.controller.RadioController;
+import de.techfak.gse.lwalkenhorst.radioplayer.StreamPlayer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,7 +16,9 @@ import java.io.IOException;
  */
 public class ClientApplication extends Application {
 
+    private static StreamPlayer streamPlayer;
     private Stage stage;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -25,6 +28,9 @@ public class ClientApplication extends Application {
         );
         final Pane root = fxmlClientLoader.load();
         final ConnectionController connectionController = fxmlClientLoader.getController();
+        connectionController.load(streamPlayer, stage);
+
+
         connectionController.setOnRadioStart((radio -> {
             try {
                 stage.close();
@@ -46,7 +52,17 @@ public class ClientApplication extends Application {
         setStage(root);
     }
 
-    public static void main(String[] args) {
+    /**
+     * Starting the Client.
+     *
+     * @param stream musicPlayer to play music from stream.
+     */
+    public static void start(final StreamPlayer stream) {
+        streamPlayer = stream;
+        ClientApplication.main();
+    }
+
+    public static void main(String... args) {
         launch(args);
     }
 

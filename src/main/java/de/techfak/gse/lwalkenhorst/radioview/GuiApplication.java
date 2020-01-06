@@ -2,7 +2,7 @@ package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.argumentparser.*;
 import de.techfak.gse.lwalkenhorst.controller.RadioController;
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ import java.util.List;
  * Prepares the stage and loads the Controller specified in the fxml
  */
 public class GuiApplication extends Application {
-    private static RadioModel radio;
+    private static RadioPlayer radio;
     private static boolean advanced = false;
     private static final String ADVANCED = "advanced";
 
@@ -47,7 +47,7 @@ public class GuiApplication extends Application {
      * @param radioPlayer the radio model
      * @param args        the arguments.
      */
-    public static void start(final RadioModel radioPlayer, final String... args) {
+    public static void start(final RadioPlayer radioPlayer, final String... args) {
         try {
             List<IOption> options = new ArrayList<>();
             IOption advancedOption = Option.builder().withName(ADVANCED).build();

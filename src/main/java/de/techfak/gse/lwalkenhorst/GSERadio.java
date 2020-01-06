@@ -52,7 +52,8 @@ public final class GSERadio {
             final String directory = commandLine.hasArgument() ? commandLine.getArgument() : USER_DIR;
 
             if (commandLine.hasOption(CLIENT)) { //Client
-                ClientApplication.main(args);
+                final StreamMusicPlayer streamPlayer = new StreamMusicPlayer();
+                ClientApplication.start(streamPlayer);
             } else {
                 final MusicPlayer musicPlayer = load(directory);
                 if (commandLine.hasOption(SERVER)) { //Server

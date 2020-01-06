@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -16,7 +16,7 @@ public class SongController {
     private final Label songLabel;
     private final ImageView image;
     private final ProgressBar timeLine;
-    private final RadioModel radio;
+    private final RadioPlayer radio;
 
     /**
      * Creates a new SongController to show the current song.
@@ -27,7 +27,7 @@ public class SongController {
      * @param radio     to get information when notified
      */
     public SongController(final Label songLabel, final ImageView image,
-                          final ProgressBar timeLine, final RadioModel radio) {
+                          final ProgressBar timeLine, final RadioPlayer radio) {
         this.songLabel = songLabel;
         this.image = image;
         this.timeLine = timeLine;

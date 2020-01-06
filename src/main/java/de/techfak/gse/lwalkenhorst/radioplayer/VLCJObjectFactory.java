@@ -13,11 +13,11 @@ import java.util.List;
  * VLCJFactory to create vlcj-lib objects.
  * Registers object cleanups to CleanUpDemon
  */
-public class VLCJFactory implements AutoCloseable {
+public class VLCJObjectFactory implements AutoCloseable {
 
     private List<Cleaner> cleaners = new ArrayList<>();
 
-    public VLCJFactory() {
+    public VLCJObjectFactory() {
         CleanUpDemon.getInstance().register(this, () -> cleaners.forEach(Cleaner::clean));
     }
 

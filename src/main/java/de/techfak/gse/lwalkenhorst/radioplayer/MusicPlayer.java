@@ -4,12 +4,11 @@ import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.FinishedEventAdapter
 import de.techfak.gse.lwalkenhorst.radioplayer.eventadapter.TimeChangedEventAdapter;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Plays mp3 songs by using the vlcj library.
  */
-public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
+public class MusicPlayer extends VLCJMediaPlayer {
     private VotingManager votingManager;
 
     private Playlist playlist = new Playlist();
@@ -38,7 +37,7 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
                     votingManager.resetVotes(oldSong);
                 }
                 getSupport().firePropertyChange(SONG_UPDATE, oldSong, currentSong);
-                playSong(currentSong);
+                play(currentSong);
             }
         }
     }
@@ -61,21 +60,6 @@ public class MusicPlayer extends VLCJApiPlayer implements RadioModel {
             this.registerEventListener(new TimeChangedEventAdapter(
                 (mediaPlayer, newTime) -> getSupport().firePropertyChange(TIME_UPDATE, 0.0f, newTime))
             );
-        }
-    }
-
-    /**
-     * Performs a given operation on each song that will be played.
-     * Splits the playlist in two sublist with respect to the current song location.
-     * Iterates through both sublist with given consumer.
-     *
-     * @param consumer to passed to foreach call.
-     */
-    @Override
-    public void forEachUpcomingSong(final Consumer<Song> consumer) {
-        synchronized (this) {
-            final List<Song> songs = playlist.getSongs();
-            songs.forEach(consumer);
         }
     }
 

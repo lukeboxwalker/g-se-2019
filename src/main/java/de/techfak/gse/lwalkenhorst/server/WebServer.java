@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 
-
 /**
  * WebServer to setup Rest Server.
  */
@@ -25,6 +24,7 @@ public class WebServer extends NanoHTTPD {
     private static final String MIME_TYPE_JSON = "application/json";
     private static final String MIME_TYPE_JPEG = "image/jpeg";
     private static final String ID = "id";
+    private static final String NOT_FOUND = "Not found";
 
     private final JSONParser parser;
     private MusicPlayer musicPlayer;
@@ -86,7 +86,7 @@ public class WebServer extends NanoHTTPD {
     public Response serve(IHTTPSession session) {
         try {
             if (session.getUri().isEmpty()) {
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, NOT_FOUND);
             }
             switch (session.getUri()) {
                 case "/current-song":
@@ -112,14 +112,14 @@ public class WebServer extends NanoHTTPD {
                         try {
                             String url = URI.create(song.getArtWorkURL()).getPath();
                             if (url == null || url.isEmpty()) {
-                                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "Not found");
+                                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, NOT_FOUND);
                             }
                             File file = new File(url);
                             FileInputStream stream = new FileInputStream(file);
                             return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JPEG, stream, -1);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
-                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "Not found");
+                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, NOT_FOUND);
                         }
                     }
                     break;

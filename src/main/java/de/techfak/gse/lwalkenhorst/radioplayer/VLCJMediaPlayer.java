@@ -11,7 +11,7 @@ import java.beans.PropertyChangeSupport;
  * Centralize the vlcj library usage.
  * Acts as a wrapper for the MediaPlayerFactory and MediaPlayer given by vlcj.
  */
-public abstract class VLCJApiPlayer {
+public abstract class VLCJMediaPlayer implements RadioPlayer {
 
     public static final String VOTE_UPDATE = "voteUpdate";
     public static final String SONG_UPDATE = "songUpdate";
@@ -24,43 +24,56 @@ public abstract class VLCJApiPlayer {
     /**
      * Initialize the VLCJApiPlayer.
      * Responsible for playing music with vlcj library.
-     *
-     * @param playBehavior supplies runnable to submit for playing a song.
      */
-    public VLCJApiPlayer(IPlayBehavior playBehavior) {
-        final VLCJFactory factory = new VLCJFactory();
+    public VLCJMediaPlayer() {
+        final VLCJObjectFactory factory = new VLCJObjectFactory();
         final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
         this.mediaPlayer = factory.newMediaPlayer(mediaPlayerFactory);
         this.support = new PropertyChangeSupport(this);
-        this.playBehavior = playBehavior;
+        this.playBehavior = (new NormalPlayBehavior());
     }
 
-    public VLCJApiPlayer() {
-        this(new NormalPlayBehavior());
-    }
-
+    @Override
     public void setPlayBehavior(IPlayBehavior playBehavior) {
         this.playBehavior = playBehavior;
     }
 
-    public void playSong(final Song song) {
+    public void play(final Song song) {
         mediaPlayer.submit(playBehavior.play(mediaPlayer, song));
     }
 
+    @Override
     public void skipSong(final Skip skip) {
         mediaPlayer.controls().skipPosition(skip.positionSkip);
     }
 
+    @Override
     public void pauseSong() {
         mediaPlayer.controls().pause();
     }
 
+    @Override
     public void resumeSong() {
         mediaPlayer.controls().play();
     }
 
     protected void registerEventListener(final MediaPlayerEventListener eventListener) {
         mediaPlayer.events().addMediaPlayerEventListener(eventListener);
+    }
+
+
+    @Override
+    public void addPropertyChangeListener(final PropertyChangeListener observer) {
+        support.addPropertyChangeListener(observer);
+    }
+
+    @Override
+    public void removePropertyChangeListener(final PropertyChangeListener observer) {
+        support.removePropertyChangeListener(observer);
+    }
+
+    protected PropertyChangeSupport getSupport() {
+        return support;
     }
 
     /**
@@ -75,17 +88,5 @@ public abstract class VLCJApiPlayer {
             this.positionSkip = positionSkip;
         }
 
-    }
-
-    public void addPropertyChangeListener(final PropertyChangeListener observer) {
-        support.addPropertyChangeListener(observer);
-    }
-
-    public void removePropertyChangeListener(final PropertyChangeListener observer) {
-        support.removePropertyChangeListener(observer);
-    }
-
-    protected PropertyChangeSupport getSupport() {
-        return support;
     }
 }

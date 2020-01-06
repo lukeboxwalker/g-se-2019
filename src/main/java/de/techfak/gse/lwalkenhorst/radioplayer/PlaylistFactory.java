@@ -63,7 +63,7 @@ public class PlaylistFactory {
     public Playlist newPlaylist() throws NoMusicFileFoundException {
         final List<Song> songs = new ArrayList<>();
         final File dir = new File(directoryName);
-        try (VLCJFactory factory = new VLCJFactory()) {
+        try (VLCJObjectFactory factory = new VLCJObjectFactory()) {
             final MediaPlayerFactory mediaPlayerFactory = factory.newMediaPlayerFactory();
             for (final File file : searchForMp3Files(dir)) {
                 try {
@@ -145,7 +145,7 @@ public class PlaylistFactory {
         song.setGenre(genre);
         song.setArtWorkURL(artWorldURL);
         song.setDurationMillis(duration);
-        System.out.println(song.getUuid());
+
         // Printing song after reading metadata
         System.out.println(song.toString());
         return song;

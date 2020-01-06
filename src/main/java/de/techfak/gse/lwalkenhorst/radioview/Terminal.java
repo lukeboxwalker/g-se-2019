@@ -1,7 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 
 import java.io.BufferedReader;
@@ -22,7 +22,7 @@ public class Terminal {
 
     private static final int BUFFER_WAIT = 200;
 
-    private final RadioModel radio;
+    private final RadioPlayer radio;
 
     private final AtomicBoolean running;
 
@@ -30,7 +30,7 @@ public class Terminal {
      * Creates a new cli (Terminal) object.
      * @param radio the musicPlayer
      */
-    public Terminal(final RadioModel radio) {
+    public Terminal(final RadioPlayer radio) {
         this.radio = radio;
         this.running = new AtomicBoolean(false);
         radio.start();
@@ -139,7 +139,7 @@ public class Terminal {
         if (playlist == null) {
             messageBuilder.append("\nEmpty\n");
         } else {
-            radio.forEachUpcomingSong((song) -> {
+            radio.getPlaylist().getSongs().forEach((song) -> {
                 messageBuilder.append(BREAK);
                 messageBuilder.append(song.toString());
             });

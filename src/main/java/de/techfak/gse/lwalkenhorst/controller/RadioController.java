@@ -1,9 +1,9 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
-import de.techfak.gse.lwalkenhorst.radioplayer.VLCJApiPlayer;
+import de.techfak.gse.lwalkenhorst.radioplayer.VLCJMediaPlayer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 
 /**
  * The main Controller of the GUI.
@@ -50,7 +49,7 @@ public class RadioController implements PropertyChangeListener {
      * @param radio    the model the view is observing
      * @param advanced to decide if control buttons are loaded
      */
-    public void load(final RadioModel radio, final boolean advanced) {
+    public void load(final RadioPlayer radio, final boolean advanced) {
         radio.addPropertyChangeListener(this);
         this.playlistController = new PlaylistController(playlist, radio);
         this.songController = new SongController(songLabel, image, timeLine, radio);
@@ -68,9 +67,9 @@ public class RadioController implements PropertyChangeListener {
      *
      * @param radio to perform action on.
      */
-    public void loadControls(final RadioModel radio) {
-        skip.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.FORWARD));
-        back.setOnAction(e -> radio.skipSong(VLCJApiPlayer.Skip.BACKWARD));
+    public void loadControls(final RadioPlayer radio) {
+        skip.setOnAction(e -> radio.skipSong(VLCJMediaPlayer.Skip.FORWARD));
+        back.setOnAction(e -> radio.skipSong(VLCJMediaPlayer.Skip.BACKWARD));
         play.setOnAction(e -> {
             if (play.isSelected()) {
                 radio.pauseSong();

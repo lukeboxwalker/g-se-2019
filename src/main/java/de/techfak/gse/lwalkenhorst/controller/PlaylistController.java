@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
-import de.techfak.gse.lwalkenhorst.radioplayer.RadioModel;
+import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +21,7 @@ public class PlaylistController {
     private final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> coloring;
     private final Callback<TableColumn<TableEntry, String>, TableCell<TableEntry, String>> voting;
     private final TableView<TableEntry> playlist;
-    private final RadioModel radio;
+    private final RadioPlayer radio;
 
     /**
      * Creates a new PlaylistController to fill the table.
@@ -30,7 +30,7 @@ public class PlaylistController {
      * @param playlist the tableView
      * @param radio    to get information when notified
      */
-    public PlaylistController(final TableView<TableEntry> playlist, final RadioModel radio) {
+    public PlaylistController(final TableView<TableEntry> playlist, final RadioPlayer radio) {
         this.playlist = playlist;
         this.radio = radio;
         final ProgressIndicator placeHolder = new ProgressIndicator();
