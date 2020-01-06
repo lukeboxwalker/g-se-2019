@@ -54,7 +54,7 @@ public class ClientApplication extends Application {
      * Setting current stage with given Pane.
      * @param root the pane to set
      */
-    public void setStage(Pane root) {
+    private void setStage(Pane root) {
         final Scene scene = new Scene(root);
         this.stage.setTitle("GSE-Radio");
         this.stage.setScene(scene);

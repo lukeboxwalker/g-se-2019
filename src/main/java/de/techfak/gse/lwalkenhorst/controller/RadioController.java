@@ -50,7 +50,7 @@ public class RadioController implements PropertyChangeListener {
      * @param radio    the model the view is observing
      * @param advanced to decide if control buttons are loaded
      */
-    public void load(final RadioModel radio, final boolean advanced) throws IOException {
+    public void load(final RadioModel radio, final boolean advanced) {
         radio.addPropertyChangeListener(this);
         this.playlistController = new PlaylistController(playlist, radio);
         this.songController = new SongController(songLabel, image, timeLine, radio);

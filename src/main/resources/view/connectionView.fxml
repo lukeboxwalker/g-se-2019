@@ -15,8 +15,8 @@
             <Label style="-fx-text-fill: white;" text="GSE-Radio application client connection:" />
             <HBox fx:id="hbox" alignment="TOP_CENTER" prefHeight="28.0" prefWidth="254.0" spacing="100.0">
                <children>
-                  <TextField fx:id="address" promptText="&lt;server address&gt;" style="-fx-alignment: center; -fx-background-color: #787878; fx-text-fill: white;" />
-                  <TextField fx:id="port" alignment="CENTER_RIGHT" promptText="&lt;port&gt;" style="-fx-alignment: center; -fx-background-color: #787878; fx-text-fill: white;" />
+                  <TextField fx:id="address" text="localhost" promptText="&lt;server address&gt;" style="-fx-alignment: center; -fx-background-color: #787878; fx-text-fill: white;" />
+                  <TextField fx:id="port" alignment="CENTER_RIGHT" text="8080" promptText="&lt;port&gt;" style="-fx-alignment: center; -fx-background-color: #787878; fx-text-fill: white;" />
                </children>
             </HBox>
             <Label style="-fx-text-fill: white;" text="or directly via:" textFill="WHITE" />

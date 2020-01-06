@@ -68,14 +68,14 @@ public class ConnectionController {
                 RadioModel radio;
                 if (!url.isEmpty()) {
                     radio = factory.newStreamPlayer(url);
-                    radioStart.accept(radio);
                     response.setText("");
+                    radioStart.accept(radio);
                 } else if (serverAddress.isEmpty() || serverPort.isEmpty()) {
                     response.setText("[ERROR] no input given");
                 } else {
                     radio = factory.newStreamPlayer(serverAddress, serverPort);
-                    radioStart.accept(radio);
                     response.setText("");
+                    radioStart.accept(radio);
                 }
             } catch (NoConnectionException | NoValidUrlException e) {
                 response.setText(e.getMessage());

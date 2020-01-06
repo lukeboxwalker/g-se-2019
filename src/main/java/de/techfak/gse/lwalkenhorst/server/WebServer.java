@@ -110,12 +110,16 @@ public class WebServer extends NanoHTTPD {
                         Song song = musicPlayer.getPlaylist().getSongs().stream()
                             .filter(song1 -> song1.getUuid().equals(songUUID)).findFirst().get();
                         try {
-                            File file = new File(URI.create(song.getArtWorkURL()).getPath());
+                            String url = URI.create(song.getArtWorkURL()).getPath();
+                            if (url == null || url.isEmpty()) {
+                                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "Not found");
+                            }
+                            File file = new File(url);
                             FileInputStream stream = new FileInputStream(file);
                             return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JPEG, stream, -1);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
-                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "not found");
+                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, "Not found");
                         }
                     }
                     break;

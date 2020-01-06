@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 public class PlaylistFactory {
 
     private static final Pattern URL_QUICK_MATCH = Pattern.compile("^\\p{Alpha}[\\p{Alnum}+.-]*:.*$");
-    private static final String FALLBACK_URL = "file:src/main/resources/view/fallback.png";
     private static final String EXCEPTION_MESSAGE = "No mp3-files found in directory ";
 
     private String directoryName;
@@ -161,7 +160,7 @@ public class PlaylistFactory {
     private static String validateUrl(final String url) {
         final char separate = '/';
         if (url == null || url.isEmpty()) {
-            return FALLBACK_URL;
+            return "";
         } else {
             try {
                 if (URL_QUICK_MATCH.matcher(url).matches()) {
@@ -182,7 +181,7 @@ public class PlaylistFactory {
                     }
                 }
             } catch (IllegalArgumentException | MalformedURLException e) {
-                return FALLBACK_URL;
+                return "";
             }
         }
     }

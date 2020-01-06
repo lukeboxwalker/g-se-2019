@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  */
 public class StreamPlayer extends VLCJApiPlayer implements RadioModel {
 
-    private static final int DELAY_MS = 1000;
+    private static final int DELAY_MS = 0;
     private static final int PERIOD_MS = 10000;
 
     private WebClient client;
