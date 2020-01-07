@@ -1,6 +1,5 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
 import de.techfak.gse.lwalkenhorst.exceptions.FileNotLoadableException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -72,8 +71,6 @@ public class PlaylistFactory {
                     System.err.println(e.getMessage());
                 }
             }
-        } catch (NoCleanUpFoundException e) {
-            e.printStackTrace();
         }
         if (songs.isEmpty()) {
             throw new NoMusicFileFoundException(EXCEPTION_MESSAGE + dir.getAbsolutePath());

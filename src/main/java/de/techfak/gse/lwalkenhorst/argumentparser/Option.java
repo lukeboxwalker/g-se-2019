@@ -1,118 +1,59 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
  * Option that could be used in a commandline.
  */
-public class Option implements IOption {
-
-    private final String optionName;
-    private final String shortName;
-    private List<String> conflictingOptions;
-    private List<IArgument> requiredArguments;
+public interface Option {
 
     /**
-     * Creates a new Option with given name.
-     * Option always requires a name to specify its
-     * long name and short name (first letter of long name)
+     * Option can conflict other options.
+     * Conflicting options are stored in a list
      *
-     * @param optionName to set name of option
+     * @return list of conflicting option names
      */
-    Option(final String optionName) {
-        this.optionName = optionName;
-        this.shortName = optionName.substring(0, 1);
-        this.conflictingOptions = new ArrayList<>();
-        this.requiredArguments = new ArrayList<>();
-    }
-
-    public void setConflictingOptions(List<String> conflictingOptions) {
-        this.conflictingOptions = conflictingOptions;
-    }
-
-    public void setRequiredArguments(List<IArgument> requiredArguments) {
-        this.requiredArguments = requiredArguments;
-    }
-
-    @Override
-    public String getName() {
-        return optionName;
-    }
-
-    @Override
-    public String getShortName() {
-        return shortName;
-    }
-
-    @Override
-    public void addRequiredArguments(IArgument argument) {
-        requiredArguments.add(argument);
-    }
-
-    @Override
-    public List<IArgument> getRequiredArguments() {
-        return requiredArguments;
-    }
-
-    @Override
-    public void addConflictingOption(String option) {
-        conflictingOptions.add(option);
-    }
-
-    @Override
-    public List<String> getConflictingOptions() {
-        return conflictingOptions;
-    }
-
-    public static NameBuilder builder() {
-        return new OptionBuilder();
-    }
+    List<String> getConflictingOptions();
 
     /**
-     * Builder to build an option object.
-     * Which has to specify a name
+     * Adds a conflicting option.
+     * Identifies options by there names
+     *
+     * @param option the conflicting option name
      */
-    public interface NameBuilder {
-        /**
-         * Prepares the name of the option.
-         * Needs to be set for option to be instantiated
-         *
-         * @param optionName for option
-         * @return builder
-         */
-        Option.OptionalsBuilder withName(String optionName);
-    }
+    void addConflictingOption(String option);
 
     /**
-     * Builder to build an option object.
-     * Using fluent interface design to build option
+     * Each option specifies a name.
+     *
+     * @return option name
      */
-    public interface OptionalsBuilder {
+    String getName();
 
-        /**
-         * Prepares to add a new argument to the option.
-         *
-         * @param argument to add
-         * @return builder
-         */
-        Option.OptionalsBuilder withArgument(IArgument argument);
+    /**
+     * Each option specifies a short name.
+     * Default short name is the first letter of the name
+     *
+     * @return option short name
+     */
+    String getShortName();
 
-        /**
-         * Prepares to add a conflicting option.
-         *
-         * @param option that conflicts
-         * @return builder
-         */
-        Option.OptionalsBuilder conflictsOption(String option);
+    /**
+     * Option may have arguments.
+     * Each argument can be configured separately {@link Argument}
+     *
+     * @return list if required arguments
+     */
+    List<Argument> getRequiredArguments();
 
-        /**
-         * Building the option object.
-         * Using all configurations set during
-         * the building process.
-         *
-         * @return new option
-         */
-        IOption build();
-    }
+    /**
+     * Adding a new argument to option.
+     * Required arguments are stored in an option
+     * Each option can have zero to many arguments
+     *
+     * @param argument the required argument
+     */
+    void addRequiredArguments(Argument argument);
+
 }

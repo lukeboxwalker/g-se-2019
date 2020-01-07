@@ -1,5 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.NormalPlayBehavior;
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.PlayBehavior;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
@@ -18,7 +20,7 @@ public abstract class VLCJMediaPlayer implements RadioPlayer {
     public static final String TIME_UPDATE = "timeUpdate";
 
     private MediaPlayer mediaPlayer;
-    private IPlayBehavior playBehavior;
+    private PlayBehavior playBehavior;
     private PropertyChangeSupport support;
 
     /**
@@ -34,7 +36,7 @@ public abstract class VLCJMediaPlayer implements RadioPlayer {
     }
 
     @Override
-    public void setPlayBehavior(IPlayBehavior playBehavior) {
+    public void setPlayBehavior(PlayBehavior playBehavior) {
         this.playBehavior = playBehavior;
     }
 

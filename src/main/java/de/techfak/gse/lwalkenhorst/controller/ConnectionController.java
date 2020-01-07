@@ -2,8 +2,10 @@ package de.techfak.gse.lwalkenhorst.controller;
 
 
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
-import de.techfak.gse.lwalkenhorst.server.NoConnectionException;
-import de.techfak.gse.lwalkenhorst.server.NoValidUrlException;
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamListeningPlayBehavior;
+import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
+import de.techfak.gse.lwalkenhorst.exceptions.NoValidUrlException;
+import de.techfak.gse.lwalkenhorst.server.UrlParser;
 import de.techfak.gse.lwalkenhorst.server.WebClient;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,10 +18,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 /**
  * Controller for ClientApplication.
@@ -44,8 +44,6 @@ public class ConnectionController {
     @FXML
     private Label response;
 
-    private Consumer<RadioPlayer> radioStart = (radioModel -> {
-    });
     private StreamPlayer streamPlayer;
     private Stage currentStage;
 
@@ -84,15 +82,9 @@ public class ConnectionController {
                 } else {
                     throw new NoValidUrlException("could not parse address");
                 }
-                final String rtpUrl = "rtp://" + parser.toAddress(serverAddress) + ":" + serverPort + "/";
-                System.out.println(rtpUrl);
                 streamPlayer.useWebClient(client);
-                streamPlayer.setPlayBehavior(new IPlayBehavior() {
-                    @Override
-                    public Runnable play(MediaPlayer mediaPlayer, Song song) {
-                        return () -> mediaPlayer.media().play(rtpUrl);
-                    }
-                });
+                streamPlayer.setPlayBehavior(
+                    new StreamListeningPlayBehavior(parser.toAddress(serverAddress), serverPort));
                 loadGUIStage(streamPlayer);
                 currentStage.close();
             } catch (NoConnectionException | NoValidUrlException e) {
@@ -122,7 +114,4 @@ public class ConnectionController {
         this.currentStage = stage;
     }
 
-    public void setOnRadioStart(Consumer<RadioPlayer> radioStart) {
-        this.radioStart = radioStart;
-    }
 }

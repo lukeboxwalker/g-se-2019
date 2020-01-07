@@ -1,15 +1,16 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Builder to build an option object.
  * Using fluent interface design to build option
  */
-class OptionBuilder implements Option.NameBuilder, Option.OptionalsBuilder {
+class OptionBuilder implements CommandLineOption.NameBuilder, CommandLineOption.OptionalsBuilder {
     private List<String> conflictingOptions;
-    private List<IArgument> requiredArguments;
+    private List<Argument> requiredArguments;
     private String optionName;
 
     OptionBuilder() {
@@ -18,19 +19,19 @@ class OptionBuilder implements Option.NameBuilder, Option.OptionalsBuilder {
     }
 
     @Override
-    public Option.OptionalsBuilder withArgument(IArgument argument) {
+    public CommandLineOption.OptionalsBuilder withArgument(Argument argument) {
         this.requiredArguments.add(argument);
         return this;
     }
 
     @Override
-    public Option.OptionalsBuilder conflictsOption(String option) {
-        this.conflictingOptions.add(option);
+    public CommandLineOption.OptionalsBuilder conflictsOptions(String... option) {
+        this.conflictingOptions.addAll(Arrays.asList(option));
         return this;
     }
 
     @Override
-    public Option.OptionalsBuilder withName(String optionName) {
+    public CommandLineOption.OptionalsBuilder withName(String optionName) {
         if (optionName.isEmpty()) {
             throw new IllegalArgumentException("Option must declare a name");
         }
@@ -39,10 +40,10 @@ class OptionBuilder implements Option.NameBuilder, Option.OptionalsBuilder {
     }
 
     @Override
-    public IOption build() {
-        final Option option = new Option(optionName);
-        option.setConflictingOptions(conflictingOptions);
-        option.setRequiredArguments(requiredArguments);
-        return option;
+    public Option build() {
+        final CommandLineOption commandLineOption = new CommandLineOption(optionName);
+        commandLineOption.setConflictingOptions(conflictingOptions);
+        commandLineOption.setRequiredArguments(requiredArguments);
+        return commandLineOption;
     }
 }

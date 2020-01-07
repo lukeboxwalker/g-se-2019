@@ -1,8 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
-import de.techfak.gse.lwalkenhorst.cleanup.Cleaner;
-import de.techfak.gse.lwalkenhorst.cleanup.NoCleanUpFoundException;
+import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
+import de.techfak.gse.lwalkenhorst.closeup.Closeup;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
@@ -15,10 +14,10 @@ import java.util.List;
  */
 public class VLCJObjectFactory implements AutoCloseable {
 
-    private List<Cleaner> cleaners = new ArrayList<>();
+    private List<Closeup> closeups = new ArrayList<>();
 
     public VLCJObjectFactory() {
-        CleanUpDemon.getInstance().register(this, () -> cleaners.forEach(Cleaner::clean));
+        ObjectCloseupManager.getInstance().register(this, () -> closeups.forEach(Closeup::close));
     }
 
     /**
@@ -29,7 +28,7 @@ public class VLCJObjectFactory implements AutoCloseable {
      */
     public MediaPlayerFactory newMediaPlayerFactory() {
         final MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-        cleaners.add(0, mediaPlayerFactory::release);
+        closeups.add(0, mediaPlayerFactory::release);
         return mediaPlayerFactory;
     }
 
@@ -42,7 +41,7 @@ public class VLCJObjectFactory implements AutoCloseable {
      */
     public MediaPlayer newMediaPlayer(final MediaPlayerFactory factory) {
         final MediaPlayer mediaPlayer = factory.mediaPlayers().newMediaPlayer();
-        cleaners.add(0, () -> {
+        closeups.add(0, () -> {
             mediaPlayer.controls().stop();
             mediaPlayer.release();
         });
@@ -50,7 +49,7 @@ public class VLCJObjectFactory implements AutoCloseable {
     }
 
     @Override
-    public void close() throws NoCleanUpFoundException {
-        CleanUpDemon.getInstance().cleanup(this);
+    public void close() {
+        ObjectCloseupManager.getInstance().closeObject(this);
     }
 }

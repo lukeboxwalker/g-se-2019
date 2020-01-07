@@ -2,6 +2,8 @@ package de.techfak.gse.lwalkenhorst.radioview;
 
 import de.techfak.gse.lwalkenhorst.argumentparser.*;
 import de.techfak.gse.lwalkenhorst.controller.RadioController;
+import de.techfak.gse.lwalkenhorst.exceptions.OverlappingOptionException;
+import de.techfak.gse.lwalkenhorst.exceptions.ParseException;
 import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -49,10 +51,10 @@ public class GuiApplication extends Application {
      */
     public static void start(final RadioPlayer radioPlayer, final String... args) {
         try {
-            List<IOption> options = new ArrayList<>();
-            IOption advancedOption = Option.builder().withName(ADVANCED).build();
+            List<Option> options = new ArrayList<>();
+            Option advancedOption = CommandLineOption.builder().withName(ADVANCED).build();
             options.add(advancedOption);
-            ICommandLine commandLine = new ArgumentParser().parse(options, args);
+            CommandLine commandLine = new ArgumentParser().parse(options, args);
             radio = radioPlayer;
             if (commandLine.hasOption(ADVANCED)) {
                 advanced = true;

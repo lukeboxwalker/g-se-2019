@@ -1,6 +1,4 @@
-package de.techfak.gse.lwalkenhorst.argumentparser;
-
-import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
+package de.techfak.gse.lwalkenhorst.exceptions;
 
 /**
  * OverlappingOptionException when arguments overlap.

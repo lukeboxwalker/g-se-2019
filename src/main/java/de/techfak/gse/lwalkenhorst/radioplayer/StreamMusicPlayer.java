@@ -1,7 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.server.WebClient;
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
+import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,7 +48,7 @@ public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
                 }
             };
             timer.schedule(timerTask, DELAY_MS, PERIOD_MS);
-            CleanUpDemon.getInstance().register(this, timer::cancel);
+            ObjectCloseupManager.getInstance().register(this, timer::cancel);
             play(currentSong);
         }
     }

@@ -3,7 +3,7 @@ package de.techfak.gse.lwalkenhorst.exceptions;
 /**
  * File could not be loaded.
  */
-public class FileNotLoadableException extends Exception {
+public class FileNotLoadableException extends GSERadioException {
 
     static final long serialVersionUID = 42L;
 
@@ -15,8 +15,4 @@ public class FileNotLoadableException extends Exception {
         super(message, cause);
     }
 
-    @Override
-    public String getMessage() {
-        return "[ERROR] " + super.getMessage();
-    }
 }

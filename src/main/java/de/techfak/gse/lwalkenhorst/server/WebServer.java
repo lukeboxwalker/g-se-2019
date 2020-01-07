@@ -1,12 +1,15 @@
 package de.techfak.gse.lwalkenhorst.server;
 
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
+import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
+import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
 
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.NormalPlayBehavior;
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.PlayBehavior;
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamingPlayBehavior;
 import fi.iki.elonen.NanoHTTPD;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,16 +56,10 @@ public class WebServer extends NanoHTTPD {
      * @param port the streaming port
      * @return new PlayBehavior
      */
-    private IPlayBehavior getPlayBehavior(String port) {
-        IPlayBehavior playBehavior = new NormalPlayBehavior();
+    private PlayBehavior getPlayBehavior(String port) {
+        PlayBehavior playBehavior = new NormalPlayBehavior();
         if (port != null && !port.isEmpty()) {
-            playBehavior = new IPlayBehavior() {
-                @Override
-                public Runnable play(MediaPlayer mediaPlayer, Song song) {
-                    return () -> mediaPlayer.media().play(song.getFilePath(),
-                        ":sout=#rtp{dst=" + LOCALHOST + ",port=" + port + ",mux=ts}");
-                }
-            };
+            playBehavior = new StreamingPlayBehavior(LOCALHOST, port);
         }
         return playBehavior;
     }
@@ -79,7 +76,7 @@ public class WebServer extends NanoHTTPD {
             throw new NoConnectionException("could not setup server socket on: "
                 + LOCALHOST + ":" + getListeningPort(), e);
         }
-        CleanUpDemon.getInstance().register(this, this::stop);
+        ObjectCloseupManager.getInstance().register(this, this::stop);
     }
 
     @Override

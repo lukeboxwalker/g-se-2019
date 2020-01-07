@@ -1,4 +1,4 @@
-package de.techfak.gse.lwalkenhorst.radioplayer;
+package de.techfak.gse.lwalkenhorst.server;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

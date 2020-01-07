@@ -1,6 +1,4 @@
-package de.techfak.gse.lwalkenhorst.server;
-
-import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
+package de.techfak.gse.lwalkenhorst.exceptions;
 
 /**
  * NoConnectionException if no connection could be found.

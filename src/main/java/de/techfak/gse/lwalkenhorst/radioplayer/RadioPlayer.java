@@ -1,5 +1,7 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
+import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.PlayBehavior;
+
 /**
  * Model interface for radio application.
  */
@@ -74,5 +76,5 @@ public interface RadioPlayer extends Observable {
      *
      * @param playBehavior to set
      */
-    void setPlayBehavior(IPlayBehavior playBehavior);
+    void setPlayBehavior(PlayBehavior playBehavior);
 }

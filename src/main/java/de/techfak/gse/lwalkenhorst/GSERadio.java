@@ -1,8 +1,9 @@
 package de.techfak.gse.lwalkenhorst;
 
 import de.techfak.gse.lwalkenhorst.argumentparser.*;
-import de.techfak.gse.lwalkenhorst.cleanup.CleanUpDemon;
+import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
+import de.techfak.gse.lwalkenhorst.exceptions.ParseException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
 import de.techfak.gse.lwalkenhorst.radioview.ClientApplication;
 import de.techfak.gse.lwalkenhorst.radioview.GuiApplication;
@@ -10,7 +11,7 @@ import de.techfak.gse.lwalkenhorst.radioview.Terminal;
 
 import de.techfak.gse.lwalkenhorst.server.WebServer;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public final class GSERadio {
      */
     private void start(final String... args) {
         try {
-            final ICommandLine commandLine = new ArgumentParser().parse(createOptions(), args);
+            final CommandLine commandLine = new ArgumentParser().parse(createOptions(), args);
             final String directory = commandLine.hasArgument() ? commandLine.getArgument() : USER_DIR;
 
             if (commandLine.hasOption(CLIENT)) { //Client
@@ -76,10 +77,9 @@ public final class GSERadio {
             System.err.println(e.getMessage());
             System.exit(e.getExitCode());
         } catch (ParseException e) {
-            //Printing help message when argument parsing failed because of wrong arguments.
             System.err.println(e.getMessage());
         } finally {
-            CleanUpDemon.getInstance().cleanup();
+            ObjectCloseupManager.getInstance().closeReferences();
         }
     }
 
@@ -89,24 +89,19 @@ public final class GSERadio {
      *
      * @return list of defined options
      */
-    private List<IOption> createOptions() {
-        IOption guiOption = Option.builder().withName(GUI).conflictsOption(CLIENT).build();
-        IOption clientOption = Option.builder().withName(CLIENT).conflictsOption(GUI).build();
+    private List<Option> createOptions() {
+        Option guiOption = CommandLineOption.builder().withName(GUI).conflictsOptions(CLIENT, SERVER).build();
+        Option clientOption = CommandLineOption.builder().withName(CLIENT).conflictsOptions(GUI, SERVER).build();
 
-        IArgument streaming = Argument.builder().withName(STREAMING).withValueSeparator(SEPARATE)
+        Argument streaming = CommandLineArgument.builder().withName(STREAMING).withValueSeparator(SEPARATE)
             .withPatternMatcher(PORT_RANGE).isRequired(false).build();
-        IArgument port = Argument.builder().withName(PORT).withValueSeparator(SEPARATE)
+        Argument port = CommandLineArgument.builder().withName(PORT).withValueSeparator(SEPARATE)
             .withPatternMatcher(PORT_RANGE).isRequired(true).withDefaultValue(DEFAULT_PORT).build();
 
-        IOption serverOption = Option.builder().withName(SERVER).withArgument(streaming).withArgument(port)
-            .conflictsOption(CLIENT).build();
+        Option serverOption = CommandLineOption.builder().withName(SERVER).withArgument(streaming).withArgument(port)
+            .conflictsOptions(CLIENT, GUI).build();
 
-        List<IOption> options = new ArrayList<>();
-        options.add(guiOption);
-        options.add(clientOption);
-        options.add(serverOption);
-
-        return options;
+        return Arrays.asList(guiOption, clientOption, serverOption);
     }
 
     /**

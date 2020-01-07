@@ -1,111 +1,72 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Commandline that is parsed by a parser.
  */
-public class CommandLine implements ICommandLine {
-
-    private final Map<String, IOption> options;
-    private final Map<String, Map<String, String>> optionArguments;
-    private String argument;
-
-    public CommandLine() {
-        this.options = new HashMap<>();
-        this.optionArguments = new HashMap<>();
-    }
+public interface CommandLine {
 
     /**
-     * Sets argument that is found by a parser.
-     * Only one argument is allowed for a commandline
+     * Commandline could have an argument.
      *
-     * @param argument the argument
-     * @throws ParseException if there is more than one argument
+     * @return if the commandline has an argument
      */
-    public void setArgument(String argument) throws ParseException {
-        if (this.argument == null) {
-            this.argument = argument;
-        } else {
-            throw new ParseException("Too many arguments");
-        }
-
-    }
+    boolean hasArgument();
 
     /**
-     * Adding an argument that belongs to an option.
-     *
-     * @param option the argument belongs to
-     * @param argKey the argument prefix
-     * @param argValue the argument value
+     * @return the argument.
      */
-    public void addOptionArgument(IOption option, String argKey, String argValue) {
-        final String optionName = option.getName();
-        if (optionArguments.containsKey(optionName)) {
-            Map<String, String> arguments = optionArguments.get(optionName);
-            arguments.put(argKey, argValue);
-        } else {
-            Map<String, String> arguments = new HashMap<>();
-            arguments.put(argKey, argValue);
-            optionArguments.put(optionName, arguments);
-        }
-    }
+    String getArgument();
 
     /**
-     * Adding an option that was found.
+     * Gets the value associated with given argument prefix.
+     * Commandline stores argument values for option
+     * and its argument
      *
-     * @param option found by parsing.
-     * @throws OverlappingOptionException if option would overlap an existing option
+     * @param opt the option name
+     * @param arg the argument name
+     * @return the argument value
      */
-    public void addOption(IOption option) throws OverlappingOptionException, ParseException {
-        for (String optionName : option.getConflictingOptions()) {
-            if (options.containsKey(optionName)) {
-                throw new OverlappingOptionException("The arguments have overlapping semantics");
-            }
-        }
-        if (options.containsKey(option.getName())) {
-            throw new ParseException("Found same option multiple times");
-        }
-        this.options.put(option.getName(), option);
-    }
+    String getOptionArg(String opt, String arg);
 
-    @Override
-    public boolean hasArgument() {
-        return argument != null;
-    }
+    /**
+     * Check if option has argument in commandline.
+     *
+     * @param opt the option name
+     * @param arg the argument name
+     * @return if argument was found
+     */
+    boolean hasOptionArg(String opt, String arg);
 
-    @Override
-    public String getArgument() {
-        return argument;
-    }
+    /**
+     * Getting all options that was found.
+     *
+     * @return the options
+     */
+    Collection<Option> getOptions();
 
-    @Override
-    public String getOptionArg(String opt, String arg) {
-        return hasOptionArg(opt, arg) ? optionArguments.get(opt).get(arg) : "";
-    }
+    /**
+     * Getting all arguments that are associated with options.
+     *
+     * @return all arguments.
+     */
+    Collection<Map<String, String>> getOptionArgs();
 
-    @Override
-    public boolean hasOptionArg(String opt, String arg) {
-        return (optionArguments.containsKey(opt) && optionArguments.get(opt).containsKey(arg));
-    }
+    /**
+     * Getting the option object by its option name.
+     *
+     * @param opt the option name
+     * @return the option object
+     */
+    Option getOption(String opt);
 
-    @Override
-    public Collection<IOption> getOptions() {
-        return options.values();
-    }
-
-    @Override
-    public Collection<Map<String, String>> getOptionArgs() {
-        return optionArguments.values();
-    }
-
-    @Override
-    public IOption getOption(String opt) {
-        return hasOption(opt) ? options.get(opt) : null;
-    }
-
-    @Override
-    public boolean hasOption(String opt) {
-        return options.containsKey(opt);
-    }
+    /**
+     * Checks if option was found.
+     *
+     * @param opt the option name
+     * @return if option is present
+     */
+    boolean hasOption(String opt);
 }

@@ -1,6 +1,5 @@
 package de.techfak.gse.lwalkenhorst.argumentparser;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -8,132 +7,57 @@ import java.util.regex.Pattern;
  * An Argument as a construct follows an option in a commandline
  * to specify the options semantics
  */
-public class Argument implements IArgument {
-
-    private final String argumentPrefix;
-    private boolean isRequired;
-    private String valueSeparator;
-    private Pattern valuePatternMatcher;
-    private String defaultValue;
-
-    Argument(final String argumentPrefix) {
-        this.argumentPrefix = argumentPrefix;
-        this.isRequired = true;
-    }
-
-    @Override
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public boolean hasDefaultValue() {
-        return this.defaultValue != null;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public String getPrefix() {
-        return argumentPrefix;
-    }
-
-    public void setValueMatcher(Pattern valuePatternMatcher) {
-        this.valuePatternMatcher = valuePatternMatcher;
-    }
-
-    @Override
-    public Pattern getValuePatternMatcher() {
-        return Objects.requireNonNullElse(valuePatternMatcher, Pattern.compile(".*"));
-    }
-
-    @Override
-    public String getValueSeparator() {
-        return Objects.requireNonNullElse(valueSeparator, " ");
-
-    }
-
-    public void setValueSeparator(String valueSeparator) {
-        this.valueSeparator = valueSeparator;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return isRequired;
-    }
-
-    public void setRequired(boolean isRequired) {
-        this.isRequired = isRequired;
-    }
-
-    public static PrefixBuilder builder() {
-        return new ArgumentBuilder();
-    }
+public interface Argument {
 
     /**
-     * Builder to build an argument object.
-     * Which has to specify a name
+     * Argument could be required by an option or
+     * could be optional.
+     *
+     * @return if argument is required for an option
      */
-    public interface PrefixBuilder {
-        /**
-         * Prepares the name of the argument.
-         * Needs to be set for argument to be instantiated
-         *
-         * @param argumentName for argument
-         * @return builder
-         */
-        Argument.OptionalsBuilder withName(String argumentName);
-    }
+    boolean isRequired();
 
     /**
-     * Builder to build an argument object.
-     * Using fluent interface design to build argument
+     * Specifies a separator for the prefix and the value.
+     *
+     * @return separator string
      */
-    public interface OptionalsBuilder {
+    String getValueSeparator();
 
-        /**
-         * Prepares isRequired for argument.
-         * Default is true
-         *
-         * @param isRequired to set
-         * @return builder
-         */
-        Argument.OptionalsBuilder isRequired(boolean isRequired);
+    /**
+     * Specifies a regex pattern.
+     * Pattern to match value String required to parse
+     * the argument. If pattern matcher failed the argument
+     * that is parsed is invalid.
+     *
+     * @return regex pattern
+     */
+    Pattern getValuePatternMatcher();
 
-        /**
-         * Prepares valueSeparator for argument.
-         * Default is null
-         *
-         * @param separator to set
-         * @return builder
-         */
-        Argument.OptionalsBuilder withValueSeparator(String separator);
+    /**
+     * Argument name or prefix.
+     * Required to determine the argument that is used in an
+     * commandline
+     *
+     * @return the prefix
+     */
+    String getPrefix();
 
-        /**
-         * Prepares valuePatternMatcher for argument.
-         * Default is null
-         *
-         * @param valuePatternMatcher to set
-         * @return builder
-         */
-        Argument.OptionalsBuilder withPatternMatcher(Pattern valuePatternMatcher);
+    /**
+     * Arguments default value.
+     * If an argument has a default value this
+     * return a non null string object that can be used
+     * as a default value, when the argument was not found
+     * in commandline
+     *
+     * @return the default value
+     */
+    String getDefaultValue();
 
-        /**
-         * Prepares defaultValue for argument.
-         * Default is null
-         *
-         * @param defaultValue to set
-         * @return builder
-         */
-        Argument.OptionalsBuilder withDefaultValue(String defaultValue);
-
-        /**
-         * Building the argument.
-         *
-         * @return new configured argument
-         */
-        IArgument build();
-    }
+    /**
+     * Argument could have a default value.
+     *
+     * @return if argument has default value
+     */
+    boolean hasDefaultValue();
 }
