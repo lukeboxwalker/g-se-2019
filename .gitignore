@@ -1,5 +1,6 @@
 # Mp3 files
 *.mp3
+!src/test/resources/mp3s/*.mp3
 
 # Created by https://www.gitignore.io/api/linux,maven,windows,intellij
 # Edit at https://www.gitignore.io/?templates=linux,maven,windows,intellij
