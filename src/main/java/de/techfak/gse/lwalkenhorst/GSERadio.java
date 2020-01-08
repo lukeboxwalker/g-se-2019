@@ -61,7 +61,7 @@ public final class GSERadio {
                     String streaming = commandLine.getOptionArg(SERVER, STREAMING);
                     String port = commandLine.getOptionArg(SERVER, PORT);
 
-                    WebServer server = new WebServer(port, musicPlayer);
+                    WebServer server = new WebServer(Integer.parseInt(port), musicPlayer);
                     server.startTSPSocket();
                     server.setMusicStream(streaming);
                 }
@@ -113,7 +113,7 @@ public final class GSERadio {
      */
     private MusicPlayer load(String directory) throws ExitCodeException {
         final PlaylistFactory factory = new PlaylistFactory(directory);
-        final Playlist playlist = factory.newPlaylist();
+        final Playlist playlist = factory.newPlaylist(true);
         playlist.shuffle();
 
         final MusicPlayer musicPlayer = new MusicPlayer();

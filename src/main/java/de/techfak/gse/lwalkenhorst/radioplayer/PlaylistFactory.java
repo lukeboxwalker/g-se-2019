@@ -25,6 +25,7 @@ public class PlaylistFactory {
     private static final String EXCEPTION_MESSAGE = "No mp3-files found in directory ";
 
     private String directoryName;
+    private boolean verbose;
 
     /**
      * Factory to create a new Playlist from given directory.
@@ -33,6 +34,7 @@ public class PlaylistFactory {
      */
     public PlaylistFactory(final String directoryName) {
         this.directoryName = directoryName;
+        this.verbose = true;
     }
 
     /**
@@ -57,9 +59,11 @@ public class PlaylistFactory {
      * Inits a MediaPlayerFactory to read Metadata
      *
      * @return a new Playlist
+     * @param verbose to print songs that are found
      * @throws NoMusicFileFoundException when playlist is empty
      */
-    public Playlist newPlaylist() throws NoMusicFileFoundException {
+    public Playlist newPlaylist(boolean verbose) throws NoMusicFileFoundException {
+        this.verbose = verbose;
         final List<Song> songs = new ArrayList<>();
         final File dir = new File(directoryName);
         try (VLCJObjectFactory factory = new VLCJObjectFactory()) {
@@ -144,7 +148,9 @@ public class PlaylistFactory {
         song.setDurationMillis(duration);
 
         // Printing song after reading metadata
-        System.out.println(song.toString());
+        if (verbose) {
+            System.out.println(song.toString());
+        }
         return song;
     }
 

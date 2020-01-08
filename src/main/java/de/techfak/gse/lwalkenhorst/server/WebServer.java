@@ -38,8 +38,8 @@ public class WebServer extends NanoHTTPD {
      * @param port        to listen to
      * @param musicPlayer to stream music
      */
-    public WebServer(final String port, MusicPlayer musicPlayer) {
-        super(Integer.parseInt(port));
+    public WebServer(final int port, MusicPlayer musicPlayer) {
+        super(port);
         this.parser = new JSONParser();
         this.musicPlayer = musicPlayer;
     }
