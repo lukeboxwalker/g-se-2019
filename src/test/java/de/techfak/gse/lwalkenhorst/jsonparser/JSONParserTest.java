@@ -4,6 +4,7 @@ import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.PlaylistFactory;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +27,7 @@ class JSONParserTest {
      * Soll verhalten: Der Song wird als der selbe song betrachtet.
      * - song gleich
      */
+    @Test
     public void SongSerialisation() {
         try {
             //read in songs
@@ -44,7 +46,7 @@ class JSONParserTest {
             //check song information is equal
             assertThat(songFromJson.getUuid()).isEqualTo(actualSong.getUuid());
             assertThat(songFromJson.getTitle()).isEqualTo(actualSong.getTitle());
-            assertThat(songFromJson.getArtist()).isEqualTo(actualSong.getTitle());
+            assertThat(songFromJson.getArtist()).isEqualTo(actualSong.getArtist());
             assertThat(songFromJson.getAlbum()).isEqualTo(actualSong.getAlbum());
             assertThat(songFromJson.getGenre()).isEqualTo(actualSong.getGenre());
             assertThat(songFromJson.getDurationMillis()).isEqualTo(actualSong.getDurationMillis());
