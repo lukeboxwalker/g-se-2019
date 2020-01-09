@@ -1,5 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer.playbehavior;
 
+import de.techfak.gse.lwalkenhorst.exceptions.StreamFailedException;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
@@ -8,10 +9,22 @@ import uk.co.caprica.vlcj.player.base.MediaPlayer;
  */
 public class StreamingPlayBehavior implements PlayBehavior {
 
+    private static final int LOWEST_PORT = 1024;
+    private static final int HIGHEST_PORT = 49151;
     private final String destination;
-    private final String port;
+    private final int port;
 
-    public StreamingPlayBehavior(final String destination, final String port) {
+    /**
+     * Creating a Stream PlayBehavior.
+     *
+     * @param destination address to stream to
+     * @param port        to listen to
+     * @throws StreamFailedException if port is not valid
+     */
+    public StreamingPlayBehavior(final String destination, final int port) throws StreamFailedException {
+        if (port < LOWEST_PORT || port > HIGHEST_PORT) {
+            throw new StreamFailedException("could not start streaming with vlc media player because of port: " + port);
+        }
         this.destination = destination;
         this.port = port;
     }
@@ -19,6 +32,6 @@ public class StreamingPlayBehavior implements PlayBehavior {
     @Override
     public Runnable play(final MediaPlayer mediaPlayer, final Song song) {
         return () -> mediaPlayer.media().play(song.getFilePath(),
-            ":sout=#rtp{dst=" + destination + ",port=" + port + ",mux=ts}");
+                ":sout=#rtp{dst=" + destination + ",port=" + port + ",mux=ts}");
     }
 }

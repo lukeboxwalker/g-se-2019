@@ -30,8 +30,8 @@ public final class GSERadio {
     private static final String PORT = "port";
     private static final String DEFAULT_PORT = "8080";
     private static final String SEPARATE = "=";
-    private static final Pattern PORT_RANGE = Pattern.compile(
-        "(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[0-9][0-9]{4}|[0-9]{4}|[0-9]{3}|[0-9]{2}|[0-9])");
+    private static final Pattern NUMBER = Pattern.compile("([0-9]*)");
+
 
     private GSERadio() {
     }
@@ -61,9 +61,15 @@ public final class GSERadio {
                     String streaming = commandLine.getOptionArg(SERVER, STREAMING);
                     String port = commandLine.getOptionArg(SERVER, PORT);
 
-                    WebServer server = new WebServer(Integer.parseInt(port), musicPlayer);
-                    server.startTSPSocket();
-                    server.setMusicStream(streaming);
+                    try {
+                        if (streaming != null && !streaming.isEmpty()) {
+                            new WebServer(Integer.parseInt(port), musicPlayer, Integer.parseInt(streaming));
+                        } else {
+                            new WebServer(Integer.parseInt(port), musicPlayer);
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new ParseException("port argument was expected to be an integer");
+                    }
                 }
                 if (commandLine.hasOption(GUI)) { //Local GUI
                     GuiApplication.start(musicPlayer, "-a");
@@ -94,12 +100,12 @@ public final class GSERadio {
         Option clientOption = CommandLineOption.builder().withName(CLIENT).conflictsOptions(GUI, SERVER).build();
 
         Argument streaming = CommandLineArgument.builder().withName(STREAMING).withValueSeparator(SEPARATE)
-            .withPatternMatcher(PORT_RANGE).isRequired(false).build();
+                .withPatternMatcher(NUMBER).isRequired(false).build();
         Argument port = CommandLineArgument.builder().withName(PORT).withValueSeparator(SEPARATE)
-            .withPatternMatcher(PORT_RANGE).isRequired(true).withDefaultValue(DEFAULT_PORT).build();
+                .withPatternMatcher(NUMBER).isRequired(true).withDefaultValue(DEFAULT_PORT).build();
 
         Option serverOption = CommandLineOption.builder().withName(SERVER).withArgument(streaming).withArgument(port)
-            .conflictsOptions(CLIENT, GUI).build();
+                .conflictsOptions(CLIENT, GUI).build();
 
         return Arrays.asList(guiOption, clientOption, serverOption);
     }

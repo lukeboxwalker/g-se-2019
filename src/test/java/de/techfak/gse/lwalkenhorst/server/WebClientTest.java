@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
+import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
@@ -42,9 +43,7 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             musicPlayer.start();
 
@@ -62,7 +61,7 @@ class WebClientTest {
             assertThat(requestedSong.getUuid()).isEqualTo(actualSong.getUuid());
             assertThat(requestedSong.getTitle()).isEqualTo(actualSong.getTitle());
             assertThat(requestedSong.getArtist()).isEqualTo(actualSong.getArtist());
-        } catch (NoMusicFileFoundException | NoConnectionException e) {
+        } catch (ExitCodeException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -93,9 +92,7 @@ class WebClientTest {
             musicPlayer.setPlaylist(testMusic);
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             //setting up client
             WebClient client = new WebClient("127.0.0.1", 8080);
@@ -116,7 +113,7 @@ class WebClientTest {
             //information should be not null
             assertThat(requestedSong.getTitle()).isEqualTo("");
             assertThat(requestedSong.getArtist()).isEqualTo("");
-        } catch (NoMusicFileFoundException | NoConnectionException e) {
+        } catch (ExitCodeException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -148,9 +145,7 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             musicPlayer.start();
 
@@ -162,7 +157,7 @@ class WebClientTest {
 
             //checking if songLists are equal
             assertThat(musicPlayer.getPlaylist().getSongList()).isEqualTo(requestedPlaylist.getSongList());
-        } catch (NoMusicFileFoundException | NoConnectionException e) {
+        } catch (ExitCodeException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -195,9 +190,7 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             musicPlayer.start();
 
@@ -212,7 +205,7 @@ class WebClientTest {
             //checking if songLists are equal
             assertThat(musicPlayer.getPlaylist().getSongList()).isNotEqualTo(requestedPlaylist.getSongList());
             assertThat(requestedPlaylist.getSongList().size()).isEqualTo(0);
-        } catch (NoMusicFileFoundException | NoConnectionException e) {
+        } catch (ExitCodeException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();

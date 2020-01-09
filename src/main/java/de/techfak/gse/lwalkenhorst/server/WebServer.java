@@ -1,13 +1,11 @@
 package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
+import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
-
-import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.NormalPlayBehavior;
-import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.PlayBehavior;
 import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamingPlayBehavior;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -38,43 +36,34 @@ public class WebServer extends NanoHTTPD {
      * @param port        to listen to
      * @param musicPlayer to stream music
      */
-    public WebServer(final int port, MusicPlayer musicPlayer) {
+    public WebServer(final int port, MusicPlayer musicPlayer) throws NoConnectionException {
         super(port);
         this.parser = new JSONParser();
         this.musicPlayer = musicPlayer;
-    }
-
-    public void setMusicStream(final String port) {
-        this.musicPlayer.setPlayBehavior(getPlayBehavior(port));
+        this.startTSPSocket(port);
     }
 
     /**
-     * Creates new PlayBehavior for server usage.
-     * Using given port to setup stream play behavior.
-     * If port is null or empty using normal behavior
+     * Creating a new WebServer.
      *
-     * @param port the streaming port
-     * @return new PlayBehavior
+     * @param port        to listen to
+     * @param musicPlayer to stream music
+     * @param streamPort  to stream music via vlc
      */
-    private PlayBehavior getPlayBehavior(String port) {
-        PlayBehavior playBehavior = new NormalPlayBehavior();
-        if (port != null && !port.isEmpty()) {
-            playBehavior = new StreamingPlayBehavior(LOCALHOST, port);
-        }
-        return playBehavior;
+    public WebServer(final int port, MusicPlayer musicPlayer, final int streamPort) throws ExitCodeException {
+        super(port);
+        this.parser = new JSONParser();
+        this.musicPlayer = musicPlayer;
+        this.musicPlayer.setPlayBehavior(new StreamingPlayBehavior(LOCALHOST, streamPort));
+        this.startTSPSocket(port);
     }
 
-    /**
-     * Starting the server.
-     *
-     * @throws NoConnectionException if server could not start socket.
-     */
-    public void startTSPSocket() throws NoConnectionException {
+    private void startTSPSocket(final int port) throws NoConnectionException {
         try {
             this.start(SOCKET_READ_TIMEOUT, false);
         } catch (IOException e) {
             throw new NoConnectionException("could not setup server socket on: "
-                + LOCALHOST + ":" + getListeningPort(), e);
+                    + LOCALHOST + ":" + port, e);
         }
         ObjectCloseupManager.getInstance().register(this, this::stop);
     }
@@ -88,14 +77,14 @@ public class WebServer extends NanoHTTPD {
             switch (session.getUri()) {
                 case "/current-song":
                     return newFixedLengthResponse(Response.Status.OK,
-                        MIME_TYPE_JSON, parser.toJSON(musicPlayer.getSong()));
+                            MIME_TYPE_JSON, parser.toJSON(musicPlayer.getSong()));
                 case "/playlist":
                     return newFixedLengthResponse(Response.Status.OK,
-                        MIME_TYPE_JSON, parser.toJSON(musicPlayer.getPlaylist()));
+                            MIME_TYPE_JSON, parser.toJSON(musicPlayer.getPlaylist()));
                 case "/votes":
                     if (session.getParameters().size() == 1) {
                         String songUUID = session.getParameters()
-                            .getOrDefault(ID, Collections.singletonList("")).get(0);
+                                .getOrDefault(ID, Collections.singletonList("")).get(0);
                         Integer integer = musicPlayer.getVotingManager().getVotes(songUUID);
                         return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JSON, parser.toJSON(integer));
                     }
@@ -103,9 +92,9 @@ public class WebServer extends NanoHTTPD {
                 case "/cover":
                     if (session.getParameters().size() == 1) {
                         String songUUID = session.getParameters()
-                            .getOrDefault(ID, Collections.singletonList("")).get(0);
+                                .getOrDefault(ID, Collections.singletonList("")).get(0);
                         Song song = musicPlayer.getPlaylist().getSongs().stream()
-                            .filter(song1 -> song1.getUuid().equals(songUUID)).findFirst().get();
+                                .filter(song1 -> song1.getUuid().equals(songUUID)).findFirst().get();
                         try {
                             String url = URI.create(song.getArtWorkURL()).getPath();
                             if (url == null || url.isEmpty()) {

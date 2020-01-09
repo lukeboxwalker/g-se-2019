@@ -1,6 +1,7 @@
 package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
+import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
 import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
@@ -46,9 +47,7 @@ class WebServerTest {
             musicPlayer.setPlaylist(testMusic);
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             musicPlayer.start();
 
@@ -66,7 +65,7 @@ class WebServerTest {
             List<String> mimeTypes = response.headers().allValues("content-type");
             assertThat(mimeTypes.size()).isEqualTo(1);
             assertThat(mimeTypes.get(0)).isEqualTo("application/json");
-        } catch (NoMusicFileFoundException | NoConnectionException | IOException | InterruptedException e) {
+        } catch (ExitCodeException | IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -96,9 +95,7 @@ class WebServerTest {
             MusicPlayer musicPlayer = new MusicPlayer();
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             //request current song
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:8080/current-song")).build();
@@ -114,7 +111,7 @@ class WebServerTest {
             List<String> mimeTypes = response.headers().allValues("content-type");
             assertThat(mimeTypes.size()).isEqualTo(1);
             assertThat(mimeTypes.get(0)).isEqualTo("application/json");
-        } catch (NoConnectionException | IOException | InterruptedException e) {
+        } catch (ExitCodeException | IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -146,9 +143,8 @@ class WebServerTest {
             musicPlayer.setPlaylist(testMusic);
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
+
 
             musicPlayer.start();
 
@@ -166,7 +162,7 @@ class WebServerTest {
             List<String> mimeTypes = response.headers().allValues("content-type");
             assertThat(mimeTypes.size()).isEqualTo(1);
             assertThat(mimeTypes.get(0)).isEqualTo("application/json");
-        } catch (NoMusicFileFoundException | NoConnectionException | IOException | InterruptedException e) {
+        } catch (ExitCodeException | IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
@@ -196,9 +192,7 @@ class WebServerTest {
             MusicPlayer musicPlayer = new MusicPlayer();
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
+            WebServer server = new WebServer(8080, musicPlayer, 8080);
 
             //request current song
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:8080/playlist")).build();
@@ -214,7 +208,7 @@ class WebServerTest {
             List<String> mimeTypes = response.headers().allValues("content-type");
             assertThat(mimeTypes.size()).isEqualTo(1);
             assertThat(mimeTypes.get(0)).isEqualTo("application/json");
-        } catch (NoConnectionException | IOException | InterruptedException e) {
+        } catch (ExitCodeException | IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
