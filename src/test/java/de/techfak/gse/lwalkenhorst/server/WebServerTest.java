@@ -24,10 +24,10 @@ class WebServerTest {
     /**
      * Test für User Story 13 #9200 Abfrage des aktuellen Songs des Servers.
      * Die Anfrage http://<IP>:<PORT>/current-song wird vom Server mit dem Status Code 200 (Ok) und
-     * der Information über den aktuellen Song im JSON format antwortet.
+     * der Information über den aktuellen Song im JSON format geantwortet.
      * <p>
      * Um den Fehler eines falschen StatusCodes oder eines falschen response types zu finden, wurde die Äquivalenzklasse
-     * zum überprüfen richtigen Kodierung und des StatusCodes gebildet.
+     * zum überprüfen der richtigen Kodierung und des StatusCodes gebildet.
      * <p>
      * Als Repräsentant wurde der WebServer gewählt, um eine korrekte Bereitstellung zu überprüfen
      * <p>
@@ -76,10 +76,10 @@ class WebServerTest {
     /**
      * Test für User Story 13 #9200 Abfrage des aktuellen Songs des Servers.
      * Die Anfrage http://<IP>:<PORT>/current-song wird vom Server mit dem Status Code 200 (Ok) und
-     * der Information über den aktuellen Song im JSON format antwortet.
+     * der Information über den aktuellen Song im JSON format geantwortet.
      * <p>
      * Um den Fehler eines falschen StatusCodes oder eines falschen response types zu finden, wurde die Äquivalenzklasse
-     * zum überprüfen richtigen Kodierung und des StatusCodes gebildet.
+     * zum überprüfen der richtigen Kodierung und des StatusCodes gebildet.
      * <p>
      * Als Repräsentant wurde der WebServer gewählt, um eine korrekte Bereitstellung zu überprüfen
      * <p>
@@ -102,6 +102,106 @@ class WebServerTest {
 
             //request current song
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:8080/current-song")).build();
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+            //check if status code is 200
+            assertThat(response.statusCode()).isEqualTo(200);
+
+            //check if body is not empty
+            assertThat(response.body()).isNotEqualTo("");
+
+            //check if header mime type is set to application/json (json string)
+            List<String> mimeTypes = response.headers().allValues("content-type");
+            assertThat(mimeTypes.size()).isEqualTo(1);
+            assertThat(mimeTypes.get(0)).isEqualTo("application/json");
+        } catch (NoConnectionException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            ObjectCloseupManager.getInstance().closeReferences();
+        }
+    }
+
+    /**
+     * Test für User Story 15 #9203 Abfrage der aktuellen Playlist des Servers.
+     * Die Anfrage http://<IP>:<PORT>/playlist wird vom Server mit dem Status Code 200 (Ok) und
+     * der Information über die aktuelle Playlist im JSON format beantwortet.
+     * <p>
+     * Um den Fehler eines falschen StatusCodes oder eines falschen response types zu finden, wurde die Äquivalenzklasse
+     * zum überprüfen der richtigen Kodierung und des StatusCodes gebildet.
+     * <p>
+     * Als Repräsentant wurde der WebServer gewählt, um eine korrekte Bereitstellung zu überprüfen
+     * <p>
+     * Testfall 1A: Server ist gestartet und der MusicPlayer spielt die Playlist.
+     * Soll verhalten: Die Antwort des Server ist ein statusCode 200 (Ok) und ein JSON String
+     * - status code 200
+     * - mimeType application/json
+     * - body not empty
+     */
+    @Test
+    public void requestPlaylistStatusCodeMimeTypePlaying() {
+        try {
+            //setting up musicPlayer
+            Playlist testMusic = new PlaylistFactory(dir).newPlaylist(false);
+            MusicPlayer musicPlayer = new MusicPlayer();
+            musicPlayer.setPlaylist(testMusic);
+
+            //setting up server
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.setMusicStream("8080");
+            server.startTSPSocket();
+
+            musicPlayer.start();
+
+            //request current song
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:8080/playlist")).build();
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+            //check if status code is 200
+            assertThat(response.statusCode()).isEqualTo(200);
+
+            //check if body is not empty
+            assertThat(response.body()).isNotEqualTo("");
+
+            //check if header mime type is set to application/json (json string)
+            List<String> mimeTypes = response.headers().allValues("content-type");
+            assertThat(mimeTypes.size()).isEqualTo(1);
+            assertThat(mimeTypes.get(0)).isEqualTo("application/json");
+        } catch (NoMusicFileFoundException | NoConnectionException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            ObjectCloseupManager.getInstance().closeReferences();
+        }
+    }
+
+    /**
+     * Test für User Story 15 #9203 Abfrage der aktuellen Playlist des Servers.
+     * Die Anfrage http://<IP>:<PORT>/playlist wird vom Server mit dem Status Code 200 (Ok) und
+     * der Information über die aktuelle Playlist im JSON format beantwortet.
+     * <p>
+     * Um den Fehler eines falschen StatusCodes oder eines falschen response types zu finden, wurde die Äquivalenzklasse
+     * zum überprüfen der richtigen Kodierung und des StatusCodes gebildet.
+     * <p>
+     * Als Repräsentant wurde der WebServer gewählt, um eine korrekte Bereitstellung zu überprüfen
+     * <p>
+     * Testfall 2A: Server ist gestartet, der MusicPlayer spielt keine playlist.
+     * Soll verhalten: Die Antwort des Server ist ein statusCode 200 (Ok) und ein JSON String
+     * - status code 200
+     * - mimeType application/json
+     * - body not empty
+     */
+    @Test
+    public void requestPlaylistStatusCodeMimeTypeNotPlaying() {
+        try {
+            //setting up musicPlayer
+            MusicPlayer musicPlayer = new MusicPlayer();
+
+            //setting up server
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.setMusicStream("8080");
+            server.startTSPSocket();
+
+            //request current song
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:8080/playlist")).build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             //check if status code is 200

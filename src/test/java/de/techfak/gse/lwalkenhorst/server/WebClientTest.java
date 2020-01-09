@@ -33,7 +33,7 @@ class WebClientTest {
      * - song gleich
      */
     @Test
-    void requestSongServerOnlinePlaying() {
+    public void requestSongServerOnline() {
         try {
             //setting up musicPlayer
             Playlist testMusic = new PlaylistFactory(dir).newPlaylist(false);
@@ -79,61 +79,13 @@ class WebClientTest {
      *
      * Als Repräsentant wurde der Webclient gewählt, um einen request zu senden und diesen zu überprüfen.
      *
-     * Testfall 2A: Server ist gestartet, der MusicPlayer spielt keine playlist.
-     * Soll verhalten: Der Song der durch den request gebaut wird ist leer, aber nicht null oder undefiniert
-     * - leerer Song
-     * - song gleich
-     */
-    @Test
-    void requestSongServerOnlineNotPlaying() {
-        try {
-            //setting up musicPlayer
-            MusicPlayer musicPlayer = new MusicPlayer();
-
-            //setting up server
-            WebServer server = new WebServer(8080, musicPlayer);
-            server.setMusicStream("8080");
-            server.startTSPSocket();
-
-            //setting up client
-            WebClient client = new WebClient("127.0.0.1", 8080);
-
-            //request a song to test
-            Song requestedSong = client.requestSong();
-            Song actualSong = musicPlayer.getSong();
-
-            //checking if songs would be treated as same 'song' (empty song)
-            assertThat(requestedSong).isEqualTo(actualSong);
-            assertThat(requestedSong.getUuid()).isEqualTo(actualSong.getUuid());
-
-            //checking if no minimal information is given because there is no song played
-            //information should be not null
-            assertThat(requestedSong.getTitle()).isEqualTo(actualSong.getTitle()).isEqualTo("");
-            assertThat(requestedSong.getArtist()).isEqualTo(actualSong.getArtist()).isEqualTo("");
-        } catch (NoConnectionException e) {
-            e.printStackTrace();
-        } finally {
-            ObjectCloseupManager.getInstance().closeReferences();
-        }
-    }
-
-    /**
-     * Test für User Story 13 #9200 Abfrage des aktuellen Songs des Servers.
-     * Die Anfrage http://<IP>:<PORT>/current-song wird vom Server mit der Information über den aktuellen Song
-     * im JSON format geantwortet, welcher wieder in einen Song überführt werden kann.
-     *
-     * Um den Fehler des übermitteln des falschen/fehlerhaften Song zu finden, wurde die Äquivalenzklasse
-     * zum überprüfen der richtigen übermittlung gebildet.
-     *
-     * Als Repräsentant wurde der Webclient gewählt, um einen request zu senden und diesen zu überprüfen.
-     *
      * Testfall 2A: Server ist gestartet verliert jedoch die Verbindung, der MusicPlayer spielt die Playlist.
      * Soll verhalten: Der Song der durch den request gebaut wird ist leer, aber nicht null oder undefiniert
      * - leerer Song
      * - song nicht gleich
      */
     @Test
-    void requestSongServerOfflinePlaying() {
+    public void requestSongServerOffline() {
         try {
             //setting up musicPlayer
             Playlist testMusic = new PlaylistFactory(dir).newPlaylist(false);
@@ -172,31 +124,82 @@ class WebClientTest {
     }
 
     /**
-     * Test für User Story 13 #9200 Abfrage des aktuellen Songs des Servers.
-     * Die Anfrage http://<IP>:<PORT>/current-song wird vom Server mit der Information über den aktuellen Song
-     * im JSON format geantwortet, welcher wieder in einen Song überführt werden kann.
+     * Test für User Story 15 #9203 Abfrage der aktuellen Playlist des Servers.
+     * Die Anfrage http://<IP>:<PORT>/playlist wird vom Server mit der Information über die aktuelle
+     * Playlist im JSON format beantwortet, welcher wieder in eine Playlist überführt werden kann.
      *
-     * Um den Fehler des übermitteln des falschen/fehlerhaften Song zu finden, wurde die Äquivalenzklasse
+     * Um den Fehler des übermitteln der falschen/fehlerhaften Playlist zu finden, wurde die Äquivalenzklasse
      * zum überprüfen der richtigen übermittlung gebildet.
      *
      * Als Repräsentant wurde der Webclient gewählt, um einen request zu senden und diesen zu überprüfen.
      *
-     * Testfall 2B: Server ist gestartet verliert jedoch die Verbindung, der MusicPlayer spielt keine playlist.
-     * Soll verhalten: Der Song der durch den request gebaut wird ist leer und
-     * nicht der gleiche wie der des musicPlayers, aber nicht null oder undefiniert
-     * - leerer Song
-     * - song nicht gleich
+     * Testfall 1A: Server ist gestartet und der MusicPlayer spielt die Playlist.
+     * Soll verhalten: Die vom server gespielte Playlist (Liste der Songs) ist der selbe,
+     * welcher durch den request gebaut wird.
+     * - selbe songlist (playlist)
      */
     @Test
-    void requestSongServerOfflineNotPlaying() {
+    public void requestPlaylistServerOnline() {
         try {
             //setting up musicPlayer
+            Playlist testMusic = new PlaylistFactory(dir).newPlaylist(false);
             MusicPlayer musicPlayer = new MusicPlayer();
+            musicPlayer.setPlaylist(testMusic);
+
 
             //setting up server
             WebServer server = new WebServer(8080, musicPlayer);
             server.setMusicStream("8080");
             server.startTSPSocket();
+
+            musicPlayer.start();
+
+            //setting up client
+            WebClient client = new WebClient("127.0.0.1", 8080);
+
+            //request a song to test
+            Playlist requestedPlaylist = client.requestPlaylist();
+
+            //checking if songLists are equal
+            assertThat(musicPlayer.getPlaylist().getSongList()).isEqualTo(requestedPlaylist.getSongList());
+        } catch (NoMusicFileFoundException | NoConnectionException e) {
+            e.printStackTrace();
+        } finally {
+            ObjectCloseupManager.getInstance().closeReferences();
+        }
+    }
+
+    /**
+     * Test für User Story 15 #9203 Abfrage der aktuellen Playlist des Servers.
+     * Die Anfrage http://<IP>:<PORT>/playlist wird vom Server mit der Information über die aktuelle
+     * Playlist im JSON format beantwortet, welcher wieder in eine Playlist überführt werden kann.
+     *
+     * Um den Fehler des übermitteln der falschen/fehlerhaften Playlist zu finden, wurde die Äquivalenzklasse
+     * zum überprüfen der richtigen übermittlung gebildet.
+     *
+     * Als Repräsentant wurde der Webclient gewählt, um einen request zu senden und diesen zu überprüfen.
+     *
+     * Testfall 1A: Server ist gestartet  verliert jedoch die Verbindung, der MusicPlayer spielt die Playlist.
+     * Soll verhalten: Die vom server gespielte Playlist (Liste der Songs) ist nicht dies selbe
+     * welcher durch den request gebaut wird.
+     * - leerer Playlist
+     * - songLists nicht gleich
+     */
+    @Test
+    public void requestPlaylistServerOffline() {
+        try {
+            //setting up musicPlayer
+            Playlist testMusic = new PlaylistFactory(dir).newPlaylist(false);
+            MusicPlayer musicPlayer = new MusicPlayer();
+            musicPlayer.setPlaylist(testMusic);
+
+
+            //setting up server
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.setMusicStream("8080");
+            server.startTSPSocket();
+
+            musicPlayer.start();
 
             //setting up client
             WebClient client = new WebClient("127.0.0.1", 8080);
@@ -204,18 +207,12 @@ class WebClientTest {
             ObjectCloseupManager.getInstance().closeObject(server);
 
             //request a song to test
-            Song requestedSong = client.requestSong();
-            Song actualSong = musicPlayer.getSong();
+            Playlist requestedPlaylist = client.requestPlaylist();
 
-            //checking if songs would be treated as same 'song' (empty song)
-            assertThat(requestedSong).isNotEqualTo(actualSong);
-            assertThat(requestedSong.getUuid()).isNotEqualTo(actualSong.getUuid());
-
-            //checking if no minimal information is given because there is no song played
-            //information should be not null
-            assertThat(requestedSong.getTitle()).isEqualTo(actualSong.getTitle()).isEqualTo("");
-            assertThat(requestedSong.getArtist()).isEqualTo(actualSong.getArtist()).isEqualTo("");
-        } catch (NoConnectionException e) {
+            //checking if songLists are equal
+            assertThat(musicPlayer.getPlaylist().getSongList()).isNotEqualTo(requestedPlaylist.getSongList());
+            assertThat(requestedPlaylist.getSongList().size()).isEqualTo(0);
+        } catch (NoMusicFileFoundException | NoConnectionException e) {
             e.printStackTrace();
         } finally {
             ObjectCloseupManager.getInstance().closeReferences();
