@@ -72,7 +72,7 @@ public final class GSERadio {
                     }
                 }
                 if (commandLine.hasOption(GUI)) { //Local GUI
-                    GuiApplication.start(musicPlayer, "-a");
+                    GuiApplication.start(musicPlayer);
                 } else { //Local Terminal
                     final Terminal terminal = new Terminal(musicPlayer);
                     terminal.listenForInstructions();
