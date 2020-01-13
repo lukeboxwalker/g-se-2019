@@ -11,6 +11,11 @@ public class OverlappingOptionException extends ExitCodeException {
     private static final int EXIT_CODE = 103;
 
     public OverlappingOptionException(final String message) {
-        super(message, EXIT_CODE);
+        super(message);
+    }
+
+    @Override
+    public int getExitCode() {
+        return EXIT_CODE;
     }
 }

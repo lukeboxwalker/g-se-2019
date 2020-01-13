@@ -9,6 +9,11 @@ public class NoMusicFileFoundException extends ExitCodeException {
     private static final int EXIT_CODE = 100;
 
     public NoMusicFileFoundException(final String message) {
-        super(message, EXIT_CODE);
+        super(message);
+    }
+
+    @Override
+    public int getExitCode() {
+        return EXIT_CODE;
     }
 }

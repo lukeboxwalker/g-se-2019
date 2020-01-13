@@ -9,10 +9,15 @@ public class StreamFailedException extends ExitCodeException {
     private static final int EXIT_CODE = 102;
 
     public StreamFailedException(String message) {
-        super(message, EXIT_CODE);
+        super(message);
     }
 
     public StreamFailedException(String message, Throwable cause) {
-        super(message, EXIT_CODE, cause);
+        super(message, cause);
+    }
+
+    @Override
+    public int getExitCode() {
+        return EXIT_CODE;
     }
 }

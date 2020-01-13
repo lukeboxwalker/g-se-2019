@@ -7,20 +7,16 @@ package de.techfak.gse.lwalkenhorst.exceptions;
 public abstract class ExitCodeException extends GSERadioException {
 
     public static final long serialVersionUID = 42L;
-    private final int exitCode;
 
-    public ExitCodeException(final String message, final int errorCode) {
+    public ExitCodeException(String message) {
         super(message);
-        this.exitCode = errorCode;
     }
 
-    public ExitCodeException(final String message, final int errorCode, Throwable cause) {
+    public ExitCodeException(String message, Throwable cause) {
         super(message, cause);
-        this.exitCode = errorCode;
     }
 
-    public int getExitCode() {
-        return exitCode;
-    }
+
+    public abstract int getExitCode();
 
 }

@@ -10,10 +10,15 @@ public class NoConnectionException extends ExitCodeException {
     private static final int EXIT_CODE = 101;
 
     public NoConnectionException(final String message) {
-        super(message, EXIT_CODE);
+        super(message);
     }
 
     public NoConnectionException(final String message, Throwable cause) {
-        super(message, EXIT_CODE, cause);
+        super(message, cause);
+    }
+
+    @Override
+    public int getExitCode() {
+        return EXIT_CODE;
     }
 }
