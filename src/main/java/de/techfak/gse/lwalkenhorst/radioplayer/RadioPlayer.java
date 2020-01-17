@@ -64,6 +64,14 @@ public interface RadioPlayer extends Observable {
     int getVotes(Song song);
 
     /**
+     * Getting votes for given song (uuid).
+     *
+     * @param uuid to get votes for
+     * @return number of votes
+     */
+    int getVotes(String uuid);
+
+    /**
      * Vote for a specific song.
      * @param song to vote for
      */

@@ -79,15 +79,14 @@ public class MusicPlayer extends VLCJMediaPlayer {
         }
     }
 
-    /**
-     * Getting the votes of a song.
-     *
-     * @param song to get the votes from
-     * @return the votes from given song
-     */
     @Override
     public int getVotes(final Song song) {
         return votingManager.getVotes(song);
+    }
+
+    @Override
+    public int getVotes(final String uuid) {
+        return votingManager.getVotes(uuid);
     }
 
     public VotingManager getVotingManager() {

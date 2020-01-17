@@ -6,7 +6,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamListeningPlayB
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoValidUrlException;
 import de.techfak.gse.lwalkenhorst.server.UrlParser;
-import de.techfak.gse.lwalkenhorst.server.WebClient;
+import de.techfak.gse.lwalkenhorst.server.ClientSocket;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Controller for ClientApplication.
@@ -72,19 +73,18 @@ public class ConnectionController {
             String url = urlAddress.getText();
             try {
                 UrlParser parser = new UrlParser();
-                WebClient client;
+                ClientSocket client;
                 if (parser.isValidServerAddress(serverAddress) && parser.isValidPort(serverPort)) {
-                    client = new WebClient(serverAddress, Integer.parseInt(serverPort));
+                    client = new ClientSocket(serverAddress, Integer.parseInt(serverPort), streamPlayer);
                 } else if (parser.isValidURL(url)) {
                     serverAddress = parser.extractServerAddress(url);
                     serverPort = parser.extractPort(url);
-                    client = new WebClient(serverAddress, Integer.parseInt(serverPort));
+                    client = new ClientSocket(serverAddress, Integer.parseInt(serverPort), streamPlayer);
                 } else {
                     throw new NoValidUrlException("could not parse address");
                 }
-                streamPlayer.useWebClient(client);
-                streamPlayer.setPlayBehavior(
-                    new StreamListeningPlayBehavior(parser.toAddress(serverAddress), serverPort));
+                streamPlayer.setPlayBehavior(new StreamListeningPlayBehavior(parser.toAddress(serverAddress), serverPort));
+                client.connect();
                 loadGUIStage(streamPlayer);
                 currentStage.close();
             } catch (NoConnectionException | NoValidUrlException e) {

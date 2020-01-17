@@ -58,21 +58,20 @@ public final class GSERadio {
             } else {
                 final MusicPlayer musicPlayer = load(directory);
                 if (commandLine.hasOption(SERVER)) { //Server
-                    String streaming = commandLine.getOptionArg(SERVER, STREAMING);
-                    String port = commandLine.getOptionArg(SERVER, PORT);
+                    final String streaming = commandLine.getOptionArg(SERVER, STREAMING);
+                    final String port = commandLine.getOptionArg(SERVER, PORT);
 
                     try {
+                        final WebServer server = new WebServer(Integer.parseInt(port), musicPlayer);
                         if (streaming != null && !streaming.isEmpty()) {
-                            new WebServer(Integer.parseInt(port), musicPlayer, Integer.parseInt(streaming));
-                        } else {
-                            new WebServer(Integer.parseInt(port), musicPlayer);
+                            server.streamMusic(Integer.parseInt(streaming));
                         }
                     } catch (NumberFormatException e) {
                         throw new ParseException("port argument was expected to be an integer");
                     }
                 }
                 if (commandLine.hasOption(GUI)) { //Local GUI
-                    GuiApplication.start(musicPlayer);
+                    GuiApplication.start(musicPlayer, "-a");
                 } else { //Local Terminal
                     final Terminal terminal = new Terminal(musicPlayer);
                     terminal.listenForInstructions();
@@ -96,7 +95,7 @@ public final class GSERadio {
      * @return list of defined options
      */
     private List<Option> createOptions() {
-        Option guiOption = CommandLineOption.builder().withName(GUI).conflictsOptions(CLIENT, SERVER).build();
+        Option guiOption = CommandLineOption.builder().withName(GUI).conflictsOptions(CLIENT).build();
         Option clientOption = CommandLineOption.builder().withName(CLIENT).conflictsOptions(GUI, SERVER).build();
 
         Argument streaming = CommandLineArgument.builder().withName(STREAMING).withValueSeparator(SEPARATE)
@@ -105,7 +104,7 @@ public final class GSERadio {
                 .withPatternMatcher(NUMBER).isRequired(true).withDefaultValue(DEFAULT_PORT).build();
 
         Option serverOption = CommandLineOption.builder().withName(SERVER).withArgument(streaming).withArgument(port)
-                .conflictsOptions(CLIENT, GUI).build();
+                .conflictsOptions(CLIENT).build();
 
         return Arrays.asList(guiOption, clientOption, serverOption);
     }

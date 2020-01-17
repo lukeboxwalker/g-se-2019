@@ -3,32 +3,29 @@ package de.techfak.gse.lwalkenhorst.server;
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
+import de.techfak.gse.lwalkenhorst.exceptions.StreamFailedException;
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.*;
 import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamingPlayBehavior;
-import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoWSD;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * WebServer to setup Rest Server.
  */
-public class WebServer extends NanoHTTPD {
+public class WebServer extends NanoWSD implements PropertyChangeListener {
 
     private static final String LOCALHOST = "127.0.0.1";
-    private static final String MIME_TYPE_JSON = "application/json";
-    private static final String MIME_TYPE_JPEG = "image/jpeg";
-    private static final String ID = "id";
-    private static final String NOT_FOUND = "Not found";
 
-    private final JSONParser parser;
-    private MusicPlayer musicPlayer;
+
+    private final ServerResponseFactory factory;
+    private final List<ServerSocket> sockets = new ArrayList<>();
+    private final MusicPlayer musicPlayer;
 
     /**
      * Creating a new WebServer.
@@ -36,84 +33,72 @@ public class WebServer extends NanoHTTPD {
      * @param port        to listen to
      * @param musicPlayer to stream music
      */
-    public WebServer(final int port, MusicPlayer musicPlayer) throws NoConnectionException {
+    public WebServer(final int port, final MusicPlayer musicPlayer) throws NoConnectionException {
         super(port);
-        this.parser = new JSONParser();
         this.musicPlayer = musicPlayer;
-        this.startTSPSocket(port);
-    }
-
-    /**
-     * Creating a new WebServer.
-     *
-     * @param port        to listen to
-     * @param musicPlayer to stream music
-     * @param streamPort  to stream music via vlc
-     */
-    public WebServer(final int port, MusicPlayer musicPlayer, final int streamPort) throws ExitCodeException {
-        super(port);
-        this.parser = new JSONParser();
-        this.musicPlayer = musicPlayer;
-        this.musicPlayer.setPlayBehavior(new StreamingPlayBehavior(LOCALHOST, streamPort));
-        this.startTSPSocket(port);
-    }
-
-    private void startTSPSocket(final int port) throws NoConnectionException {
+        this.musicPlayer.addPropertyChangeListener(this);
+        this.factory = new ServerResponseFactory(musicPlayer);
         try {
-            this.start(SOCKET_READ_TIMEOUT, false);
+            this.start(0, false);
+            ObjectCloseupManager.getInstance().register(this, this::stop);
         } catch (IOException e) {
-            throw new NoConnectionException("could not setup server socket on: "
-                    + LOCALHOST + ":" + port, e);
+            throw new NoConnectionException("could not setup server socket on: " +  getHostname() + ":" + port, e);
         }
-        ObjectCloseupManager.getInstance().register(this, this::stop);
+    }
+
+    public void streamMusic(final int streamPort) throws StreamFailedException {
+        this.musicPlayer.setPlayBehavior(new StreamingPlayBehavior(LOCALHOST, streamPort));
     }
 
     @Override
-    public Response serve(IHTTPSession session) {
+    protected WebSocket openWebSocket(final IHTTPSession ihttpSession) {
+        //ServerSocket on server side
+        return new ServerSocket(ihttpSession, sockets);
+    }
+
+    @Override
+    public Response serve(final IHTTPSession session) {
         try {
-            if (session.getUri().isEmpty()) {
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, NOT_FOUND);
+            //In case of a websocket request just use super
+            if (isWebsocketRequested(session)) {
+                return super.serve(session);
+            } else if (session.getMethod() == Method.GET) { //Case of normal http requests
+                switch (session.getUri()) {
+                    case "/current-song":
+                        return factory.newSongResponse();
+                    case "/playlist":
+                        return factory.newPlaylistResponse();
+                    case "/votes":
+                        return factory.newVotesResponse(session);
+                    case "/cover":
+                        return factory.newCoverResponse(session);
+                    default:
+                }
+            } else if (session.getMethod() == Method.POST) {
+                session.parseBody(new HashMap<>());
+                String requestBody = session.getQueryParameterString();
+                System.out.println(requestBody);
+
             }
-            switch (session.getUri()) {
-                case "/current-song":
-                    return newFixedLengthResponse(Response.Status.OK,
-                            MIME_TYPE_JSON, parser.toJSON(musicPlayer.getSong()));
-                case "/playlist":
-                    return newFixedLengthResponse(Response.Status.OK,
-                            MIME_TYPE_JSON, parser.toJSON(musicPlayer.getPlaylist()));
-                case "/votes":
-                    if (session.getParameters().size() == 1) {
-                        String songUUID = session.getParameters()
-                                .getOrDefault(ID, Collections.singletonList("")).get(0);
-                        Integer integer = musicPlayer.getVotingManager().getVotes(songUUID);
-                        return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JSON, parser.toJSON(integer));
-                    }
-                    break;
-                case "/cover":
-                    if (session.getParameters().size() == 1) {
-                        String songUUID = session.getParameters()
-                                .getOrDefault(ID, Collections.singletonList("")).get(0);
-                        Song song = musicPlayer.getPlaylist().getSongs().stream()
-                                .filter(song1 -> song1.getUuid().equals(songUUID)).findFirst().get();
-                        try {
-                            String url = URI.create(song.getArtWorkURL()).getPath();
-                            if (url == null || url.isEmpty()) {
-                                return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, NOT_FOUND);
-                            }
-                            File file = new File(url);
-                            FileInputStream stream = new FileInputStream(file);
-                            return newFixedLengthResponse(Response.Status.OK, MIME_TYPE_JPEG, stream, -1);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                            return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_TYPE_JSON, NOT_FOUND);
-                        }
-                    }
-                    break;
-                default:
-            }
-        } catch (SerialisationException e) {
+        } catch (SerialisationException | IOException | ResponseException e) {
             e.printStackTrace();
         }
-        return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "GSE Radio");
+        return factory.newPlainResponse("GSE Radio");
+    }
+
+    @Override
+    public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
+        try {
+            final Set<String> broadcasts = new HashSet<>(Arrays.asList(MusicPlayer.SONG_UPDATE, MusicPlayer.VOTE_UPDATE));
+            final String propertyName = propertyChangeEvent.getPropertyName();
+            if (broadcasts.contains(propertyName)) {
+                for (ServerSocket socket : sockets) {
+                    socket.send(propertyName);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

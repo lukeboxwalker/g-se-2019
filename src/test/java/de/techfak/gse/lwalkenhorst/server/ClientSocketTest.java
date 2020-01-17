@@ -2,17 +2,14 @@ package de.techfak.gse.lwalkenhorst.server;
 
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 import de.techfak.gse.lwalkenhorst.exceptions.ExitCodeException;
-import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
-import de.techfak.gse.lwalkenhorst.exceptions.NoMusicFileFoundException;
-import de.techfak.gse.lwalkenhorst.radioplayer.MusicPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
-import de.techfak.gse.lwalkenhorst.radioplayer.PlaylistFactory;
-import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.*;
 import org.junit.jupiter.api.Test;
+
+import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WebClientTest {
+class ClientSocketTest {
 
     private static final String dir = System.getProperty("user.dir") + "/src/test/resources/mp3s";
 
@@ -43,12 +40,13 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer, 8080);
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.streamMusic(8080);
 
             musicPlayer.start();
 
             //setting up client
-            WebClient client = new WebClient("127.0.0.1", 8080);
+            ClientSocket client = new ClientSocket("127.0.0.1", 8080, new StreamMusicPlayer());
 
             //request a song to test
             Song requestedSong = client.requestSong();
@@ -92,10 +90,11 @@ class WebClientTest {
             musicPlayer.setPlaylist(testMusic);
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer, 8080);
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.streamMusic(8080);
 
             //setting up client
-            WebClient client = new WebClient("127.0.0.1", 8080);
+            ClientSocket client = new ClientSocket("127.0.0.1", 8080, new StreamMusicPlayer());
 
             ObjectCloseupManager.getInstance().closeObject(server);
 
@@ -145,12 +144,13 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer, 8080);
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.streamMusic(8080);
 
             musicPlayer.start();
 
             //setting up client
-            WebClient client = new WebClient("127.0.0.1", 8080);
+            ClientSocket client = new ClientSocket("127.0.0.1", 8080, new StreamMusicPlayer());
 
             //request a song to test
             Playlist requestedPlaylist = client.requestPlaylist();
@@ -190,12 +190,13 @@ class WebClientTest {
 
 
             //setting up server
-            WebServer server = new WebServer(8080, musicPlayer, 8080);
+            WebServer server = new WebServer(8080, musicPlayer);
+            server.streamMusic(8080);
 
             musicPlayer.start();
 
             //setting up client
-            WebClient client = new WebClient("127.0.0.1", 8080);
+            ClientSocket client = new ClientSocket("127.0.0.1", 8080, new StreamMusicPlayer());
 
             ObjectCloseupManager.getInstance().closeObject(server);
 

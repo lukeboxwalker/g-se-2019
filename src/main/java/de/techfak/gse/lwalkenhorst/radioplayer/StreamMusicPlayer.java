@@ -1,6 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
-import de.techfak.gse.lwalkenhorst.server.WebClient;
+import de.techfak.gse.lwalkenhorst.server.ClientSocket;
 import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 
 import java.util.Timer;
@@ -12,13 +12,9 @@ import java.util.TimerTask;
  */
 public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
 
-    private static final int DELAY_MS = 0;
-    private static final int PERIOD_MS = 10000;
-
-    private WebClient client;
+    private ClientSocket client;
     private Song currentSong;
     private Playlist playlist;
-    private TimerTask timerTask;
 
     public StreamMusicPlayer() {
         this.currentSong = new Song();
@@ -37,34 +33,46 @@ public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
 
     @Override
     public void start() {
-        if (client != null) {
-            Timer timer = new Timer();
-            this.timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    currentSong = client.requestSong();
-                    playlist = client.requestPlaylist();
-                    getSupport().firePropertyChange(SONG_UPDATE, null, currentSong);
-                }
-            };
-            timer.schedule(timerTask, DELAY_MS, PERIOD_MS);
-            ObjectCloseupManager.getInstance().register(this, timer::cancel);
-            play(currentSong);
-        }
+        this.playlist = client.requestPlaylist();
+        this.currentSong = client.requestSong();
+        getSupport().firePropertyChange(SONG_UPDATE, null, currentSong);
+        play(currentSong);
     }
 
     @Override
     public int getVotes(Song song) {
-        return client.requestVote(song);
+        return getVotes(song.getUuid());
+    }
+
+    @Override
+    public int getVotes(String uuid) {
+        return client.requestVote(uuid);
     }
 
     @Override
     public void vote(Song song) {
-        timerTask.run();
     }
 
     @Override
-    public void useWebClient(WebClient client) {
+    public void setWebClient(ClientSocket client) {
         this.client = client;
+    }
+
+    @Override
+    public void updateFromServer(String update) {
+        switch (update) {
+            case SONG_UPDATE:
+                this.playlist = client.requestPlaylist();
+                this.currentSong = client.requestSong();
+                getSupport().firePropertyChange(update, null, currentSong);
+                break;
+            case VOTE_UPDATE:
+                this.playlist = client.requestPlaylist();
+                getSupport().firePropertyChange(update, 0, 1);
+                break;
+            case TIME_UPDATE:
+                break;
+            default:
+        }
     }
 }

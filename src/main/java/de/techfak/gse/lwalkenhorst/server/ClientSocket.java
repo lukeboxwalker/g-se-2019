@@ -1,11 +1,14 @@
 package de.techfak.gse.lwalkenhorst.server;
 
-
+import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
 import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.jsonparser.JSONParser;
 import de.techfak.gse.lwalkenhorst.jsonparser.SerialisationException;
 import de.techfak.gse.lwalkenhorst.radioplayer.Playlist;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
+import de.techfak.gse.lwalkenhorst.radioplayer.StreamPlayer;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,14 +19,14 @@ import java.net.http.HttpResponse;
 /**
  * WebClient that communicates with server by requests.
  */
-public class WebClient {
+public class ClientSocket extends WebSocketClient {
 
-    private static final String SPLITTER = ":";
     private static final int OK = 200;
 
     private final JSONParser parser;
     private final HttpClient client;
     private final String baseUri;
+    private final StreamPlayer streamPlayer;
 
     /**
      * Creates a new Webclient.
@@ -33,13 +36,16 @@ public class WebClient {
      * @param port of the server
      * @throws NoConnectionException if could not connect to given server
      */
-    public WebClient(String serverAddress, int port) throws NoConnectionException {
+    public ClientSocket(String serverAddress, int port, StreamPlayer streamPlayer) throws NoConnectionException {
+        super(URI.create("ws://"+ serverAddress +":" + port));
         this.client = HttpClient.newHttpClient();
+        this.streamPlayer = streamPlayer;
+        this.streamPlayer.setWebClient(this);
         this.parser = new JSONParser();
-        this.baseUri = "http://" + serverAddress + SPLITTER + port;
-        final String message = "could not connect to given url " + serverAddress + SPLITTER + port;
+        this.baseUri = "http://" + uri.getAuthority();
+        final String message = "could not connect to given url " + baseUri;
         try {
-            final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).build();
+            final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).GET().build();
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != OK || !response.body().equals("GSE Radio")) {
                 throw new NoConnectionException(message);
@@ -47,6 +53,7 @@ public class WebClient {
         } catch (IOException | InterruptedException e) {
             throw new NoConnectionException(message, e);
         }
+        ObjectCloseupManager.getInstance().register(this, this::close);
     }
 
     /**
@@ -58,7 +65,7 @@ public class WebClient {
      */
     public Song requestSong() {
         try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).GET().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             Song song = parser.parseJSON(response.body(), Song.class);
             song.setArtWorkURL(URI.create(baseUri + "/cover?id=" + song.getUuid()).toString());
@@ -79,7 +86,7 @@ public class WebClient {
      * @return new Playlist object
      */
     public Playlist requestPlaylist() {
-        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/playlist")).build();
+        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/playlist")).GET().build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return parser.parseJSON(response.body(), Playlist.class);
@@ -96,17 +103,52 @@ public class WebClient {
      * Using the uuid of a song to send server request
      * returns 0 if connection fails.
      *
-     * @param song to get votes from
+     * @param uuid to get votes from
      * @return votes of a given song
      */
-    public int requestVote(Song song) {
+    public int requestVote(String uuid) {
         final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(baseUri + "/votes?id=" + song.getUuid())).build();
+            .uri(URI.create(baseUri + "/votes?id=" + uuid)).GET().build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return Integer.parseInt(response.body());
         } catch (IOException | InterruptedException e) {
             return 0;
         }
+    }
+
+    /**
+     * Using the uuid of a song to vote for song.
+     *
+     * @param uuid to vote for
+     */
+    public void vote(String uuid) {
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUri + "/vote" + uuid)).POST(HttpRequest.BodyPublishers.ofString(uuid)).build();
+        try {
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onOpen(ServerHandshake serverHandshake) {
+
+    }
+
+    @Override
+    public void onMessage(String update) {
+        streamPlayer.updateFromServer(update);
+    }
+
+    @Override
+    public void onClose(int i, String s, boolean b) {
+
+    }
+
+    @Override
+    public void onError(Exception e) {
+        e.printStackTrace();
     }
 }
