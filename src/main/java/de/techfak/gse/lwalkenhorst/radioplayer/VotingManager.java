@@ -31,14 +31,14 @@ public class VotingManager {
      * Increment the vote score for given song.
      * Sorts the playlist with respect to the voting scores
      *
-     * @param song to vote for
+     * @param uuid to vote for
      */
-    public void vote(final Song song) {
+    public void vote(final String uuid) {
         synchronized (this) {
-            if (songMap.containsKey(song.getUuid())) {
+            if (songMap.containsKey(uuid)) {
                 final List<Song> songs = playlist.getSongs();
                 final Song first = songs.remove(0);
-                final AtomicInteger voting = songMap.get(song.getUuid());
+                final AtomicInteger voting = songMap.get(uuid);
                 voting.incrementAndGet();
                 songs.sort((song1, song2) -> Integer.compare(
                     songMap.get(song2.getUuid()).get(), songMap.get(song1.getUuid()).get()));
@@ -50,28 +50,12 @@ public class VotingManager {
     /**
      * Resets votes for a given song.
      *
-     * @param song to reset votes
+     * @param songUUID to reset votes
      */
-    public void resetVotes(final Song song) {
+    public void resetVotes(final String songUUID) {
         synchronized (this) {
-            if (song != null && songMap.containsKey(song.getUuid())) {
-                songMap.get(song.getUuid()).set(0);
-            }
-        }
-    }
-
-    /**
-     * Getting the current voting score form given song.
-     *
-     * @param song to get votes from
-     * @return the voting score for given song
-     */
-    public int getVotes(final Song song) {
-        synchronized (this) {
-            if (song != null && songMap.containsKey(song.getUuid())) {
-                return songMap.get(song.getUuid()).get();
-            } else {
-                return 0;
+            if (songUUID != null && songMap.containsKey(songUUID)) {
+                songMap.get(songUUID).set(0);
             }
         }
     }

@@ -34,7 +34,7 @@ public class MusicPlayer extends VLCJMediaPlayer {
                     oldSong = songs.remove(0);
                     songs.add(oldSong);
                     currentSong = songs.get(0);
-                    votingManager.resetVotes(oldSong);
+                    votingManager.resetVotes(oldSong.getUuid());
                 }
                 getSupport().firePropertyChange(SONG_UPDATE, oldSong, currentSong);
                 play(currentSong);
@@ -63,17 +63,17 @@ public class MusicPlayer extends VLCJMediaPlayer {
         }
     }
 
-    /**
-     * Vote for a given song.
-     *
-     * @param song to vote for
-     */
     @Override
     public void vote(final Song song) {
+        vote(song.getUuid());
+    }
+
+    @Override
+    public void vote(final String uuid) {
         synchronized (this) {
-            if (!song.equals(currentSong)) {
-                votingManager.vote(song);
-                final int currentVotes = votingManager.getVotes(song);
+            if (!uuid.equals(currentSong.getUuid())) {
+                votingManager.vote(uuid);
+                final int currentVotes = votingManager.getVotes(uuid);
                 getSupport().firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
             }
         }
@@ -81,16 +81,12 @@ public class MusicPlayer extends VLCJMediaPlayer {
 
     @Override
     public int getVotes(final Song song) {
-        return votingManager.getVotes(song);
+        return getVotes(song.getUuid());
     }
 
     @Override
     public int getVotes(final String uuid) {
         return votingManager.getVotes(uuid);
-    }
-
-    public VotingManager getVotingManager() {
-        return votingManager;
     }
 
     @Override

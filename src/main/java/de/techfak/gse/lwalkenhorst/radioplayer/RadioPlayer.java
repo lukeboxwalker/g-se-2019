@@ -78,6 +78,12 @@ public interface RadioPlayer extends Observable {
     void vote(Song song);
 
     /**
+     * Vote for a specific song.
+     * @param uuid to vote for
+     */
+    void vote(String uuid);
+
+    /**
      * Setting the playBehavior of the radio.
      * Changes style of playing e.g. local, streaming
      * stream listener...

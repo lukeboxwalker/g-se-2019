@@ -75,10 +75,11 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
                     default:
                 }
             } else if (session.getMethod() == Method.POST) {
-                session.parseBody(new HashMap<>());
-                String requestBody = session.getQueryParameterString();
-                System.out.println(requestBody);
-
+                if ("/vote".equals(session.getUri())) {
+                    final Map<String, String> body = new HashMap<>();
+                    session.parseBody(body);
+                    musicPlayer.vote(body.get("postData"));
+                }
             }
         } catch (SerialisationException | IOException | ResponseException e) {
             e.printStackTrace();

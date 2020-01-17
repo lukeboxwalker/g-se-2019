@@ -124,7 +124,7 @@ public class ClientSocket extends WebSocketClient {
      */
     public void vote(String uuid) {
         final HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUri + "/vote" + uuid)).POST(HttpRequest.BodyPublishers.ofString(uuid)).build();
+                .uri(URI.create(baseUri + "/vote")).POST(HttpRequest.BodyPublishers.ofString(uuid)).build();
         try {
             client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {

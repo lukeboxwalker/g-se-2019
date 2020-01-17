@@ -51,6 +51,12 @@ public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
 
     @Override
     public void vote(Song song) {
+        vote(song.getUuid());
+    }
+
+    @Override
+    public void vote(String uuid) {
+        client.vote(uuid);
     }
 
     @Override
