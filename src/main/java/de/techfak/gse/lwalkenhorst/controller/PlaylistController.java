@@ -4,6 +4,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.RadioPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
@@ -33,10 +34,7 @@ public class PlaylistController {
     public PlaylistController(final TableView<TableEntry> playlist, final RadioPlayer radio) {
         this.playlist = playlist;
         this.radio = radio;
-        final ProgressIndicator placeHolder = new ProgressIndicator();
-        placeHolder.setStyle(" -fx-progress-color: lightgreen");
-        placeHolder.setProgress(-1);
-        this.playlist.setPlaceholder(placeHolder);
+        resetFallbackNode();
         this.coloring = column -> new TableCell<>() {
             @Override
             protected void updateItem(final String item, final boolean empty) {
@@ -126,6 +124,17 @@ public class PlaylistController {
 
     public void updatePlaylist() {
         refreshItems();
+    }
+
+    public void resetFallbackNode() {
+        final ProgressIndicator placeHolder = new ProgressIndicator();
+        placeHolder.setStyle(" -fx-progress-color: lightgreen");
+        placeHolder.setProgress(-1);
+        setFallbackNode(placeHolder);
+    }
+
+    public void setFallbackNode (Node node) {
+        this.playlist.setPlaceholder(node);
     }
 
     /**

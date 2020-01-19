@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="814.0" prefWidth="1069.0"
+<AnchorPane VBox.vgrow="ALWAYS" prefHeight="814.0" prefWidth="1069.0"
             style="-fx-background-color: linear-gradient( #383838 0%, #131313 100%);"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.techfak.gse.lwalkenhorst.controller.RadioController">

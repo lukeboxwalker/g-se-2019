@@ -91,4 +91,6 @@ public interface RadioPlayer extends Observable {
      * @param playBehavior to set
      */
     void setPlayBehavior(PlayBehavior playBehavior);
+
+    float getCurrentPlayTime();
 }

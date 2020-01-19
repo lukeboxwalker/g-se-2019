@@ -38,6 +38,6 @@ public class ServerSocket extends NanoWSD.WebSocket {
 
     @Override
     protected void onException(final IOException e) {
-        e.printStackTrace();
+
     }
 }

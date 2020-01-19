@@ -16,4 +16,6 @@ public interface StreamPlayer extends RadioPlayer {
     void setWebClient(ClientSocket client);
 
     void updateFromServer(String update);
+
+    void disconnect();
 }

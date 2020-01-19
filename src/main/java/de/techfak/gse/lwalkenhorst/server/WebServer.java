@@ -22,7 +22,6 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
 
     private static final String LOCALHOST = "127.0.0.1";
 
-
     private final ServerResponseFactory factory;
     private final List<ServerSocket> sockets = new ArrayList<>();
     private final MusicPlayer musicPlayer;
@@ -40,9 +39,18 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
         this.factory = new ServerResponseFactory(musicPlayer);
         try {
             this.start(0, false);
-            ObjectCloseupManager.getInstance().register(this, this::stop);
+            ObjectCloseupManager.getInstance().register(this, () -> {
+                sockets.forEach(socket -> {
+                    try {
+                        socket.close(WebSocketFrame.CloseCode.GoingAway, "closed", true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                stop();
+            });
         } catch (IOException e) {
-            throw new NoConnectionException("could not setup server socket on: " +  getHostname() + ":" + port, e);
+            throw new NoConnectionException("could not setup server socket on: " + getHostname() + ":" + port, e);
         }
     }
 
@@ -52,7 +60,6 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
 
     @Override
     protected WebSocket openWebSocket(final IHTTPSession ihttpSession) {
-        //ServerSocket on server side
         return new ServerSocket(ihttpSession, sockets);
     }
 
@@ -66,6 +73,8 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
                 switch (session.getUri()) {
                     case "/current-song":
                         return factory.newSongResponse();
+                    case "/current-time":
+                        return factory.newTimeResponse();
                     case "/playlist":
                         return factory.newPlaylistResponse();
                     case "/votes":
@@ -90,16 +99,12 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
     @Override
     public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
         try {
-            final Set<String> broadcasts = new HashSet<>(Arrays.asList(MusicPlayer.SONG_UPDATE, MusicPlayer.VOTE_UPDATE));
             final String propertyName = propertyChangeEvent.getPropertyName();
-            if (broadcasts.contains(propertyName)) {
-                for (ServerSocket socket : sockets) {
-                    socket.send(propertyName);
-                }
+            for (ServerSocket socket : sockets) {
+                socket.send(propertyName);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

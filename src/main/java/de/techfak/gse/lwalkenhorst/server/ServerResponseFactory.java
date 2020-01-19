@@ -31,6 +31,10 @@ public class ServerResponseFactory {
         this.radio = radio;
     }
 
+    public NanoHTTPD.Response newTimeResponse() {
+        return NanoHTTPD.newFixedLengthResponse(OK, JSON, String.valueOf(radio.getCurrentPlayTime()));
+    }
+
     public NanoHTTPD.Response newSongResponse() throws SerialisationException {
         final String jsonSong = parser.toJSON(radio.getSong());
         return NanoHTTPD.newFixedLengthResponse(OK, JSON, jsonSong);

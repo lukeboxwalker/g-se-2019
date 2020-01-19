@@ -59,6 +59,10 @@ public abstract class VLCJMediaPlayer implements RadioPlayer {
         mediaPlayer.controls().play();
     }
 
+    protected void stop() {
+        this.mediaPlayer.controls().stop();
+    }
+
     protected void registerEventListener(final MediaPlayerEventListener eventListener) {
         mediaPlayer.events().addMediaPlayerEventListener(eventListener);
     }

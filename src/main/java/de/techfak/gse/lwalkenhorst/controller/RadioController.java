@@ -6,6 +6,7 @@ import de.techfak.gse.lwalkenhorst.radioplayer.Song;
 import de.techfak.gse.lwalkenhorst.radioplayer.VLCJMediaPlayer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
@@ -130,5 +131,13 @@ public class RadioController implements PropertyChangeListener {
     private <T> Property<T> castProperty(final PropertyChangeEvent propertyChangeEvent, final Class<T> clazz) {
         return new Property<>(clazz.cast(propertyChangeEvent.getOldValue()),
             clazz.cast(propertyChangeEvent.getNewValue()));
+    }
+
+    public void resetFallbackNode() {
+        this.playlistController.resetFallbackNode();
+    }
+
+    public void setFallbackNode(Node node) {
+        this.playlistController.setFallbackNode(node);
     }
 }

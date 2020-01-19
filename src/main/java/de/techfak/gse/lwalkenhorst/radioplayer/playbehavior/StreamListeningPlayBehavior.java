@@ -10,7 +10,7 @@ public class StreamListeningPlayBehavior implements PlayBehavior {
 
     private final String rtpUrl;
 
-    public StreamListeningPlayBehavior(final String address, final String port) {
+    public StreamListeningPlayBehavior(final String address, final int port) {
         this.rtpUrl = "rtp://" + address + ":" + port + "/";
     }
 

@@ -65,6 +65,19 @@ public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
     }
 
     @Override
+    public float getCurrentPlayTime() {
+        return client.requestCurrentTime();
+    }
+
+    @Override
+    public void disconnect() {
+        if (client != null) {
+            this.stop();
+            client.disconnect();
+        }
+    }
+
+    @Override
     public void updateFromServer(String update) {
         switch (update) {
             case SONG_UPDATE:
@@ -77,6 +90,7 @@ public class StreamMusicPlayer extends VLCJMediaPlayer implements StreamPlayer {
                 getSupport().firePropertyChange(update, 0, 1);
                 break;
             case TIME_UPDATE:
+                getSupport().firePropertyChange(update, 0f, getCurrentPlayTime());
                 break;
             default:
         }

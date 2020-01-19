@@ -13,6 +13,7 @@ public class MusicPlayer extends VLCJMediaPlayer {
 
     private Playlist playlist = new Playlist();
     private Song currentSong = new Song();
+    private volatile float currentPlayTime = 0f;
 
     /**
      * Creating a new MusicPlayer to play music.
@@ -57,9 +58,10 @@ public class MusicPlayer extends VLCJMediaPlayer {
             this.currentSong = null;
             this.playNextSong();
             this.registerEventListener(new FinishedEventAdapter(mediaPlayer -> playNextSong()));
-            this.registerEventListener(new TimeChangedEventAdapter(
-                (mediaPlayer, newTime) -> getSupport().firePropertyChange(TIME_UPDATE, 0.0f, newTime))
-            );
+            this.registerEventListener(new TimeChangedEventAdapter((mediaPlayer, newTime) -> {
+                getSupport().firePropertyChange(TIME_UPDATE, 0.0f, newTime);
+                currentPlayTime = newTime;
+            }));
         }
     }
 
@@ -77,6 +79,11 @@ public class MusicPlayer extends VLCJMediaPlayer {
                 getSupport().firePropertyChange(VOTE_UPDATE, currentVotes - 1, currentVotes);
             }
         }
+    }
+
+    @Override
+    public float getCurrentPlayTime() {
+        return currentPlayTime;
     }
 
     @Override
