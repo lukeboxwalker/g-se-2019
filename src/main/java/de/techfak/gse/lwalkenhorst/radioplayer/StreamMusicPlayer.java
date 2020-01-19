@@ -1,11 +1,6 @@
 package de.techfak.gse.lwalkenhorst.radioplayer;
 
 import de.techfak.gse.lwalkenhorst.server.ClientSocket;
-import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 /**
  * Plays vljc stream by using the vlcj library.

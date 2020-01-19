@@ -7,6 +7,9 @@ import javafx.scene.control.TextField;
 import java.net.URI;
 import java.util.function.Consumer;
 
+/**
+ * Controller for Ip Connect Window.
+ */
 public class IpConnectionController implements Initializable<Consumer<URI>> {
 
     @FXML

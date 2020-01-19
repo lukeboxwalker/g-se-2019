@@ -14,6 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Building Response for {@link WebServer}.
+ */
 public class ServerResponseFactory {
 
     private static final NanoHTTPD.Response.Status OK = NanoHTTPD.Response.Status.OK;
@@ -45,6 +48,12 @@ public class ServerResponseFactory {
         return NanoHTTPD.newFixedLengthResponse(OK, JSON, jsonPlaylist);
     }
 
+    /**
+     * Building Response for votes of a Song.
+     *
+     * @param session of request
+     * @return response for session
+     */
     public NanoHTTPD.Response newVotesResponse(final NanoHTTPD.IHTTPSession session) {
         if (session.getParameters().size() == 1) {
             final Integer votes = radio.getVotes(getUUID(session));
@@ -53,6 +62,12 @@ public class ServerResponseFactory {
         return NanoHTTPD.newFixedLengthResponse(NOT_FOUND, JSON, "");
     }
 
+    /**
+     * Building Response for the cover of a Song.
+     *
+     * @param session of request
+     * @return response for session
+     */
     public NanoHTTPD.Response newCoverResponse(final NanoHTTPD.IHTTPSession session) {
         if (session.getParameters().size() == 1) {
             final String uuid = getUUID(session);

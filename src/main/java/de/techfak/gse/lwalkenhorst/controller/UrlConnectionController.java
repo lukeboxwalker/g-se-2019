@@ -7,6 +7,9 @@ import javafx.scene.control.TextField;
 import java.net.URI;
 import java.util.function.Consumer;
 
+/**
+ * Controller for Url Connect Window.
+ */
 public class UrlConnectionController implements Initializable<Consumer<URI>> {
 
     @FXML

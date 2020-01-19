@@ -38,8 +38,9 @@ public class ClientSocket extends WebSocketClient {
      *
      * @param serverAddress of the server
      * @param port          of the server
+     * @param streamPlayer  to communicate with.
      */
-    public ClientSocket(String serverAddress, int port, StreamPlayer streamPlayer) {
+    public ClientSocket(final String serverAddress, final int port, final StreamPlayer streamPlayer) {
         super(URI.create("ws://" + serverAddress + ":" + port));
         this.client = HttpClient.newHttpClient();
         this.streamPlayer = streamPlayer;
@@ -54,6 +55,12 @@ public class ClientSocket extends WebSocketClient {
         ObjectCloseupManager.getInstance().closeObject(this);
     }
 
+    /**
+     * Checks if client can connect.
+     * Trying to connect to server given when client was constructed.
+     *
+     * @return if connection is possible
+     */
     public boolean canConnect() {
         try {
             final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri)).GET().build();
@@ -72,7 +79,9 @@ public class ClientSocket extends WebSocketClient {
      * @return new song object.
      */
     public Song requestSong() {
-        if (closed) return new Song();
+        if (closed) {
+            return new Song();
+        }
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-song")).GET().build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -95,7 +104,9 @@ public class ClientSocket extends WebSocketClient {
      * @return new Playlist object
      */
     public Playlist requestPlaylist() {
-        if (closed) return new Playlist();
+        if (closed) {
+            return new Playlist();
+        }
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/playlist")).GET().build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -117,7 +128,9 @@ public class ClientSocket extends WebSocketClient {
      * @return votes of a given song
      */
     public int requestVote(String uuid) {
-        if (closed) return 0;
+        if (closed) {
+            return 0;
+        }
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUri + "/votes?id=" + uuid)).GET().build();
         try {
@@ -128,8 +141,15 @@ public class ClientSocket extends WebSocketClient {
         }
     }
 
+    /**
+     * Requests the current playing progress.
+     *
+     * @return current progress 0 to 1
+     */
     public float requestCurrentTime() {
-        if (closed) return 0f;
+        if (closed) {
+            return 0f;
+        }
         final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseUri + "/current-time")).GET().build();
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -145,7 +165,9 @@ public class ClientSocket extends WebSocketClient {
      * @param uuid to vote for
      */
     public void vote(String uuid) {
-        if (closed) return;
+        if (closed) {
+            return;
+        }
         final HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUri + "/vote")).POST(HttpRequest.BodyPublishers.ofString(uuid)).build();
         try {
@@ -177,6 +199,14 @@ public class ClientSocket extends WebSocketClient {
         e.printStackTrace();
     }
 
+    /**
+     * Start reconnect Schedule.
+     * Creates Runnable in with that will trying to reconnect
+     * to server with given period delay
+     *
+     * @param period that will wait for next reconnect.
+     * @return created runnable
+     */
     public Runnable reconnectSchedule(int period) {
         return () -> {
             Timer timer = new Timer();

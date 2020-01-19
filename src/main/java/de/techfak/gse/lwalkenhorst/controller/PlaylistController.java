@@ -126,6 +126,9 @@ public class PlaylistController {
         refreshItems();
     }
 
+    /**
+     * Sets Playlist PlaceHolder to ProgressIndicator.
+     */
     public void resetFallbackNode() {
         final ProgressIndicator placeHolder = new ProgressIndicator();
         placeHolder.setStyle(" -fx-progress-color: lightgreen");
@@ -133,7 +136,7 @@ public class PlaylistController {
         setFallbackNode(placeHolder);
     }
 
-    public void setFallbackNode (Node node) {
+    public void setFallbackNode(Node node) {
         this.playlist.setPlaceholder(node);
     }
 

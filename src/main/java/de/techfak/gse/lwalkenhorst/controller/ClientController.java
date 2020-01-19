@@ -1,9 +1,6 @@
 package de.techfak.gse.lwalkenhorst.controller;
 
-import de.techfak.gse.lwalkenhorst.closeup.ObjectCloseupManager;
-import de.techfak.gse.lwalkenhorst.exceptions.NoConnectionException;
 import de.techfak.gse.lwalkenhorst.radioplayer.StreamPlayer;
-import de.techfak.gse.lwalkenhorst.radioplayer.VLCJMediaPlayer;
 import de.techfak.gse.lwalkenhorst.radioplayer.playbehavior.StreamListeningPlayBehavior;
 import de.techfak.gse.lwalkenhorst.server.ClientSocket;
 import de.techfak.gse.lwalkenhorst.server.UrlParser;
@@ -12,11 +9,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -27,11 +21,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.function.Consumer;
 
+/**
+ * Controller for Client GUI.
+ */
 public class ClientController implements Initializable<StreamPlayer> {
+
+    private static final int LOST_CONNECTION = 1001;
+    private static final int CONNECTION_PERIOD = 3000;
 
     @FXML
     private MenuItem wiki;
@@ -85,7 +83,8 @@ public class ClientController implements Initializable<StreamPlayer> {
         return fxmlLoader.load();
     }
 
-    private <T extends Initializable<Consumer<URI>>> Stage buildConnectionWindow(final RadioController controller, final FXMLLoader fxmlLoader) throws Exception {
+    private <T extends Initializable<Consumer<URI>>> Stage buildConnectionWindow(
+            final RadioController controller, final FXMLLoader fxmlLoader) throws Exception {
         controller.resetFallbackNode();
         final Stage connectionWindow = new Stage();
         connectionWindow.initModality(Modality.APPLICATION_MODAL);
@@ -102,8 +101,8 @@ public class ClientController implements Initializable<StreamPlayer> {
                     @Override
                     public void onClose(int closeCode, String reason, boolean b) {
                         super.onClose(closeCode, reason, b);
-                        if (closeCode == 1001) {
-                            Platform.runLater(reconnectSchedule(3000));
+                        if (closeCode == LOST_CONNECTION) {
+                            Platform.runLater(reconnectSchedule(CONNECTION_PERIOD));
                         }
                     }
                 };
@@ -158,6 +157,12 @@ public class ClientController implements Initializable<StreamPlayer> {
         }
     }
 
+    /**
+     * Resetting Focus of javafx Node.
+     *
+     * @param focusedNode   node that is focused but should not be focused.
+     * @param redirectFocus node to redirect focus to.
+     */
     public static void resetFocus(final Node focusedNode, final Node redirectFocus) {
         focusedNode.focusedProperty().addListener(new ChangeListener<>() {
             private boolean startup = true;
