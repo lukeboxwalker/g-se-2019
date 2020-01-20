@@ -169,7 +169,7 @@ public class ClientSocket extends WebSocketClient {
             return;
         }
         final HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUri + "/vote")).POST(HttpRequest.BodyPublishers.ofString(uuid)).build();
+            .uri(URI.create(baseUri + "/song/" + uuid + "/vote")).POST(HttpRequest.BodyPublishers.noBody()).build();
         try {
             client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
@@ -181,6 +181,7 @@ public class ClientSocket extends WebSocketClient {
     public void onOpen(ServerHandshake serverHandshake) {
         this.closed = false;
         this.disconnected = false;
+        streamPlayer.updateFromServer(VLCJMediaPlayer.SONG_UPDATE);
     }
 
     @Override

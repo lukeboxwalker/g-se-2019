@@ -4,6 +4,7 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoWSD;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.List;
 
 /**
@@ -43,6 +44,8 @@ public class ServerSocket extends NanoWSD.WebSocket {
 
     @Override
     protected void onException(final IOException e) {
-
+        if (!(e instanceof SocketException)) {
+            e.printStackTrace();
+        }
     }
 }

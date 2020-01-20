@@ -20,7 +20,7 @@ public class ClientApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        final URL location = Thread.currentThread().getContextClassLoader().getResource("view/ClientView.fxml");
+        final URL location = Thread.currentThread().getContextClassLoader().getResource("view/clientView.fxml");
         final FXMLLoader fxmlLoader = new FXMLLoader(location);
         final Pane root = fxmlLoader.load();
         final ClientController controller = fxmlLoader.getController();

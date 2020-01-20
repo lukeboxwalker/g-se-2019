@@ -6,6 +6,6 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="598.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label prefHeight="17.0" prefWidth="720.0" style="-fx-background-color: transparent; -fx-alignment: center;" text="- NO CONNECTION FOUND -" textFill="#bf2828" />
-      <Label prefHeight="17.0" prefWidth="655.0" style="-fx-background-color: transparent; -fx-alignment: center;" text="Please configure a connection or connect by selecting: Connect -&gt; connect by ... in context menu" textFill="WHITE" />
+      <Label prefHeight="17.0" prefWidth="655.0" style="-fx-background-color: transparent; -fx-alignment: center;" text="Please configure a connection in context menu" textFill="WHITE" />
    </children>
 </VBox>

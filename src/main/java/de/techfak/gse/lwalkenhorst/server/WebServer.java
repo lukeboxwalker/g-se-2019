@@ -40,7 +40,7 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
             ObjectCloseupManager.getInstance().register(this, () -> {
                 sockets.forEach(socket -> {
                     try {
-                        socket.close(WebSocketFrame.CloseCode.GoingAway, "closed", true);
+                        socket.close(WebSocketFrame.CloseCode.GoingAway, "closed", false);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -82,13 +82,17 @@ public class WebServer extends NanoWSD implements PropertyChangeListener {
                     default:
                 }
             } else if (session.getMethod() == Method.POST) {
-                if ("/vote".equals(session.getUri())) {
-                    final Map<String, String> body = new HashMap<>();
-                    session.parseBody(body);
-                    musicPlayer.vote(body.get("postData"));
+                if (session.getUri().startsWith("/song")) {
+                    String[] uri = session.getUri().split("/");
+                    final int uriLength = 4;
+                    final int uuidIndex = 2;
+                    if (uri.length == uriLength) {
+                        musicPlayer.vote(uri[uuidIndex]);
+                    }
+                    return factory.newPlainResponse("");
                 }
             }
-        } catch (SerialisationException | IOException | ResponseException e) {
+        } catch (SerialisationException e) {
             e.printStackTrace();
         }
         return factory.newPlainResponse("GSE Radio");

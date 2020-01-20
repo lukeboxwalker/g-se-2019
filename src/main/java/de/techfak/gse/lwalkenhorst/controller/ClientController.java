@@ -83,15 +83,15 @@ public class ClientController implements Initializable<StreamPlayer> {
         return fxmlLoader.load();
     }
 
-    private <T extends Initializable<Consumer<URI>>> Stage buildConnectionWindow(
-            final RadioController controller, final FXMLLoader fxmlLoader) throws Exception {
+    private Stage buildConnectionWindow(final RadioController controller,
+                                        final FXMLLoader fxmlLoader) throws Exception {
         controller.resetFallbackNode();
         final Stage connectionWindow = new Stage();
         connectionWindow.initModality(Modality.APPLICATION_MODAL);
         connectionWindow.setTitle("Connect to server");
 
         final Pane pane = fxmlLoader.load();
-        final T connectionController = fxmlLoader.getController();
+        final Initializable<Consumer<URI>> connectionController = fxmlLoader.getController();
         connectionController.initialize((uri -> {
             connectionWindow.close();
             final UrlParser parser = new UrlParser();
