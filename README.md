@@ -1,9 +1,8 @@
 # GSE-Radio
 
+<a href="https://se.techfak.de/projects/g-se-ws-2019-lwalkenhorst">![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Redmine_logo.svg/250px-Redmine_logo.png)</a>
+
 Projekt für Grundlagen-Software-Engineering 2019.
-
-Original Repository https://se.techfak.de/git/g-se-ws-2019-lwalkenhorst.git
-
 ## Anleitung
 
 ### Argumente:
